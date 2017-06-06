@@ -1,13 +1,31 @@
 package io.github.yesalam.acquaint;
 
+import android.app.Activity;
+import android.net.wifi.WifiEnterpriseConfig;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseWebActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+
+        webView.setVisibility(View.VISIBLE);
+        setContentView(webView);
+
+
+
+
+
     }
+
+
 }
