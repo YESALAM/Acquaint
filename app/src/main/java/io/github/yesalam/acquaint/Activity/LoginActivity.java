@@ -1,4 +1,4 @@
-package io.github.yesalam.acquaint;
+package io.github.yesalam.acquaint.Activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -6,22 +6,10 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,23 +18,26 @@ import android.view.inputmethod.EditorInfo;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.github.yesalam.acquaint.BaseWebActivity;
+import io.github.yesalam.acquaint.R;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.Util.Util.IS_LOGGED_KEY;
+import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
+import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
+import static io.github.yesalam.acquaint.Util.Util.USER_KEY;
+import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends BaseWebActivity  {
+public class LoginActivity extends BaseWebActivity {
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -189,40 +180,32 @@ public class LoginActivity extends BaseWebActivity  {
 
 
     private void login(String userid,String password){
-        webView.postUrl(ACQUINT_URL,byteCodeit(userid,password));
-        webView.addJavascriptInterface(new LoginJSInterface(this),"html");
+        webView.postUrl(ACQUAINT_URL,byteCodeit(userid,password));
+        webView.addJavascriptInterface(new LoginJSInterface(this,userid,password),"html");
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                showProgress(false);
+                showProgress(false);//TODO make sure we cover this to show everything fine when its gone main should come
                 webView.loadUrl("javascript:var x;var a=document.getElementById('wel');if(a===null){var b=document.getElementById('UserName');if(b===null)x='noservice';else x='nologin';}else x=document.getElementById('wel').getElementsByTagName('span')[0].innerHTML;window.html.getName(x);");
             }
         });
-
     }
 
-    private byte[] byteCodeit(String userid,String password){
-        //String temp = "UserName=Gwalioroffice1&Password=Mohnish123&RememberMe=false" ;
-        StringBuilder sb = new StringBuilder("UserName=");
-        sb.append(userid);
-        sb.append("&Password=");
-        sb.append(password);
-        sb.append("&RememberMe=");
-        sb.append("false");
 
-        return sb.toString().getBytes();
-    }
 
-    class LoginJSInterface{
+    private class LoginJSInterface{
         private Context context ;
-        public LoginJSInterface(Context context){
+        private String userid;
+        private String password;
+        LoginJSInterface(Context context,String userid,String password){
             this.context = context ;
+            this.userid = userid;
+            this.password = password;
         }
 
         @JavascriptInterface
         public void getName(String name){
-            Toast.makeText(context,"I am "+name+" don",Toast.LENGTH_LONG).show();
             if(name.equalsIgnoreCase("nologin")){
                 //Login failed
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -234,14 +217,21 @@ public class LoginActivity extends BaseWebActivity  {
                 SharedPreferences app_preferences =
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = app_preferences.edit();
-                editor.putBoolean("logged",true).commit();
-                Intent intent = new Intent(getBaseContext(),MainActivity.class) ;
+                editor.putBoolean(IS_LOGGED_KEY,true);
+                editor.putString(USER_KEY,name);
+                editor.putString(USER_ID_KEY,userid);
+                editor.putString(PASSWORD_KEY,password);
+                editor.apply();
+                Intent intent = new Intent(context,MainActivity.class) ;
                 startActivity(intent);
                 finish();
             }
 
         }
     }
+
+
+
 
 
 }

@@ -1,4 +1,4 @@
-package io.github.yesalam.acquaint;
+package io.github.yesalam.acquaint.Activity;
 
 import android.app.Activity;
 import android.net.wifi.WifiEnterpriseConfig;
@@ -10,6 +10,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import io.github.yesalam.acquaint.BaseWebActivity;
 
 public class MainActivity extends BaseWebActivity {
 
