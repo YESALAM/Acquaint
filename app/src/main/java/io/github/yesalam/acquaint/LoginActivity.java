@@ -5,7 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -46,20 +48,6 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends BaseWebActivity  {
 
-    LinearLayout ll ;
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
-
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -94,8 +82,7 @@ public class LoginActivity extends BaseWebActivity  {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        ll = (LinearLayout) findViewById(R.id.ll_login);
-        //ll.addView(webView);
+
     }
 
 
@@ -109,9 +96,7 @@ public class LoginActivity extends BaseWebActivity  {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+
 
         // Reset errors.
         mEmailView.setError(null);
@@ -151,8 +136,7 @@ public class LoginActivity extends BaseWebActivity  {
             // perform the user login attempt.
             showProgress(true);
             login(email,password);
-            /*mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);*/
+
         }
     }
 
@@ -247,89 +231,18 @@ public class LoginActivity extends BaseWebActivity  {
                 //Service Unavailable
                 Toast.makeText(context, "Service Unavailable! Please Try later", Toast.LENGTH_SHORT).show();
             }else {
+                SharedPreferences app_preferences =
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = app_preferences.edit();
+                editor.putBoolean("logged",true).commit();
                 Intent intent = new Intent(getBaseContext(),MainActivity.class) ;
                 startActivity(intent);
-            }
-
-        }
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        private byte[] byteCodeit(String userid,String password){
-            //String temp = "UserName=Gwalioroffice1&Password=Mohnish123&RememberMe=false" ;
-            StringBuilder sb = new StringBuilder("UserName=");
-            sb.append(userid);
-            sb.append("&Password=");
-            sb.append(password);
-            sb.append("&RememberMe=");
-            sb.append("true");
-
-            return sb.toString().getBytes();
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            webView.postUrl(ACQUINT_URL,byteCodeit(mEmail,mPassword));
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-
-
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
                 finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
             }
-        }
 
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
         }
     }
+
+
 }
 
