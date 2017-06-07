@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -31,12 +32,9 @@ import static io.github.yesalam.acquaint.Util.Util.USER_KEY;
  * Created by yesalam on 07-06-2017.
  */
 
-public class BaseDrawerActivity extends BaseWebActivity {
+public abstract class BaseDrawerActivity extends BaseWebActivity {
 
     protected DrawerLayout mDrawerLayout;
-    protected NavigationView navigationView;
-
-    protected ActionBar actionBar;
 
     protected SharedPreferences app_preferences;
 
@@ -51,29 +49,38 @@ public class BaseDrawerActivity extends BaseWebActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        actionBar = getSupportActionBar();
+        final ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-
+        if (viewPager != null) {
+            setupViewPager(viewPager);
+        }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
 
-        String name = app_preferences.getString(USER_KEY,null);
+        String name = app_preferences.getString(USER_KEY, null);
         TextView textView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.name_header);
         textView.setText(name);
-    }
 
+        if (this instanceof CaseActivity) {
+            actionBar.setTitle("Case");
+            navigationView.getMenu().getItem(0).setChecked(true);
+        } else {
+            actionBar.setTitle("Field Investigations");
+            navigationView.getMenu().getItem(1).setChecked(true);
+        }
+    }
 
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -83,21 +90,16 @@ public class BaseDrawerActivity extends BaseWebActivity {
                 item.setChecked(true);
                 mDrawerLayout.closeDrawers();
                 Intent intent;
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.case_menu_drawer:
-                        //case
-                        //Toast.makeText(getApplicationContext(),"Case clicked",Toast.LENGTH_SHORT).show();
                         intent = new Intent(getApplicationContext(), CaseActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.investigation_menu_drawer:
-                        //case
-                        //Toast.makeText(getApplicationContext(), "investigation clicked", Toast.LENGTH_SHORT).show();
                         intent = new Intent(getApplicationContext(), InvestigationActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.signout_menu_drawer:
-                        //signout
                         SharedPreferences.Editor editor = app_preferences.edit();
                         editor.remove(USER_KEY);
                         editor.remove(USER_ID_KEY);
@@ -113,9 +115,21 @@ public class BaseDrawerActivity extends BaseWebActivity {
     }
 
 
-    protected void setApp_preferences(){
+    protected void setApp_preferences() {
         app_preferences =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public abstract void setupViewPager(ViewPager viewPager);
 
 }
