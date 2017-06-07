@@ -222,7 +222,7 @@ public class LoginActivity extends BaseWebActivity {
                 editor.putString(USER_ID_KEY,userid);
                 editor.putString(PASSWORD_KEY,password);
                 editor.apply();
-                Intent intent = new Intent(context,MainActivity.class) ;
+                Intent intent = new Intent(context,CaseActivity.class) ;
                 startActivity(intent);
                 finish();
             }

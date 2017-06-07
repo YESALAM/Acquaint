@@ -29,7 +29,7 @@ public class SplashActivity extends AppCompatActivity {
 
         Intent intent ;
         if(logged)
-            intent = new Intent(this,MainActivity.class);
+            intent = new Intent(this,CaseActivity.class);
         else
             intent = new Intent(this,LoginActivity.class);
 
