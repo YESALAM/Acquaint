@@ -7,7 +7,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -16,6 +18,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,9 +68,10 @@ public abstract class BaseDrawerActivity extends BaseWebActivity {
             setupViewPager(viewPager);
         }
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
 
         String name = app_preferences.getString(USER_KEY, null);
         TextView textView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.name_header);
@@ -76,9 +80,17 @@ public abstract class BaseDrawerActivity extends BaseWebActivity {
         if (this instanceof CaseActivity) {
             actionBar.setTitle("Case");
             navigationView.getMenu().getItem(0).setChecked(true);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            });
         } else {
             actionBar.setTitle("Field Investigations");
             navigationView.getMenu().getItem(1).setChecked(true);
+            fab.setVisibility(View.GONE);
         }
     }
 
