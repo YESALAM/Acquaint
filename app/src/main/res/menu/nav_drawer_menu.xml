@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/case_menu_drawer"
+            android:title="@string/case_drawer_title"
+            />
+        <item
+            android:id="@+id/investigation_menu_drawer"
+            android:title="@string/investigation_drawer_title"
+            />
+
+    </group>
+    <item android:title="Other">
+        <menu>
+            <item
+                android:id="@+id/signout_menu_drawer"
+                android:title="@string/signout_drawer_title"
+                />
+        </menu>
+    </item>
+</menu>

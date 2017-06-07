@@ -14,4 +14,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="case_drawer_title">Case</string>
+    <string name="investigation_drawer_title">Investigations</string>
+    <string name="signout_drawer_title">Sign Out</string>
+    <string name="website_url">myacquaint.com</string>
 </resources>
