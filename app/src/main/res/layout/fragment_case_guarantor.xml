@@ -11,9 +11,9 @@
         android:orientation="vertical"
         >
         <android.support.v7.widget.CardView
-            android:id="@+id/basic_detail_case_card"
+            android:id="@+id/guarantor_case_card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="10dp"
             >
 
@@ -24,31 +24,26 @@
                 android:padding="@dimen/card_padding"
                 >
 
-                <include layout="@layout/include_case_basic_detail"/>
-
-                <include layout="@layout/include_applicant_resident_details" />
-
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Have Company Address"
-                    android:id="@+id/have_company_address_radiobutton"
+                    android:text="Have Guarantor"
+                    android:id="@+id/have_guarantor_residential_radiobutton"
 
                     android:layout_marginTop="@dimen/card_padding"
                     />
 
-                <include layout="@layout/include_applicant_office_details"/>
+                <include layout="@layout/include_guarantor_resident_detail"/>
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Have Permanent Address"
-                    android:id="@+id/have_permanent_address"
-
+                    android:text="Have Office Address"
+                    android:id="@+id/have_guarantor_office_address"
                     android:layout_marginTop="@dimen/card_padding"
                     />
 
-                <include layout="@layout/include_permanent_resident_address"/>
+                <include layout="@layout/include_guarantor_office_details"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -63,13 +58,15 @@
                     android:layout_marginTop="20dp"
                     android:clickable="true"
                     />
+
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
 
+        </android.support.v7.widget.CardView>
         <android.support.v4.widget.Space
             android:layout_width="match_parent"
             android:layout_height="50dp" />
     </LinearLayout>
+    
 
 </ScrollView>
