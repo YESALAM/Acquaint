@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/case_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/card_margin"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginLeft="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:layout_marginRight="@dimen/card_margin"
+    >
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:padding="10dp"
+        >
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Case"
+                style="@style/CardHeaderText"
+                 />
+
+            <TextView
+                android:id="@+id/caseno_case_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/CardHeaderText"
+                android:hint="4860674"
+                android:text="4860674" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                style="@style/CardHeaderText"
+                 />
+
+            <TextView
+                android:id="@+id/applicant_name_case_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/CardHeaderText"
+                android:hint="BRIJRAJ SINGH"
+                android:text="BRIJRAJ SINGH"
+                 />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Loan Type "
+
+                />
+
+            <TextView
+                android:id="@+id/loan_type_case_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:fontFamily="sans-serif"
+                android:hint="Personal Loan "
+                android:text="Personal Loan " />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Client &amp; Branch "
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/client_case_card"
+
+                android:hint="State Bank of India
+CITY CENTER (4352) "
+                android:text="State Bank of India
+CITY CENTER (4352) "
+                />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contact Person "
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/contact_person_case_card"
+
+                android:hint="SHAILESH BANJARE "
+                android:text="SHAILESH BANJARE "
+                />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pickup Date"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_date_case_card"
+
+                android:hint="05-06-2017"
+                android:text="05-06-2017"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Punched By"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/punchedby_case_card"
+
+                android:hint="MANISH JAIN"
+                android:text="MANISH JAIN"
+                />
+        </TableRow>
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/status_case_card"
+
+                android:hint="In Progress "
+                android:text="In Progress "
+                />
+        </TableRow>
+    </TableLayout>
+
+</android.support.v7.widget.CardView>
