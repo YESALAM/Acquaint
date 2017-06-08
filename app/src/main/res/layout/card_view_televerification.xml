@@ -28,10 +28,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/investigationId_investigation_card"
+                android:id="@+id/investigationId_tele_card"
                 style="@style/CardHeaderText"
-                android:hint="4940790"
-                android:text="4940790"
+                android:hint="4716123"
+                android:text="4716123"
                 />
         </TableRow>
 
@@ -45,50 +45,26 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/applicant_name_investigation_card"
+                android:id="@+id/applicant_name_tele_card"
                 style="@style/CardHeaderText"
-                android:hint="VIDYA WATT"
+                android:hint="OM WATT"
                 android:text="VIDYA WATT"
                 />
         </TableRow>
 
         <TableRow>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Type "
-                style="@style/CardHeaderText"
+                android:text="Case Id"
+
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/location_type_investigation_card"
-                style="@style/CardHeaderText"
-                android:hint="Residence "
-                android:text="Residence "
-                />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Address "
-                style="@style/CardHeaderText"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/address_investigation_card"
-                style="@style/CardHeaderText"
-                android:hint="S.D.O.P BEHT OFFICE
-NEAR KALPI BRIDGE
-GWALIOR,MADHAYA PRADESH  "
-                android:text="S.D.O.P BEHT OFFICE
-NEAR KALPI BRIDGE
-GWALIOR,MADHAYA PRADESH  "
+                android:id="@+id/caseid_tele_card"
+                android:hint="4594856"
+                android:text="4594856"
                 />
         </TableRow>
 
@@ -103,7 +79,7 @@ GWALIOR,MADHAYA PRADESH  "
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/client_investigation_card"
+                android:id="@+id/client_tele_card"
 
                 android:hint="Indiabulls
 GWALIOR (NA) "
@@ -111,24 +87,59 @@ GWALIOR (NA) "
 GWALIOR (NA) "
                 />
         </TableRow>
+
         <TableRow>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Case Detail"
+                android:text="Pickup Date"
 
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/case_detail_investigation_card"
-                android:hint="Case Id : 1852372
-Loan Type : Home Loan
-Pickup Date : 28-12-2016
-Punched By : MANISH JAIN"
-                android:text="Case Id : 4634859\nLoan Type : Home Loan\nPickup Date : 07-06-2017\nPunched By : MANISH JAIN"
+                android:id="@+id/pickup_date_tele_card"
+
+                android:hint="05-06-2017"
+                android:text="05-06-2017"
                 />
         </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Punched By"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/punchedby_tele_card"
+
+                android:hint="MANISH JAIN"
+                android:text="MANISH JAIN"
+                />
+        </TableRow>
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/status_tele_card"
+
+                android:hint="In Progress "
+                android:text="In Progress "
+                />
+        </TableRow>
+
+
+
     </TableLayout>
 
 </android.support.v7.widget.CardView>
