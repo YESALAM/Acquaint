@@ -1,20 +1,23 @@
-package io.github.yesalam.acquaint;
+package io.github.yesalam.acquaint.Adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.github.yesalam.acquaint.R;
+
 /**
  * Created by yesalam on 08-06-2017.
  */
 
-public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<InvestigationRecyclerAdapter.ViewHolder> {
+public class CaseRecyclerAdapter extends RecyclerView.Adapter<CaseRecyclerAdapter.ViewHolder> {
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_investigation,parent,false);
-
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.card_view_case,parent,false);
         return new ViewHolder(view);
     }
 
@@ -23,14 +26,20 @@ public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<Investiga
 
     }
 
+
     @Override
     public int getItemCount() {
-        return 10;
+        return 5;
     }
 
+
     public static class ViewHolder extends RecyclerView.ViewHolder{
+
+        //TODO declare all textview to update
+
         public ViewHolder(View itemView) {
             super(itemView);
         }
     }
+
 }

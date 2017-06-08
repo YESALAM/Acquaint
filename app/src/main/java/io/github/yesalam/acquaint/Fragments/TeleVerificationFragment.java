@@ -9,9 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.github.yesalam.acquaint.InvestigationRecyclerAdapter;
 import io.github.yesalam.acquaint.R;
-import io.github.yesalam.acquaint.TeleVeriRecyclerAdapter;
+import io.github.yesalam.acquaint.Adapters.TeleVeriRecyclerAdapter;
 
 /**
  * Created by yesalam on 08-06-2017.

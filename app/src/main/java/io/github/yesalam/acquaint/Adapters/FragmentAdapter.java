@@ -1,4 +1,4 @@
-package io.github.yesalam.acquaint;
+package io.github.yesalam.acquaint.Adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

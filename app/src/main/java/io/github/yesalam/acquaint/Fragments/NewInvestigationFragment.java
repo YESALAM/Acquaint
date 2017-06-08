@@ -9,8 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.github.yesalam.acquaint.CaseRecyclerAdapter;
-import io.github.yesalam.acquaint.InvestigationRecyclerAdapter;
+import io.github.yesalam.acquaint.Adapters.InvestigationRecyclerAdapter;
 import io.github.yesalam.acquaint.R;
 
 /**

@@ -1,19 +1,22 @@
-package io.github.yesalam.acquaint;
+package io.github.yesalam.acquaint.Adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.github.yesalam.acquaint.R;
+
 /**
  * Created by yesalam on 08-06-2017.
  */
 
-public class TeleVeriRecyclerAdapter extends RecyclerView.Adapter<TeleVeriRecyclerAdapter.ViewHolder> {
+public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<InvestigationRecyclerAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_televerification,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_investigation,parent,false);
+
         return new ViewHolder(view);
     }
 
@@ -27,7 +30,7 @@ public class TeleVeriRecyclerAdapter extends RecyclerView.Adapter<TeleVeriRecycl
         return 10;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         public ViewHolder(View itemView) {
             super(itemView);
         }

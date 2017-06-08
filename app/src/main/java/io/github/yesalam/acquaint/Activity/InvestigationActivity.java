@@ -1,12 +1,10 @@
 package io.github.yesalam.acquaint.Activity;
 
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.view.MenuItem;
 
 import io.github.yesalam.acquaint.BaseDrawerActivity;
-import io.github.yesalam.acquaint.FragmentAdapter;
+import io.github.yesalam.acquaint.Adapters.FragmentAdapter;
 import io.github.yesalam.acquaint.Fragments.CompleteInvestigationFragment;
 import io.github.yesalam.acquaint.Fragments.NewInvestigationFragment;
 import io.github.yesalam.acquaint.Fragments.TeleVerificationFragment;
