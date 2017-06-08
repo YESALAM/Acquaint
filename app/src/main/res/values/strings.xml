@@ -18,4 +18,5 @@
     <string name="investigation_drawer_title">Investigations</string>
     <string name="signout_drawer_title">Sign Out</string>
     <string name="website_url">myacquaint.com</string>
+    <string name="title_activity_indi_case">IndiCaseActivity</string>
 </resources>

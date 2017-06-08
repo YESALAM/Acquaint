@@ -31,7 +31,7 @@ public class InvestigationActivity extends BaseDrawerActivity {
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(new NewInvestigationFragment(),"New");
         adapter.addFragment(new CompleteInvestigationFragment(),"Complete");
-        adapter.addFragment(new TeleVerificationFragment(),"Televerification");
+        adapter.addFragment(new TeleVerificationFragment(),"Tele-verification");
         viewPager.setAdapter(adapter);
     }
 
