@@ -33,6 +33,7 @@
         <activity
             android:name=".Activity.IndiCaseActivity"
             android:parentActivityName=".Activity.CaseActivity"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

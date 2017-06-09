@@ -52,18 +52,15 @@
 
                 <include layout="@layout/include_permanent_resident_address"/>
 
-                <TextView
+                <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Save"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="20sp"
                     android:textAlignment="viewEnd"
-                    android:fontFamily="sans-serif-medium"
                     android:layout_gravity="end"
                     android:padding="@dimen/card_margin"
                     android:layout_marginTop="20dp"
-                    android:clickable="true"
+                    android:background="@null"
                     />
             </LinearLayout>
 
