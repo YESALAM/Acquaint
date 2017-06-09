@@ -32,7 +32,6 @@
         <activity android:name=".Activity.InvestigationActivity"></activity>
         <activity
             android:name=".Activity.IndiCaseActivity"
-            android:label="@string/title_activity_indi_case"
             android:parentActivityName=".Activity.CaseActivity"
             android:theme="@style/AppTheme">
             <meta-data

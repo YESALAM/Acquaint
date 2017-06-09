@@ -1,5 +1,6 @@
 package io.github.yesalam.acquaint.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -25,10 +26,13 @@ public class IndiCaseActivity extends BaseWebActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indi_case);
 
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("caseno");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Case "+title);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

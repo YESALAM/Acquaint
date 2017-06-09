@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import io.github.yesalam.acquaint.Activity.IndiCaseActivity;
 import io.github.yesalam.acquaint.R;
@@ -31,6 +32,10 @@ public class CaseRecyclerAdapter extends RecyclerView.Adapter<CaseRecyclerAdapte
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, IndiCaseActivity.class);
+                //TODO MAKE it better
+                TextView casenott = (TextView) v.findViewById(R.id.caseno_case_card);
+                String caseno = (String) casenott.getText();
+                intent.putExtra("caseno",caseno);
                 context.startActivity(intent);
             }
         });
@@ -46,6 +51,7 @@ public class CaseRecyclerAdapter extends RecyclerView.Adapter<CaseRecyclerAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder{
         View view;
         //TODO declare all textview to update
+        TextView caseno;
 
         public ViewHolder(View itemView) {
             super(itemView);
