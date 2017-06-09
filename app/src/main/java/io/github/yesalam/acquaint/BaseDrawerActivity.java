@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 
 import io.github.yesalam.acquaint.Activity.CaseActivity;
+import io.github.yesalam.acquaint.Activity.CreateCaseDialog;
 import io.github.yesalam.acquaint.Activity.InvestigationActivity;
 
 import static io.github.yesalam.acquaint.Util.Util.IS_LOGGED_KEY;
@@ -83,8 +84,8 @@ public abstract class BaseDrawerActivity extends BaseWebActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Intent intent = new Intent(view.getContext(), CreateCaseDialog.class);
+                    view.getContext().startActivity(intent);
                 }
             });
         } else {

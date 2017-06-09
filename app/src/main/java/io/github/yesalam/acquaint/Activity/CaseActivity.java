@@ -26,6 +26,7 @@ public class CaseActivity extends BaseDrawerActivity {
         adapter.addFragment(new NewCaseFragment(),"New");
         adapter.addFragment(new CompleteCaseFragment(),"Complete");
         viewPager.setAdapter(adapter);
+
     }
 
 

@@ -47,6 +47,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.yesalam.acquaint.Activity.IndiCaseActivity" />
         </activity>
+        <activity android:name=".Activity.CreateCaseDialog"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".Activity.CaseActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.yesalam.acquaint.Activity.CaseActivity" />
+        </activity>
     </application>
 
 </manifest>

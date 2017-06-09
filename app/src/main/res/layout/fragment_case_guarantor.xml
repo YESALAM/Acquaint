@@ -37,15 +37,7 @@
 
                 <include layout="@layout/include_guarantor_resident_detail"/>
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Have Office Address"
-                    android:id="@+id/have_guarantor_office_address"
-                    android:layout_marginTop="@dimen/card_padding"
-                    />
 
-                <include layout="@layout/include_guarantor_office_details"/>
 
                 <Button
                     android:layout_width="wrap_content"
