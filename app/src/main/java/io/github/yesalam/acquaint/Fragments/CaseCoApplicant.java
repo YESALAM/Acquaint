@@ -29,7 +29,7 @@ public class CaseCoApplicant extends Fragment {
 
     private void setupRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new CoapplicantRecyclerAdapter());
+        recyclerView.setAdapter(new CoapplicantRecyclerAdapter(this));
     }
 
 

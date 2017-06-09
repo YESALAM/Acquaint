@@ -1,10 +1,14 @@
 package io.github.yesalam.acquaint.Adapters;
 
+import android.content.Intent;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.github.yesalam.acquaint.Fragments.CoApplicantDialog;
 import io.github.yesalam.acquaint.R;
 
 /**
@@ -12,6 +16,12 @@ import io.github.yesalam.acquaint.R;
  */
 
 public class CoapplicantRecyclerAdapter extends RecyclerView.Adapter<CoapplicantRecyclerAdapter.ViewHolder> {
+
+    private Fragment fragment;
+
+    public CoapplicantRecyclerAdapter(Fragment fragment){
+        this.fragment = fragment;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -21,7 +31,15 @@ public class CoapplicantRecyclerAdapter extends RecyclerView.Adapter<Coapplicant
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*DialogFragment dialogFragment = new DialogFragment();
+                dialogFragment.show(fragment.getFragmentManager(),"dialog");*/
+                Intent intent = new Intent(v.getContext(), io.github.yesalam.acquaint.Activity.CoApplicantDialog.class);
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -30,8 +48,10 @@ public class CoapplicantRecyclerAdapter extends RecyclerView.Adapter<Coapplicant
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        View view;
         public ViewHolder(View itemView) {
             super(itemView);
+            this.view = itemView;
         }
     }
 }
