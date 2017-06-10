@@ -1,10 +1,14 @@
 package io.github.yesalam.acquaint.Adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import io.github.yesalam.acquaint.Activity.IndiFieldInvestigationDialog;
 import io.github.yesalam.acquaint.R;
 
 /**
@@ -12,6 +16,7 @@ import io.github.yesalam.acquaint.R;
  */
 
 public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<InvestigationRecyclerAdapter.ViewHolder> {
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -22,7 +27,17 @@ public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<Investiga
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context,IndiFieldInvestigationDialog.class);
+                    TextView textView = (TextView) v.findViewById(R.id.investigationId_investigation_card);
+                    String investigationid = (String) textView.getText();
+                    intent.putExtra("investigationid",investigationid);
+                    context.startActivity(intent);
+                }
+            });
     }
 
     @Override
@@ -31,8 +46,10 @@ public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<Investiga
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
+        View view;
         public ViewHolder(View itemView) {
             super(itemView);
+            this.view = itemView ;
         }
     }
 }

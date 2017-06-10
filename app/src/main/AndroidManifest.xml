@@ -55,6 +55,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.yesalam.acquaint.Activity.CaseActivity" />
         </activity>
+        <activity android:name=".Activity.IndiFieldInvestigationDialog"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".Activity.InvestigationActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.yesalam.acquaint.Activity.InvestigationActivity" />
+        </activity>
+        <activity android:name=".Activity.TeleVerificationDialog"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".Activity.InvestigationActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.yesalam.acquaint.Activity.InvestigationActivity" />
+        </activity>
     </application>
 
 </manifest>

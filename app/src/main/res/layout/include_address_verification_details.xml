@@ -18,7 +18,8 @@
             android:layout_marginTop="15dp"
             android:background="@drawable/frame"
             android:padding="@dimen/card_padding"
-            android:stretchColumns="1">
+            android:stretchColumns="1"
+            >
 
             <TableRow>
 
@@ -27,6 +28,7 @@
                     android:layout_height="wrap_content"
                     android:text="Case Id"
                     style="@style/CardHeaderText"
+
                     />
 
                 <TextView
@@ -107,7 +109,10 @@
                     />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+
+                android:baselineAligned="false"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"

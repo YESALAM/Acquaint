@@ -354,5 +354,6 @@
             android:text="If house locked fill following from neighbour" />
     </FrameLayout>
 
+    <include layout="@layout/include_address_confirmed_office_2" />
 
 </LinearLayout>
