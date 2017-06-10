@@ -14,7 +14,7 @@ import io.github.yesalam.acquaint.R;
  * Created by yesalam on 10-06-2017.
  */
 
-public class IndiFieldInvestigationDialog extends Activity {
+public class FieldInvestigationDialog extends Activity {
 
 
 

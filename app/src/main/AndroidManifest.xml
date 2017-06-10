@@ -55,7 +55,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.yesalam.acquaint.Activity.CaseActivity" />
         </activity>
-        <activity android:name=".Activity.IndiFieldInvestigationDialog"
+        <activity android:name=".Activity.FieldInvestigationDialog"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".Activity.InvestigationActivity">

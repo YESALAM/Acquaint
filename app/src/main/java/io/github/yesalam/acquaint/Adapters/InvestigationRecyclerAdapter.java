@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import io.github.yesalam.acquaint.Activity.IndiFieldInvestigationDialog;
+import io.github.yesalam.acquaint.Activity.FieldInvestigationDialog;
 import io.github.yesalam.acquaint.R;
 
 /**
@@ -31,7 +31,7 @@ public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<Investiga
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
-                    Intent intent = new Intent(context,IndiFieldInvestigationDialog.class);
+                    Intent intent = new Intent(context,FieldInvestigationDialog.class);
                     TextView textView = (TextView) v.findViewById(R.id.investigationId_investigation_card);
                     String investigationid = (String) textView.getText();
                     intent.putExtra("investigationid",investigationid);
