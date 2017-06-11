@@ -10,12 +10,17 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.w3c.dom.Text;
 
 import butterknife.BindView;
 import io.github.yesalam.acquaint.Adapters.FragmentAdapter;
@@ -37,18 +42,6 @@ public class IndiCaseActivity extends BaseWebActivity {
     String caseid;
     String LOG_TAG = "IndiCaseActivity";
     static int count = 0;
-
-    //View Binding
-    @BindView(R.id.client_spinner)
-    Spinner client_spinner;
-    @BindView(R.id.branch_spinner)
-    Spinner branch_spinner;
-    @BindView(R.id.contact_person_spinner)
-    Spinner contact_person_spinner;
-
-
-
-
 
 
     @Override

@@ -93,7 +93,7 @@
 
             <TableRow
                 android:id="@+id/company_name_row_address_verification"
-                android:visibility="gone"
+                android:visibility="visible"
                 >
                 <TextView
                     android:layout_width="wrap_content"

@@ -33,7 +33,7 @@
             <include layout="@layout/include_applicant_office_details" />
 
             <RadioButton
-                android:id="@+id/have_permanent_address"
+                android:id="@+id/have_guarantor_residential_radiobutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/card_padding"

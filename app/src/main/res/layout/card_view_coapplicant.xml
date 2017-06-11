@@ -189,7 +189,7 @@
             android:fontFamily="sans-serif-medium"
             android:textSize="20sp"
             android:id="@+id/nocoapplicant_textview"
-            android:visibility="gone"
+            android:visibility="visible"
             android:padding="@dimen/card_padding"
             />
 

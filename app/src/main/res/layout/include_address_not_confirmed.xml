@@ -50,7 +50,7 @@
 
             <TableRow
                 android:id="@+id/person_know_applicant_row"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
 
             <TableRow
                 android:id="@+id/address_belongs_to_row"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"

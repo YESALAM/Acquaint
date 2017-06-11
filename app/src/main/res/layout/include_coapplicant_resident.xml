@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/guarantor_residential_detail_frame"
+    android:id="@+id/coapplicant_residential_detail_frame"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/card_padding">
@@ -22,12 +22,9 @@
                 android:text="Name" />
 
             <EditText
-                android:id="@+id/name_coapplicant_resident_edittext"
+                android:id="@+id/name_residential_detail_edittext"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:nextFocusForward="@+id/dateofbirth_guarantor_residential_detail_edittext"
-                android:imeOptions="actionNext"
-                />
+                android:layout_height="wrap_content" />
         </TableRow>
 
         <TableRow>
@@ -38,7 +35,7 @@
                 android:text="Date of Birth" />
 
             <EditText
-                android:id="@+id/dateofbirth_coapplicant_resident_edittext"
+                android:id="@+id/dateofbirth_residential_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="false"
@@ -53,11 +50,9 @@
                 android:text="PAN" />
 
             <EditText
-                android:id="@+id/pan_coapplicant_resident_edittext"
+                android:id="@+id/pan_residential_detail_edittext"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                />
+                android:layout_height="wrap_content" />
         </TableRow>
 
         <TableRow>
@@ -68,20 +63,20 @@
                 android:text="Gender" />
 
             <RadioGroup
-                android:id="@+id/radio_group_gender_coapplicant_resident"
+                android:id="@+id/radio_group_gender_residential_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <RadioButton
-                    android:id="@+id/radio_button_male_coapplicant_resident"
+                    android:id="@+id/radio_button_male_residential_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:text="Male" />
 
                 <RadioButton
-                    android:id="@+id/radio_button_female_coapplicant_resident"
+                    android:id="@+id/radio_button_female_residential_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Female" />
@@ -96,7 +91,7 @@
                 android:text="Address" />
 
             <EditText
-                android:id="@+id/address_coapplicant_resident_edittext"
+                android:id="@+id/address_residential_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -109,7 +104,7 @@
                 android:text="City" />
 
             <EditText
-                android:id="@+id/city_coapplicant_resident_edittext"
+                android:id="@+id/city_residential_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -122,7 +117,7 @@
                 android:text="State" />
 
             <EditText
-                android:id="@+id/state_coapplicant_resident_edittext"
+                android:id="@+id/state_residential_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -135,7 +130,7 @@
                 android:text="PIN" />
 
             <EditText
-                android:id="@+id/pin_coapplicant_resident_edittext"
+                android:id="@+id/pin_residential_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -148,7 +143,7 @@
                 android:text="E-Mail" />
 
             <EditText
-                android:id="@+id/email_coapplicant_resident_edittext"
+                android:id="@+id/email_residential_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -161,7 +156,7 @@
                 android:text="Mobile" />
 
             <EditText
-                android:id="@+id/mobile_coapplicant_resident_edittext"
+                android:id="@+id/mobile_residential_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -174,7 +169,7 @@
                 android:text="Phone" />
 
             <EditText
-                android:id="@+id/phon_coapplicant_resident_edittext"
+                android:id="@+id/phon_residential_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -201,14 +196,14 @@
                 android:text="Assigned To" />
 
             <Spinner
-                android:id="@+id/assigned_to_coapplicant_resident_spinner"
+                android:id="@+id/assigned_to_residential_detail_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
 
         <TableRow
             android:id="@+id/investigationstatus_row_coapplicant_resident"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"

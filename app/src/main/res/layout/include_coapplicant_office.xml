@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/applicant_office_details_frame"
+    android:id="@+id/coapplicant_office_details_frame"
     >
 
     <TableLayout
@@ -22,7 +22,7 @@
                 android:text="Company Name" />
 
             <EditText
-                android:id="@+id/company_name_coapplicant_office_edittext"
+                android:id="@+id/company_name_office_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
@@ -36,7 +36,7 @@
                 android:text="Address" />
 
             <EditText
-                android:id="@+id/address_coapplicant_office_edittext"
+                android:id="@+id/address_office_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -49,7 +49,7 @@
                 android:text="City" />
 
             <EditText
-                android:id="@+id/city_coapplicant_office_edittext"
+                android:id="@+id/city_office_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -62,7 +62,7 @@
                 android:text="State" />
 
             <EditText
-                android:id="@+id/state_coapplicant_office_edittext"
+                android:id="@+id/state_office_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -79,7 +79,7 @@
                 android:text="Mobile" />
 
             <EditText
-                android:id="@+id/mobile_coapplicant_office_edittext"
+                android:id="@+id/mobile_office_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -92,7 +92,7 @@
                 android:text="Phone" />
 
             <EditText
-                android:id="@+id/phon_coapplicant_office_edittext"
+                android:id="@+id/phon_office_detail_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -107,7 +107,7 @@
                 android:text="Needs Verification"
                 />
             <RadioButton
-                android:id="@+id/need_verification_coapplicant_office_radiobutton"
+                android:id="@+id/need_verification_office_detail_radiobutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -121,22 +121,22 @@
                 android:text="Assigned To" />
 
             <Spinner
-                android:id="@+id/assigned_to_coapplicant_office_spinner"
+                android:id="@+id/assigned_to_office_detail_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>
 
         <TableRow
-            android:id="@+id/investigationstatus_row_coapplicant_office"
-            android:visibility="gone">
+            android:id="@+id/status_row_office_detail"
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Investigation Status" />
+                android:text="Status" />
 
             <TextView
-                android:id="@+id/status_coapplicant_office_textview"
+                android:id="@+id/status_office_detail_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </TableRow>

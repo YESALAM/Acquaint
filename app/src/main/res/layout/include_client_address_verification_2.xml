@@ -133,7 +133,7 @@
 
     <TableRow
         android:id="@+id/is_rcb_case_row"
-        android:visibility="gone"
+        android:visibility="visible"
         >
 
 
