@@ -1,48 +1,35 @@
 package io.github.yesalam.acquaint.Activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Toast;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import butterknife.BindView;
 import io.github.yesalam.acquaint.Adapters.FragmentAdapter;
 import io.github.yesalam.acquaint.BaseWebActivity;
 import io.github.yesalam.acquaint.Fragments.CaseBasicDetail;
 import io.github.yesalam.acquaint.Fragments.CaseCoApplicant;
 import io.github.yesalam.acquaint.Fragments.CaseGuarantor;
-import io.github.yesalam.acquaint.Fragments.CompleteCaseFragment;
-import io.github.yesalam.acquaint.Fragments.NewCaseFragment;
-import io.github.yesalam.acquaint.HtmlJsInterface;
+import io.github.yesalam.acquaint.Pojo.CaseBasicDetailPojo;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Util.*;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
-import static io.github.yesalam.acquaint.Util.Util.IS_LOGGED_KEY;
 import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
 import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
-import static io.github.yesalam.acquaint.Util.Util.USER_KEY;
 import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 
 public class IndiCaseActivity extends BaseWebActivity {
@@ -50,6 +37,19 @@ public class IndiCaseActivity extends BaseWebActivity {
     String caseid;
     String LOG_TAG = "IndiCaseActivity";
     static int count = 0;
+
+    //View Binding
+    @BindView(R.id.client_spinner)
+    Spinner client_spinner;
+    @BindView(R.id.branch_spinner)
+    Spinner branch_spinner;
+    @BindView(R.id.contact_person_spinner)
+    Spinner contact_person_spinner;
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +103,7 @@ public class IndiCaseActivity extends BaseWebActivity {
 
 
     private void loadCasePage() {
-        Log.e(LOG_TAG, "loading cae page");
+        Log.e(LOG_TAG, "loading case page");
         final String case_url = ACQUAINT_URL + "/Users/Cases/Edit/" + "4644878";
         //final String case_url = "http://myacquaint.com/Users/Cases/Edit/4644878";
         Log.e(LOG_TAG, "loading url " + case_url);
@@ -158,10 +158,11 @@ public class IndiCaseActivity extends BaseWebActivity {
         if (htmlJsInterface.requestType == AcquaintRequestType.LOGIN) {
             Log.e(LOG_TAG, "login successfull.");
             loadCasePage();
-        } else {
+        } else if(htmlJsInterface.requestType == AcquaintRequestType.COMPLETE_CASES){
             Document document = Jsoup.parse(response);
             Element element = document.getElementById("ContactId");
-            Log.e(LOG_TAG, element.text());
+            Log.e(LOG_TAG, element.ownText());
+            parseData(response);
         }
 
 
@@ -182,5 +183,27 @@ public class IndiCaseActivity extends BaseWebActivity {
     }
 
 
+    private void parseData(String html){
+        Document document = Jsoup.parse(html);
+        Element body = document.getElementById("body");
+        Element form = body.getElementsByTag("form").first();
+        Log.e(LOG_TAG,form.val());
+        Element tbody = form.getElementsByTag("tbody").first();
+        //CaseBasicDetailPojo
+        CaseBasicDetailPojo detail = new CaseBasicDetailPojo();
+        String selected = "selected" ;
+        detail.client = tbody.getElementById("ClientId").getElementsByAttributeValue(selected,selected).first().text();
+        detail.branch = tbody.getElementById("BranchId").getElementsByAttributeValue(selected,selected).first().text();
+        detail.contactPerson = tbody.getElementById("ContactId").getElementsByAttributeValue(selected,selected).first().text();
+        detail.loantype = tbody.getElementById("LoanType").getElementsByAttributeValue(selected,selected).first().text();
+        detail.pickupDate = tbody.getElementById("PickupDate").val();
+        detail.isReVerification = tbody.getElementById("isReverification").getElementsByAttributeValue(selected,selected).text() == "Yes" ?true :false;
+        detail.loanAmount = tbody.getElementById("LoanAmount").val();
+        detail.loanTenure = tbody.getElementById("LoanTenure").val();
+        detail.applicationRefNo = tbody.getElementById("ApplicationRefNo").val();
+        detail.pickupBy = tbody.getElementById("PunchedBy").getElementsByAttributeValue(selected,selected).first().text();
+        detail.status = tbody.getElementById("Status").val();
+
+    }
 
 }

@@ -113,12 +113,15 @@ public class HtmlJsInterface {
     }
 
     private void completeCase(String html){
+        Log.e(LOG_TAG,"called completeCase");
         Document document = Jsoup.parse(html);
         Element element = document.getElementById("btntab1");
         if(element == null){
             //not a case page
-
+            Log.e(LOG_TAG,"case detail page not loaded ");
+            callback.onDataParserdNegative(html);
         }else{
+            Log.e(LOG_TAG,"case detail page loaded");
             callback.onDataParsedPasitive(html);
         }
     }
