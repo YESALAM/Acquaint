@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import io.github.yesalam.acquaint.BaseWebActivity;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.Util.*;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.IS_LOGGED_KEY;
@@ -44,6 +46,9 @@ public class LoginActivity extends BaseWebActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    String LOG_TAG = "LoginActivity" ;
+    String userid;
+    String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +99,8 @@ public class LoginActivity extends BaseWebActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        userid = mEmailView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -108,11 +113,11 @@ public class LoginActivity extends BaseWebActivity {
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(userid)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!isEmailValid(userid)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -126,7 +131,7 @@ public class LoginActivity extends BaseWebActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            login(email,password);
+            login(userid,password);
 
         }
     }
@@ -150,7 +155,7 @@ public class LoginActivity extends BaseWebActivity {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        if (false && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
@@ -180,8 +185,10 @@ public class LoginActivity extends BaseWebActivity {
 
 
     private void login(String userid,String password){
+
+        htmlJsInterface.setRequestType(AcquaintRequestType.LOGIN);
         webView.postUrl(ACQUAINT_URL,byteCodeit(userid,password));
-        webView.addJavascriptInterface(new LoginJSInterface(this,userid,password),"html");
+        /*webView.addJavascriptInterface(new LoginJSInterface(this,userid,password),"html");
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -189,9 +196,39 @@ public class LoginActivity extends BaseWebActivity {
                 showProgress(false);//TODO make sure we cover this to show everything fine when its gone main should come
                 webView.loadUrl("javascript:var x;var a=document.getElementById('wel');if(a===null){var b=document.getElementById('UserName');if(b===null)x='noservice';else x='nologin';}else x=document.getElementById('wel').getElementsByTagName('span')[0].innerHTML;window.html.getName(x);");
             }
-        });
+        });*/
     }
 
+    @Override
+    public void onDataParsedPasitive(String response) {
+        Log.e(LOG_TAG, "login successfull. calling main");
+        SharedPreferences app_preferences =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = app_preferences.edit();
+        editor.putBoolean(IS_LOGGED_KEY,true);
+        editor.putString(USER_KEY,userid);
+        editor.putString(USER_ID_KEY,userid);
+        editor.putString(PASSWORD_KEY,password);
+        editor.apply();
+        showProgress(false);
+        Intent intent = new Intent(this,CaseActivity.class) ;
+        Log.e(LOG_TAG,"starting activity");
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onDataParserdNegative(String negative) {
+        showProgress(false);
+        if(negative.equalsIgnoreCase("loginerror")){
+            Log.e(LOG_TAG, "credential mismatch");
+            mPasswordView.setError(getString(R.string.error_incorrect_password));
+            mPasswordView.requestFocus();
+        }else{
+            Log.e(LOG_TAG, "problem with service.retrying");
+            Toast.makeText(this, "Service Unavailable! Please Try later", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     private class LoginJSInterface{
@@ -208,12 +245,15 @@ public class LoginActivity extends BaseWebActivity {
         public void getName(String name){
             if(name.equalsIgnoreCase("nologin")){
                 //Login failed
+                Log.e(LOG_TAG, "credential mismatch");
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }else if(name.equalsIgnoreCase("noservice")){
                 //Service Unavailable
+                Log.e(LOG_TAG, "problem with service.retrying");
                 Toast.makeText(context, "Service Unavailable! Please Try later", Toast.LENGTH_SHORT).show();
             }else {
+                Log.e(LOG_TAG, "login successfull. calling main");
                 SharedPreferences app_preferences =
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = app_preferences.edit();
