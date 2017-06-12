@@ -8,8 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import io.github.yesalam.acquaint.Activity.FieldInvestigationDialog;
 import io.github.yesalam.acquaint.Activity.FieldInvestigationOfficeDialoog;
+import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.R;
 
 /**
@@ -18,9 +21,15 @@ import io.github.yesalam.acquaint.R;
 
 public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<InvestigationRecyclerAdapter.ViewHolder> {
 
-    boolean isnewInvestigation;
-    public InvestigationRecyclerAdapter(boolean isnewInvestigation){
-        this.isnewInvestigation = isnewInvestigation;
+    ArrayList<InvestigationPojo> dataset ;
+
+
+    public void setDataset(ArrayList<InvestigationPojo> dataset){
+        this.dataset = dataset ;
+    }
+
+    public InvestigationRecyclerAdapter(ArrayList<InvestigationPojo> dataset){
+        this.dataset = dataset;
     }
 
     @Override
@@ -32,7 +41,7 @@ public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<Investiga
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-            if(isnewInvestigation){
+            if(dataset.get(position).type.equalsIgnoreCase("Residence")){
                 holder.view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -57,18 +66,37 @@ public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<Investiga
                     }
                 });
             }
+
+        holder.id.setText(dataset.get(position).id) ;
+        holder.name.setText(dataset.get(position).name) ;
+        holder.type.setText(dataset.get(position).type) ;
+        holder.address.setText(dataset.get(position).address) ;
+        holder.client.setText(dataset.get(position).client) ;
+        holder.casedetial.setText(dataset.get(position).casedetail) ;
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return dataset.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         View view;
+        TextView id;
+        TextView name;
+        TextView type;
+        TextView address;
+        TextView client;
+        TextView casedetial;
         public ViewHolder(View itemView) {
             super(itemView);
             this.view = itemView ;
+            id = (TextView) view.findViewById(R.id.investigationId_investigation_card);
+            name = (TextView) view.findViewById(R.id.applicant_name_investigation_card);
+            type = (TextView) view.findViewById(R.id.location_type_investigation_card);
+            address = (TextView) view.findViewById(R.id.address_investigation_card);
+            client = (TextView) view.findViewById(R.id.client_investigation_card);
+            casedetial = (TextView) view.findViewById(R.id.case_detail_investigation_card);
         }
     }
 }
