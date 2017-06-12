@@ -127,7 +127,6 @@ public class CaseActivity extends BaseDrawerActivity {
             casePojo.status = childs.get(7).text();
             dataset.add(casePojo);
         }
-
         return dataset;
 
 
