@@ -11,5 +11,6 @@ public class InvestigationPojo {
     public String address;
     public String client;
     public String casedetail;
+    public String status;
 
 }

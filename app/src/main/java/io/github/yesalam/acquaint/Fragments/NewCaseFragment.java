@@ -23,12 +23,12 @@ import io.github.yesalam.acquaint.WaitingForData;
 
 public class NewCaseFragment extends Fragment implements WaitingForData {
 
-    CaseRecyclerAdapter adapter ;
+    CaseRecyclerAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview,container,false);
+        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview, container, false);
         adapter = new CaseRecyclerAdapter(new ArrayList<CasePojo>());
         setupRecyclerView(recyclerView);
         return recyclerView;
@@ -39,9 +39,10 @@ public class NewCaseFragment extends Fragment implements WaitingForData {
         recyclerView.setAdapter(adapter);
     }
 
+
     @Override
-    public void passData(ArrayList<CasePojo> data) {
-        adapter.setDataset(data);
+    public void passData(ArrayList<? extends Object> data) {
+        adapter.setDataset((ArrayList<CasePojo>) data);
         adapter.notifyDataSetChanged();
     }
 }

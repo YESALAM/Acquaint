@@ -77,6 +77,23 @@ public class HtmlJsInterface {
                         newCases(html);
                     }
                 });
+                break;
+            case NEW_FIELD_INVESTIGATION:
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        newField(html);
+                    }
+                });
+                break;
+            case COMPLETE_FIELD_INVESTIGATION:
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        completeField(html);
+                    }
+                });
+                break;
 
         }
 
@@ -146,4 +163,33 @@ public class HtmlJsInterface {
             callback.onDataParsedPasitive(html);
         }
     }
+
+    private void newField(String html){
+        Log.e(LOG_TAG,"called newField");
+        Document document = Jsoup.parse(html);
+        Element element = document.getElementById("searchClient");
+        if(element == null){
+            //
+            Log.e(LOG_TAG,"newField not loaded");
+            callback.onDataParserdNegative(html);
+        }else{
+            Log.e(LOG_TAG,"newField loaded");
+            callback.onDataParsedPasitive(html);
+        }
+    }
+
+    private void completeField(String html){
+        Log.e(LOG_TAG,"called completeField");
+        Document document = Jsoup.parse(html);
+        Element element = document.getElementById("searchClient");
+        if(element == null){
+            //
+            Log.e(LOG_TAG,"completeField not loaded");
+            callback.onDataParserdNegative(html);
+        }else{
+            Log.e(LOG_TAG,"completeField loaded");
+            callback.onDataParsedPasitive(html);
+        }
+    }
+
 }
