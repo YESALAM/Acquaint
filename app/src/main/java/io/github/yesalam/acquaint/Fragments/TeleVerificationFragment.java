@@ -23,6 +23,15 @@ import io.github.yesalam.acquaint.WaitingForData;
 public class TeleVerificationFragment extends Fragment implements WaitingForData{
 
     TeleVeriRecyclerAdapter adapter;
+    static TeleVerificationFragment instance;
+
+    public static TeleVerificationFragment getInstance(){
+        if(instance == null){
+            instance = new TeleVerificationFragment();
+        }
+        return instance;
+    }
+
 
     @Nullable
     @Override

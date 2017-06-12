@@ -24,6 +24,16 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
 
     InvestigationRecyclerAdapter adapter;
 
+    static NewInvestigationFragment instance;
+
+    public static NewInvestigationFragment getInstance(){
+        if(instance == null){
+            instance = new NewInvestigationFragment();
+        }
+        return instance;
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

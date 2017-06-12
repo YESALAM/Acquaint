@@ -23,6 +23,16 @@ import io.github.yesalam.acquaint.WaitingForData;
 public class CompleteInvestigationFragment extends Fragment implements WaitingForData {
 
     InvestigationRecyclerAdapter adapter ;
+    static CompleteInvestigationFragment instance;
+
+    public static CompleteInvestigationFragment getInstance(){
+        if(instance == null){
+            instance = new CompleteInvestigationFragment();
+        }
+        return instance;
+    }
+
+
 
     @Nullable
     @Override
