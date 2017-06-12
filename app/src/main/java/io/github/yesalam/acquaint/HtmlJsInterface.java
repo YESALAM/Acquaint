@@ -70,7 +70,13 @@ public class HtmlJsInterface {
                     }
                 });
                 break;
-
+            case NEW_CASES:
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        newCases(html);
+                    }
+                });
 
         }
 
@@ -115,13 +121,28 @@ public class HtmlJsInterface {
     private void completeCase(String html){
         Log.e(LOG_TAG,"called completeCase");
         Document document = Jsoup.parse(html);
-        Element element = document.getElementById("btntab1");
+        Element element = document.getElementById("searchBranchOffice");
         if(element == null){
             //not a case page
-            Log.e(LOG_TAG,"case detail page not loaded ");
+            Log.e(LOG_TAG,"completeCase not loaded ");
             callback.onDataParserdNegative(html);
         }else{
-            Log.e(LOG_TAG,"case detail page loaded");
+            Log.e(LOG_TAG,"completeCase loaded");
+            callback.onDataParsedPasitive(html);
+        }
+    }
+
+
+    private void newCases(String html){
+        Log.e(LOG_TAG,"called newCases");
+        Document document = Jsoup.parse(html);
+        Element element = document.getElementById("searchBranchOffice");
+        if(element == null){
+            //
+            Log.e(LOG_TAG,"newCases not loaded");
+            callback.onDataParserdNegative(html);
+        }else{
+            Log.e(LOG_TAG,"newCases loaded");
             callback.onDataParsedPasitive(html);
         }
     }

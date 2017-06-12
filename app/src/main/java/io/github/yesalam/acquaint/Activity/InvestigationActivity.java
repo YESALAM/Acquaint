@@ -36,4 +36,13 @@ public class InvestigationActivity extends BaseDrawerActivity {
     }
 
 
+    @Override
+    public void onDataParsedPasitive(String response) {
+
+    }
+
+    @Override
+    public void onDataParserdNegative(String negative) {
+
+    }
 }

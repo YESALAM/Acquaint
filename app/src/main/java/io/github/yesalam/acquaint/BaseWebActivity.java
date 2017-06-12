@@ -1,6 +1,8 @@
 package io.github.yesalam.acquaint;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,16 +12,23 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import io.github.yesalam.acquaint.Util.Util;
+
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
+import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
+import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 
 /**
  * Created by yesalam on 05-06-2017.
  */
 
-public class BaseWebActivity extends AppCompatActivity implements HtmlJsInterface.JsCallbackInterface{
+public abstract class BaseWebActivity extends AppCompatActivity implements HtmlJsInterface.JsCallbackInterface{
     protected static WebView webView;
     public HtmlJsInterface htmlJsInterface ;
     String LOG_TAG = "BaseWebActivity";
+
+    public static int count = 0;
 
 
     @Override
@@ -49,14 +58,27 @@ public class BaseWebActivity extends AppCompatActivity implements HtmlJsInterfac
 
     }
 
-
-    @Override
-    public void onDataParsedPasitive(String response) {
-        Log.e(LOG_TAG, "login successfull. calling main");
+    public void checkLogin() {
+        Log.e(LOG_TAG, "checking login");
+        htmlJsInterface.setRequestType(Util.AcquaintRequestType.LOGIN);
+        webView.loadUrl(ACQUAINT_URL);
     }
 
-    @Override
-    public void onDataParserdNegative(String negative) {
+    public void login() {
+        SharedPreferences app_preferences =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String userid = app_preferences.getString(USER_ID_KEY, "NA");
+        String password = app_preferences.getString(PASSWORD_KEY, "NA");
+        if (userid.equalsIgnoreCase("NA")) {
+            //should no happen
+        } else {
+            Log.e(LOG_TAG, "trying to login");
+            htmlJsInterface.setRequestType(Util.AcquaintRequestType.LOGIN);
+            webView.postUrl(ACQUAINT_URL, byteCodeit(userid, password));
 
+        }
     }
+
+
+
 }

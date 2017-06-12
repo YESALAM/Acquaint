@@ -41,7 +41,6 @@ public class IndiCaseActivity extends BaseWebActivity {
 
     String caseid;
     String LOG_TAG = "IndiCaseActivity";
-    static int count = 0;
 
 
     @Override
@@ -71,27 +70,6 @@ public class IndiCaseActivity extends BaseWebActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         checkLogin();
-    }
-
-    private void checkLogin() {
-        Log.e(LOG_TAG, "checking login");
-        htmlJsInterface.setRequestType(AcquaintRequestType.LOGIN);
-        webView.loadUrl(ACQUAINT_URL);
-    }
-
-    private void login() {
-        SharedPreferences app_preferences =
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String userid = app_preferences.getString(USER_ID_KEY, "NA");
-        String password = app_preferences.getString(PASSWORD_KEY, "NA");
-        if (userid.equalsIgnoreCase("NA")) {
-            //should no happen
-        } else {
-            Log.e(LOG_TAG, "trying to login");
-            htmlJsInterface.setRequestType(AcquaintRequestType.LOGIN);
-            webView.postUrl(ACQUAINT_URL, byteCodeit(userid, password));
-
-        }
     }
 
 
@@ -163,18 +141,19 @@ public class IndiCaseActivity extends BaseWebActivity {
 
     @Override
     public void onDataParserdNegative(String negative) {
-        if (negative.equalsIgnoreCase("loginerror")) {
-            Log.e(LOG_TAG, "credential mismatch");
-            //should not happen
-        } else if (negative.equalsIgnoreCase("noservice")) {
-            Log.e(LOG_TAG, "problem with service.retrying");
-            if (count < 1) {
-                login();
-                count++;
+        if(htmlJsInterface.requestType == AcquaintRequestType.LOGIN){
+            if (negative.equalsIgnoreCase("loginerror")) {
+                Log.e(LOG_TAG, "credential mismatch");
+                //should not happen
+            } else if (negative.equalsIgnoreCase("noservice")) {
+                Log.e(LOG_TAG, "problem with service.retrying");
+                if (count < 1) {
+                    login();
+                    count++;
+                }
             }
         }
     }
-
 
     private void parseData(String html){
         Document document = Jsoup.parse(html);
