@@ -29,6 +29,6 @@ public class CompleteInvestigationFragment extends Fragment {
 
     private void setupRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new InvestigationRecyclerAdapter());
+        recyclerView.setAdapter(new InvestigationRecyclerAdapter(false));
     }
 }

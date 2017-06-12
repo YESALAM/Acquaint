@@ -94,4 +94,7 @@ public class CoApplicantDialog extends Activity {
         setContentView(R.layout.dialog_add_show_coapplicant);
         ButterKnife.bind(this);
     }
+
+
+
 }

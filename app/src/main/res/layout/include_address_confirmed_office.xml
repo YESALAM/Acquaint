@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/address_confirmed_resident_frame"
+        android:id="@+id/address_confirmed_office_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/card_padding">
@@ -20,7 +20,6 @@
             android:stretchColumns="1">
 
 
-
             <TableRow>
 
                 <TextView
@@ -29,7 +28,7 @@
                     android:text="Name of Employer" />
 
                 <EditText
-                    android:id="@+id/no_of_employer_edittext"
+                    android:id="@+id/name_of_employer_edittext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -42,7 +41,7 @@
                     android:text="Person Met" />
 
                 <EditText
-                    android:id="@+id/person_met_edittext"
+                    android:id="@+id/person_met_office_edittext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -111,6 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -136,6 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -161,6 +162,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -173,6 +175,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -185,6 +188,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -197,6 +201,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -209,6 +214,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -221,6 +227,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -233,6 +240,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -241,10 +249,11 @@
                     android:text="Locality" />
 
                 <Spinner
-                    android:id="@+id/locality_spinner"
+                    android:id="@+id/locality_office_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -257,6 +266,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -269,6 +279,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -281,6 +292,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -293,6 +305,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -305,6 +318,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -313,21 +327,22 @@
                     android:text="Grade" />
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    >
+                    android:orientation="vertical">
+
                     <Spinner
                         android:id="@+id/grade_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
+
                     <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:id="@+id/grade_edittext"
-                        />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </TableRow>
+
             <TableRow>
 
                 <TextView
@@ -351,7 +366,7 @@
             android:layout_marginStart="30dp"
             android:background="@android:color/white"
             android:padding="5dp"
-            android:text="If house locked fill following from neighbour" />
+            android:text="Fill if Applicant/Colleagues contacted" />
     </FrameLayout>
 
     <include layout="@layout/include_address_confirmed_office_2" />

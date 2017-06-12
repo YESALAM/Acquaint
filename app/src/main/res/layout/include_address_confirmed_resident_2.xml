@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/address_confirmed_resident_frame"
+        android:id="@+id/address_confirmed_resident2_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/card_padding">
@@ -42,7 +42,7 @@
                     android:text="Person Contacted" />
 
                 <EditText
-                    android:id="@+id/person_contact_edittext"
+                    android:id="@+id/person_contacted_edittext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>

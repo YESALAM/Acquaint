@@ -35,11 +35,9 @@
 
         <include layout="@layout/include_client_address_verification_1" />
 
-        <include layout="@layout/include_address_confirmed_resident" />
+        <include layout="@layout/include_address_confirmed_office" />
 
         <include layout="@layout/include_client_address_verification_2" />
-
-
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/address_confirmed_resident_frame"
+        android:id="@+id/address_confirmed_office2_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/card_padding">
@@ -26,23 +26,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Applicant Name" />
-
-                <TextView
-                    android:id="@+id/applicant_name_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Person Contacted" />
+                    android:text="Applicant Age" />
 
                 <EditText
-                    android:id="@+id/person_contact_edittext"
+                    android:id="@+id/applicant_age_office2_edittext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -52,10 +39,75 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Relation with Applicant" />
+                    android:text="Name of Company" />
+
+                <EditText
+                    android:id="@+id/nameofcompany_office2_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Establishment Year" />
+
+                <EditText
+                    android:id="@+id/establishmentyear_office2_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Designation" />
+
+                <EditText
+                    android:id="@+id/designation_office2_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone(office)" />
+
+                <EditText
+                    android:id="@+id/phone_office2_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Extension" />
+
+                <EditText
+                    android:id="@+id/extension_office2_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+                       <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Type of Comapany" />
 
                 <Spinner
-                    android:id="@+id/relation_with_applicant_spinner"
+                    android:id="@+id/typeofcompany_office2_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -65,23 +117,25 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Applicant Approx Age" />
+                    android:text="Nature of Company" />
 
-                <EditText
-                    android:id="@+id/applicant_approx_age_edittext"
+                <Spinner
+                    android:id="@+id/natureofcompany_office2_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
 
+
+
             <TableRow>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No of Residents" />
+                    android:text="No of Employees" />
 
                 <EditText
-                    android:id="@+id/no_of_residents_edittext"
+                    android:id="@+id/noofemployees_office2_edittext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
@@ -90,37 +144,34 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Living Since" />
+                    android:text="No of Branches" />
 
-                <LinearLayout
-                    android:orientation="horizontal"
+                <EditText
+                    android:id="@+id/noofbranches_office2_edittext"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    >
-
-                    <Spinner
-                        android:id="@+id/living_since_month_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <Spinner
-                        android:id="@+id/living_since_year_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-
-
+                    android:layout_height="wrap_content" />
             </TableRow>
-
             <TableRow>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Occupation" />
+                    android:text="Area" />
 
                 <EditText
-                    android:id="@+id/occupation_edittext"
+                    android:id="@+id/area_office2_edittext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nearest Landmark" />
+
+                <EditText
+                    android:id="@+id/nearestlandmark_office2_edittext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
