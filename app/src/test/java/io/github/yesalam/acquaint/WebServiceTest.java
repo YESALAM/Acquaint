@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.HashMap;
@@ -34,13 +35,7 @@ public class WebServiceTest {
         map.put("RememberMe","false");
         //webService.sendGet(ACQUAINT_URL);
         String response = webService.sendPost(ACQUAINT_URL,getPostDataString(map));
-        /*String response = null;
-        try {
-            response = webService.sendGet(ACQUAINT_URL);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-       // assertEquals("sadare",response);
+
         Document document = Jsoup.parse(response);
         Element elementuser = document.getElementById("UserName");
         Element elementwel = document.getElementById("wel");
@@ -48,6 +43,16 @@ public class WebServiceTest {
         assertNotNull(elementwel);
 
 
+    }
+
+    @Test
+    public void testPost() throws IOException {
+        String response = webService.testPost(ACQUAINT_URL);
+        Document document = Jsoup.parse(response);
+        Element elementuser = document.getElementById("UserName");
+        Element elementwel = document.getElementById("wel");
+        assertNotNull(elementuser);
+        assertNotNull(elementwel);
     }
 
     @Test
