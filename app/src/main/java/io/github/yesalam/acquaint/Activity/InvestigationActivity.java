@@ -39,6 +39,8 @@ public class InvestigationActivity extends BaseDrawerActivity {
 
     String LOG_TAG = "InvestigatonActivity";
     ProgressDialog progressDialog;
+    boolean isLoading;
+    boolean isRequested;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,11 @@ public class InvestigationActivity extends BaseDrawerActivity {
     }
 
     public void loadNewFieldInvestigation() {
+        if(isLoading){
+            isRequested = true ;
+            return;
+        }
+        else isLoading = true ;
         progressDialog.show();
         String PAGE_URL = "/Users/FieldInvestigation/NewInvestigation";
         Log.e(LOG_TAG, "loading " + PAGE_URL);
@@ -72,6 +79,11 @@ public class InvestigationActivity extends BaseDrawerActivity {
     }
 
     public void loadComleteFieldInvestigaion() {
+        if(isLoading){
+            isRequested = true ;
+            return;
+        }
+        else isLoading = true ;
         progressDialog.show();
         String PAGE_URL = "/Users/FieldInvestigation";
         Log.e(LOG_TAG, "loading " + PAGE_URL);
@@ -81,6 +93,11 @@ public class InvestigationActivity extends BaseDrawerActivity {
     }
 
     public void loadTeleVerification(){
+        if(isLoading){
+            isRequested = true ;
+            return;
+        }
+        else isLoading = true ;
         progressDialog.show();
         String PAGE_URL = "/Users/Verifications";
         Log.e(LOG_TAG, "loading " + PAGE_URL);
@@ -94,22 +111,36 @@ public class InvestigationActivity extends BaseDrawerActivity {
         if (htmlJsInterface.requestType == AcquaintRequestType.LOGIN) {
             Log.e(LOG_TAG, "login successfull.");
         } else if (htmlJsInterface.requestType == AcquaintRequestType.NEW_FIELD_INVESTIGATION) {
-            progressDialog.cancel();
+            isLoading = false ;
             List<InvestigationPojo> dataset = parseDataInvesti(response);
             WaitingForData fragment = (NewInvestigationFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 0);
             fragment.passData(dataset);
-            //progressDialog.cancel();
+            if(isRequested) {
+                isRequested = false ;
+                loadComleteFieldInvestigaion();
+            }
+            else progressDialog.cancel();
+
         } else if (htmlJsInterface.requestType == AcquaintRequestType.COMPLETE_FIELD_INVESTIGATION) {
-            progressDialog.cancel();
+            isLoading = false ;
             List<InvestigationPojo> dataset = parseDataInvesti(response);
             WaitingForData fragment = (CompleteInvestigationFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1);
             fragment.passData(dataset);
+            if(isRequested) {
+                isRequested = false ;
+                loadTeleVerification();
+            }
+            else progressDialog.cancel();
         } else if(htmlJsInterface.requestType == AcquaintRequestType.TELE_VERIFICATION){
-            progressDialog.cancel();
+            isLoading = false ;
             List<TelePojo> dataset = parseDataTele(response);
             WaitingForData fragment = (TeleVerificationFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 2);
             fragment.passData(dataset);
-
+            if(isRequested) {
+                isRequested = false ;
+                loadNewFieldInvestigation();
+            }
+            else progressDialog.cancel();
         }
     }
 
