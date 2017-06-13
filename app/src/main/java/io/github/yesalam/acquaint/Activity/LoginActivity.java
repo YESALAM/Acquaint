@@ -3,6 +3,7 @@ package io.github.yesalam.acquaint.Activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.preference.PreferenceManager;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,9 +27,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.io.IOException;
+
 import io.github.yesalam.acquaint.BaseWebActivity;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Util.*;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.IS_LOGGED_KEY;
@@ -39,16 +59,22 @@ import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends BaseWebActivity {
+public class LoginActivity extends AppCompatActivity implements Callback {
 
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private View mProgressView;
+    //private View mProgressView;
     private View mLoginFormView;
+    private ProgressDialog progressDialog;
+
     String LOG_TAG = "LoginActivity" ;
     String userid;
     String password;
+
+    static int count = 0;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +103,11 @@ public class LoginActivity extends BaseWebActivity {
         });
 
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        //mProgressView = findViewById(R.id.login_progress);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Logging you in");
+        progressDialog.setCancelable(false);
     }
 
 
@@ -130,8 +159,9 @@ public class LoginActivity extends BaseWebActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            login(userid,password);
+            //showProgress(true);
+            progressDialog.show();
+            login();
 
         }
     }
@@ -139,7 +169,7 @@ public class LoginActivity extends BaseWebActivity {
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         //return email.contains("@");
-        return true;
+        return email.length()>1;
     }
 
     private boolean isPasswordValid(String password) {
@@ -151,7 +181,7 @@ public class LoginActivity extends BaseWebActivity {
      * Shows the progress UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
+    /*private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
@@ -181,98 +211,100 @@ public class LoginActivity extends BaseWebActivity {
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }*/
+
+
+    private void login(){
+        ClearableCookieJar cookieJar =
+                new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
+
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .cookieJar(cookieJar)
+                .build();
+
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("UserName", userid)
+                .add("Password", password)
+                .add("RememberMe", "true")
+                .build();
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL)
+                .post(formBody)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(this);
+
     }
 
 
-    private void login(String userid,String password){
+    @Override
+    public void onFailure(Call call, IOException e) {
+        e.printStackTrace();
+        progressDialog.cancel();
+    }
 
-        htmlJsInterface.setRequestType(AcquaintRequestType.LOGIN);
-        webView.postUrl(ACQUAINT_URL,byteCodeit(userid,password));
-        /*webView.addJavascriptInterface(new LoginJSInterface(this,userid,password),"html");
-        webView.setWebViewClient(new WebViewClient(){
+    @Override
+    public void onResponse(Call call,final Response response) throws IOException {
+        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        final String html = response.body().string();
+        runOnUiThread(new Runnable() {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                showProgress(false);//TODO make sure we cover this to show everything fine when its gone main should come
-                webView.loadUrl("javascript:var x;var a=document.getElementById('wel');if(a===null){var b=document.getElementById('UserName');if(b===null)x='noservice';else x='nologin';}else x=document.getElementById('wel').getElementsByTagName('span')[0].innerHTML;window.html.getName(x);");
+            public void run() {
+
+                    loginResponseReader(html);
+
             }
-        });*/
-    }
-
-    @Override
-    public void onDataParsedPasitive(String response) {
-        Log.e(LOG_TAG, "login successfull. calling main");
-        SharedPreferences app_preferences =
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = app_preferences.edit();
-        editor.putBoolean(IS_LOGGED_KEY,true);
-        editor.putString(USER_KEY,userid);
-        editor.putString(USER_ID_KEY,userid);
-        editor.putString(PASSWORD_KEY,password);
-        editor.apply();
-        showProgress(false);
-        Intent intent = new Intent(this,CaseActivity.class) ;
-        Log.e(LOG_TAG,"starting activity");
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    public void onDataParserdNegative(String negative) {
-        showProgress(false);
-        if(negative.equalsIgnoreCase("loginerror")){
-            Log.e(LOG_TAG, "credential mismatch");
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            mPasswordView.requestFocus();
-        }else{
-            Log.e(LOG_TAG, "problem with service.retrying");
-            Toast.makeText(this, "Service Unavailable! Please Try later", Toast.LENGTH_SHORT).show();
-        }
+        });
     }
 
 
-    private class LoginJSInterface{
-        private Context context ;
-        private String userid;
-        private String password;
-        LoginJSInterface(Context context,String userid,String password){
-            this.context = context ;
-            this.userid = userid;
-            this.password = password;
-        }
-
-        @JavascriptInterface
-        public void getName(String name){
-            if(name.equalsIgnoreCase("nologin")){
-                //Login failed
+    private void loginResponseReader(String html){
+        Document document = Jsoup.parse(html);
+        Log.e(LOG_TAG,"login request");
+        Element welcome = document.getElementById("wel");
+        if (welcome == null) {
+            Element useridnode_error = document.getElementById("UserName");
+            if (useridnode_error == null) {
+                //noservice
+                Log.e(LOG_TAG, "problem with service.retrying");
+                if(count<2){
+                    login();
+                    progressDialog.setMessage("Taking its time");
+                }else{
+                    count=0;
+                    progressDialog.cancel();
+                    Toast.makeText(this, "Service Unavailable! Please Try later", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                //credentials mismatch
+                count=0;
+                progressDialog.cancel();
                 Log.e(LOG_TAG, "credential mismatch");
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
-            }else if(name.equalsIgnoreCase("noservice")){
-                //Service Unavailable
-                Log.e(LOG_TAG, "problem with service.retrying");
-                Toast.makeText(context, "Service Unavailable! Please Try later", Toast.LENGTH_SHORT).show();
-            }else {
-                Log.e(LOG_TAG, "login successfull. calling main");
-                SharedPreferences app_preferences =
-                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = app_preferences.edit();
-                editor.putBoolean(IS_LOGGED_KEY,true);
-                editor.putString(USER_KEY,name);
-                editor.putString(USER_ID_KEY,userid);
-                editor.putString(PASSWORD_KEY,password);
-                editor.apply();
-                Intent intent = new Intent(context,CaseActivity.class) ;
-                startActivity(intent);
-                finish();
             }
-
+        } else {
+            count=0;
+            progressDialog.cancel();
+            //logged in
+            Element span = welcome.getElementsByTag("span").first();
+            String username = span.text();
+            Log.e(LOG_TAG, "login successfull. calling main");
+            SharedPreferences app_preferences =
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = app_preferences.edit();
+            editor.putBoolean(IS_LOGGED_KEY,true);
+            editor.putString(USER_KEY,username);
+            editor.putString(USER_ID_KEY,userid);
+            editor.putString(PASSWORD_KEY,password);
+            editor.apply();
+            Intent intent = new Intent(this,CaseActivity.class) ;
+            startActivity(intent);
+            finish();
         }
     }
-
-
-
-
 
 }
 

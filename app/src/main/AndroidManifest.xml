@@ -27,9 +27,12 @@
         </activity>
         <activity
             android:name=".Activity.LoginActivity"
-            android:theme="@style/LoginTheme"></activity>
+            android:theme="@style/LoginTheme">
+        </activity>
         <activity android:name=".Activity.CaseActivity"></activity>
-        <activity android:name=".Activity.InvestigationActivity"></activity>
+        <activity android:name=".Activity.InvestigationActivity">
+
+        </activity>
         <activity
             android:name=".Activity.IndiCaseActivity"
             android:parentActivityName=".Activity.CaseActivity"

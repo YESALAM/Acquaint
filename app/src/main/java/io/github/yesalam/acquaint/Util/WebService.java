@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -17,6 +18,9 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
+
+import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+
 public class WebService {
 
     static final String COOKIES_HEADER = "Set-Cookie";
@@ -25,6 +29,36 @@ public class WebService {
     static CookieManager msCookieManager = new CookieManager();
 
     private static int responseCode;
+
+
+
+    /*public static String testPost(String url) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("UserName", "Gwalioroffice1")
+                .addFormDataPart("Password", "Mohnish123")
+                .addFormDataPart("RememberMe", "true")
+                .addFormDataPart("RememberMe", "false")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", RequestBody.create(null, new byte[0]))
+                .post(requestBody)
+                .build();
+
+            *//*RequestBody body = RequestBody.create(json);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();*//*
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+    }*/
+
+
 
     public static String sendPost(String requestURL, String urlParameters) {
 
@@ -39,6 +73,21 @@ public class WebService {
             conn.setRequestMethod("POST");
 
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+            conn.setRequestProperty("Connection","keep-alive");
+            conn.setRequestProperty("Content-Length","76");
+            conn.setRequestProperty("Cache-Control","max-age=0");
+            conn.setRequestProperty("Origin","http://myacquaint.com");
+            conn.setRequestProperty("Upgrade-Insecure-Requests","1");
+            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+            conn.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            conn.setRequestProperty("Referer","http://myacquaint.com/");
+            conn.setRequestProperty("Accept-Encoding","gzip, deflate");
+            conn.setRequestProperty("Accept-Language","en-US,en;q=0.8");
+            conn.setRequestProperty("Cookie",".ASPXAUTH=74156FC6B6540287165CFD9C12BFE23B6EB230B893F1D14E1819BE2C1A58381B6DDBEDF97A9D4F1E67392BB06E79D2BB5DFBB961C2FACA44A05C56B8A6BDFF6EB7AADA2AFD8A8C4E98C76EDB49B8350C0F6C8167C769625F39D067661E102054267E0D114AD7281C50C6E0776E4E2133; unm=Gwalioroffice1; rem=True");
+
+
+
+
 
             if (msCookieManager.getCookieStore().getCookies().size() > 0) {
                 //While joining the Cookies, use ',' or ';' as needed. Most of the server are using ';'
@@ -81,9 +130,13 @@ public class WebService {
             } else {
                 response = ""+getResponseCode();
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
 
         return response;
     }
