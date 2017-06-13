@@ -1,5 +1,6 @@
 package io.github.yesalam.acquaint.Activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -9,7 +10,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.github.yesalam.acquaint.BaseDrawerActivity;
 import io.github.yesalam.acquaint.Adapters.FragmentAdapter;
@@ -22,6 +25,7 @@ import io.github.yesalam.acquaint.Pojo.Card.CasePojo;
 import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.Pojo.Card.TelePojo;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.Util.Util.*;
 import io.github.yesalam.acquaint.WaitingForData;
 
@@ -34,15 +38,16 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 public class InvestigationActivity extends BaseDrawerActivity {
 
     String LOG_TAG = "InvestigatonActivity";
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkLogin();
-
-        getExternalCacheDir();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading Data");
+        progressDialog.setCancelable(false);
 
     }
 
@@ -50,21 +55,24 @@ public class InvestigationActivity extends BaseDrawerActivity {
     @Override
     public void setupViewPager(ViewPager viewPager) {
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
-        adapter.addFragment(NewInvestigationFragment.getInstance(), "New");
-        adapter.addFragment(CompleteInvestigationFragment.getInstance(), "Complete");
-        adapter.addFragment(TeleVerificationFragment.getInstance(), "Tele-verification");
+        adapter.addFragment(new NewInvestigationFragment(), "New");
+        adapter.addFragment(new CompleteInvestigationFragment(), "Complete");
+        adapter.addFragment(new TeleVerificationFragment(), "Tele-verification");
         viewPager.setAdapter(adapter);
     }
 
-    private void loadNewFieldInvestigation() {
+    public void loadNewFieldInvestigation() {
+        progressDialog.show();
         String PAGE_URL = "/Users/FieldInvestigation/NewInvestigation";
         Log.e(LOG_TAG, "loading " + PAGE_URL);
         final String case_url = ACQUAINT_URL + PAGE_URL;
         htmlJsInterface.setRequestType(AcquaintRequestType.NEW_FIELD_INVESTIGATION);
         webView.loadUrl(case_url);
+
     }
 
-    private void loadComleteFieldInvestigaion() {
+    public void loadComleteFieldInvestigaion() {
+        progressDialog.show();
         String PAGE_URL = "/Users/FieldInvestigation";
         Log.e(LOG_TAG, "loading " + PAGE_URL);
         final String case_url = ACQUAINT_URL + PAGE_URL;
@@ -72,7 +80,8 @@ public class InvestigationActivity extends BaseDrawerActivity {
         webView.loadUrl(case_url);
     }
 
-    private void loadTeleVerification(){
+    public void loadTeleVerification(){
+        progressDialog.show();
         String PAGE_URL = "/Users/Verifications";
         Log.e(LOG_TAG, "loading " + PAGE_URL);
         final String case_url = ACQUAINT_URL + PAGE_URL;
@@ -84,23 +93,23 @@ public class InvestigationActivity extends BaseDrawerActivity {
     public void onDataParsedPasitive(String response) {
         if (htmlJsInterface.requestType == AcquaintRequestType.LOGIN) {
             Log.e(LOG_TAG, "login successfull.");
-            loadNewFieldInvestigation();
         } else if (htmlJsInterface.requestType == AcquaintRequestType.NEW_FIELD_INVESTIGATION) {
-            ArrayList<InvestigationPojo> dataset = parseDataInvesti(response);
+            progressDialog.cancel();
+            List<InvestigationPojo> dataset = parseDataInvesti(response);
             WaitingForData fragment = (NewInvestigationFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 0);
             fragment.passData(dataset);
-            loadComleteFieldInvestigaion();
             //progressDialog.cancel();
         } else if (htmlJsInterface.requestType == AcquaintRequestType.COMPLETE_FIELD_INVESTIGATION) {
-            ArrayList<InvestigationPojo> dataset = parseDataInvesti(response);
+            progressDialog.cancel();
+            List<InvestigationPojo> dataset = parseDataInvesti(response);
             WaitingForData fragment = (CompleteInvestigationFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1);
             fragment.passData(dataset);
-            loadTeleVerification();
         } else if(htmlJsInterface.requestType == AcquaintRequestType.TELE_VERIFICATION){
-            ArrayList<TelePojo> dataset = parseDataTele(response);
+            progressDialog.cancel();
+            List<TelePojo> dataset = parseDataTele(response);
             WaitingForData fragment = (TeleVerificationFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 2);
             fragment.passData(dataset);
-            //loadTeleVerification();
+
         }
     }
 
@@ -121,8 +130,8 @@ public class InvestigationActivity extends BaseDrawerActivity {
         }
     }
 
-    private ArrayList<TelePojo> parseDataTele(String html){
-        ArrayList<TelePojo> dataset = new ArrayList<>();
+    private List<TelePojo> parseDataTele(String html){
+        List<TelePojo> dataset = new ArrayList<>();
         Document document = Jsoup.parse(html);
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();
@@ -140,13 +149,17 @@ public class InvestigationActivity extends BaseDrawerActivity {
             pojo.status = childs.get(6).text();
             dataset.add(pojo);
         }
-
+        try {
+            Util.writeObject(this, "tele", dataset);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return dataset;
     }
 
 
-    private ArrayList<InvestigationPojo> parseDataInvesti(String html) {
-        ArrayList<InvestigationPojo> dataset = new ArrayList<>();
+    private List<InvestigationPojo> parseDataInvesti(String html) {
+        List<InvestigationPojo> dataset = new ArrayList<>();
         Document document = Jsoup.parse(html);
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();
@@ -163,6 +176,16 @@ public class InvestigationActivity extends BaseDrawerActivity {
             pojo.address = childs.get(5).text();
             pojo.status = childs.get(6).text();
             dataset.add(pojo);
+        }
+
+        // Save the list of entries to internal storage
+
+        try {
+            if(htmlJsInterface.requestType == AcquaintRequestType.NEW_FIELD_INVESTIGATION)
+            Util.writeObject(this, "newfield", dataset);
+            else Util.writeObject(this, "completefield", dataset);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return dataset;

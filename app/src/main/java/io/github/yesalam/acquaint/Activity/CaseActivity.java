@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,16 +30,17 @@ public class CaseActivity extends BaseDrawerActivity {
 
     String LOG_TAG = "CaseActivity" ;
     ProgressDialog progressDialog;
+    boolean isLoading = false ;
+    boolean isRequested = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       /* progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading");
         progressDialog.setCancelable(false);
-        progressDialog.show();*/
-        checkLogin();
+        //checkLogin();
     }
 
 
@@ -52,7 +54,13 @@ public class CaseActivity extends BaseDrawerActivity {
     }
 
 
-    private void loadNewCasePage(){
+    public void loadNewCasePage(){
+        if(isLoading){
+            isRequested = true ;
+            return;
+        }
+        else isLoading = true ;
+        progressDialog.show();
         String NEW_CASES_URL = "/Users/Cases/NewCases";
         Log.e(LOG_TAG, "loading "+NEW_CASES_URL);
         final String case_url = ACQUAINT_URL + NEW_CASES_URL;
@@ -60,7 +68,13 @@ public class CaseActivity extends BaseDrawerActivity {
         webView.loadUrl(case_url);
     }
 
-    private void loadCompleteCasePage(){
+    public void loadCompleteCasePage(){
+        if(isLoading){
+            isRequested = true ;
+            return;
+        }
+        else isLoading = true ;
+        progressDialog.show();
         String NEW_CASES_URL = "/Users/Cases";
         Log.e(LOG_TAG, "loading "+NEW_CASES_URL);
         final String case_url = ACQUAINT_URL + NEW_CASES_URL;
@@ -73,17 +87,26 @@ public class CaseActivity extends BaseDrawerActivity {
     public void onDataParsedPasitive(String response) {
         if (htmlJsInterface.requestType == Util.AcquaintRequestType.LOGIN) {
             Log.e(LOG_TAG, "login successfull.");
-            loadNewCasePage();
         } else if(htmlJsInterface.requestType == Util.AcquaintRequestType.NEW_CASES){
+            isLoading = false;
             ArrayList<CasePojo> dataset = parseData(response);
             WaitingForData fragment = (NewCaseFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 0);
             fragment.passData(dataset);
-            loadCompleteCasePage();
-            //progressDialog.cancel();
+            if(isRequested) {
+                isRequested = false ;
+                loadCompleteCasePage();
+            }
+            else progressDialog.cancel();
         } else if(htmlJsInterface.requestType == Util.AcquaintRequestType.COMPLETE_CASES){
+            isLoading = false;
             ArrayList<CasePojo> dataset = parseData(response);
             WaitingForData fragment = (CompleteCaseFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1);
             fragment.passData(dataset);
+            if(isRequested) {
+                isRequested = false ;
+                loadNewCasePage();
+            }
+            else progressDialog.cancel();
         }
 
 
@@ -127,6 +150,15 @@ public class CaseActivity extends BaseDrawerActivity {
             casePojo.status = childs.get(7).text();
             dataset.add(casePojo);
         }
+        try {
+            if(htmlJsInterface.requestType == Util.AcquaintRequestType.NEW_CASES)
+                Util.writeObject(this, "newcases", dataset);
+            else Util.writeObject(this, "completecases", dataset);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         return dataset;
 
 

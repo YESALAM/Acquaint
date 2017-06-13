@@ -6,9 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.github.yesalam.acquaint.Activity.TeleVerificationDialog;
 import io.github.yesalam.acquaint.Pojo.Card.TelePojo;
@@ -19,14 +21,14 @@ import io.github.yesalam.acquaint.R;
  */
 
 public class TeleVeriRecyclerAdapter extends RecyclerView.Adapter<TeleVeriRecyclerAdapter.ViewHolder> {
-    private ArrayList<TelePojo> dataset;
+    private List<TelePojo> dataset;
 
 
-    public void setDataset(ArrayList<TelePojo> dataset) {
+    public void setDataset(List<TelePojo> dataset) {
         this.dataset = dataset;
     }
 
-    public TeleVeriRecyclerAdapter(ArrayList<TelePojo> dataset) {
+    public TeleVeriRecyclerAdapter(List<TelePojo> dataset) {
         this.dataset = dataset;
     }
 

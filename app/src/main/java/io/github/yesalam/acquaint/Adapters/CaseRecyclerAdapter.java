@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.github.yesalam.acquaint.Activity.IndiCaseActivity;
 import io.github.yesalam.acquaint.Pojo.Card.CasePojo;
@@ -20,13 +21,13 @@ import io.github.yesalam.acquaint.R;
 
 public class CaseRecyclerAdapter extends RecyclerView.Adapter<CaseRecyclerAdapter.ViewHolder> {
 
-    ArrayList<CasePojo> dataset = null ;
+    List<CasePojo> dataset = null ;
 
-    public CaseRecyclerAdapter(ArrayList<CasePojo> dataset){
+    public CaseRecyclerAdapter(List<CasePojo> dataset){
         this.dataset = dataset;
     }
 
-    public void setDataset(ArrayList<CasePojo> dataset){
+    public void setDataset(List<CasePojo> dataset){
         this.dataset = dataset;
     }
 

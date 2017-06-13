@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.github.yesalam.acquaint.Activity.FieldInvestigationDialog;
 import io.github.yesalam.acquaint.Activity.FieldInvestigationOfficeDialoog;
@@ -21,14 +22,14 @@ import io.github.yesalam.acquaint.R;
 
 public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<InvestigationRecyclerAdapter.ViewHolder> {
 
-    ArrayList<InvestigationPojo> dataset ;
+    List<InvestigationPojo> dataset ;
 
 
-    public void setDataset(ArrayList<InvestigationPojo> dataset){
+    public void setDataset(List<InvestigationPojo> dataset){
         this.dataset = dataset ;
     }
 
-    public InvestigationRecyclerAdapter(ArrayList<InvestigationPojo> dataset){
+    public InvestigationRecyclerAdapter(List<InvestigationPojo> dataset){
         this.dataset = dataset;
     }
 

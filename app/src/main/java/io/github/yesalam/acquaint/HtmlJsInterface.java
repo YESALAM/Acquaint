@@ -94,6 +94,15 @@ public class HtmlJsInterface {
                     }
                 });
                 break;
+            case TELE_VERIFICATION:
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        teleVerification(html);
+                    }
+                });
+                break;
+
 
         }
 
@@ -188,6 +197,20 @@ public class HtmlJsInterface {
             callback.onDataParserdNegative(html);
         }else{
             Log.e(LOG_TAG,"completeField loaded");
+            callback.onDataParsedPasitive(html);
+        }
+    }
+
+    private void teleVerification(String html){
+        Log.e(LOG_TAG,"called completeField");
+        Document document = Jsoup.parse(html);
+        Element element = document.getElementById("searchClient");
+        if(element == null){
+            //
+            Log.e(LOG_TAG,"teleVerificaiton not loaded");
+            callback.onDataParserdNegative(html);
+        }else{
+            Log.e(LOG_TAG,"teleVerification loaded");
             callback.onDataParsedPasitive(html);
         }
     }

@@ -1,5 +1,6 @@
 package io.github.yesalam.acquaint.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,11 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
+import io.github.yesalam.acquaint.Activity.InvestigationActivity;
 import io.github.yesalam.acquaint.Adapters.InvestigationRecyclerAdapter;
 import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WaitingForData;
 
 /**
@@ -23,13 +28,14 @@ import io.github.yesalam.acquaint.WaitingForData;
 public class CompleteInvestigationFragment extends Fragment implements WaitingForData {
 
     InvestigationRecyclerAdapter adapter ;
-    static CompleteInvestigationFragment instance;
+    InvestigationActivity activity;
 
-    public static CompleteInvestigationFragment getInstance(){
-        if(instance == null){
-            instance = new CompleteInvestigationFragment();
-        }
-        return instance;
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (InvestigationActivity) context;
     }
 
 
@@ -40,6 +46,22 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview,container,false);
         adapter = new InvestigationRecyclerAdapter(new ArrayList<InvestigationPojo>());
         setupRecyclerView(recyclerView);
+
+        try {
+            List<InvestigationPojo> cachedEntries_complete = (List<InvestigationPojo>) Util.readObject(getContext(), "completefield");
+            if(cachedEntries_complete.size()>0){
+                passData(cachedEntries_complete);
+            }else{
+                activity.loadComleteFieldInvestigaion();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            activity.loadComleteFieldInvestigaion();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            activity.loadComleteFieldInvestigaion();
+        }
+
         return recyclerView;
     }
 
@@ -49,7 +71,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
     }
 
     @Override
-    public void passData(ArrayList<? extends Object> data) {
+    public void passData(List<? extends Object> data) {
         adapter.setDataset((ArrayList<InvestigationPojo>) data);
         adapter.notifyDataSetChanged();
     }
