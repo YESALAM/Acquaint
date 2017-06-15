@@ -5,9 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:id="@+id/guarantor_residential_detail_frame"
     >
     <FrameLayout
-        android:id="@+id/guarantor_residential_detail_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/card_padding">
@@ -62,7 +62,8 @@
                     />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -181,21 +182,23 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Needs Verification" />
 
-                <RadioButton
+                <CheckBox
                     android:id="@+id/need_verification_guarantor_residential_radiobutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -221,7 +224,7 @@
             android:text="Guarantor Residential Details" />
     </FrameLayout>
 
-    <RadioButton
+    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Have Office Address"

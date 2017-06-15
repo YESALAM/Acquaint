@@ -41,7 +41,7 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 
 public class CompleteInvestigationFragment extends Fragment implements WaitingForData, Callback {
 
-    private String LOG_TAG = "NewInvestiFragment";
+    private String LOG_TAG = "CompletInvesFragment";
 
     InvestigationRecyclerAdapter adapter ;
     ProgressBar progressBar;

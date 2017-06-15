@@ -37,6 +37,8 @@
 
         <include layout="@layout/include_address_confirmed_resident" />
 
+        <include layout="@layout/include_address_not_confirmed" />
+
         <include layout="@layout/include_client_address_verification_2" />
 
 

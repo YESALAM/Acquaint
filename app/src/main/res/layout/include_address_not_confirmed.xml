@@ -3,144 +3,174 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/address_not_confirmed_frame"
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/address_not_confirmed_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/card_padding">
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:orientation="vertical"
             android:background="@drawable/frame"
-            android:padding="@dimen/card_padding"
-            android:stretchColumns="1">
+            >
 
-            <TableRow>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:padding="@dimen/card_padding"
+                android:stretchColumns="1">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Reason Not Confirmed" />
+                <TableRow
+                    android:layout_marginTop="@dimen/spinner_marginTop"
+                    >
 
-                <RadioGroup
-                    android:id="@+id/reason_not_confirmed_radiogroup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/Untraceable_reason_not_confirmed_radiobutton"
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Untraceable" />
+                        android:text="Reason     " />
 
-                    <RadioButton
-                        android:id="@+id/mismatch_reason_not_confirmed_radiobutton"
+                    <RadioGroup
+                        android:id="@+id/reason_not_confirmed_radiogroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mismatch" />
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/untraceable_reason_not_confirmed_radiobutton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Untraceable" />
+
+                        <RadioButton
+                            android:id="@+id/mismatch_reason_not_confirmed_radiobutton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mismatch" />
 
 
-                </RadioGroup>
-            </TableRow>
+                    </RadioGroup>
+                </TableRow>
 
-            <TableRow
-                android:id="@+id/person_know_applicant_row"
-                android:visibility="visible">
+            </TableLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/card_padding"
+                android:stretchColumns="1"
+                android:id="@+id/mismatch_row"
+                >
+                <TableRow
+                    android:id="@+id/person_know_applicant_row"
+                    android:visibility="visible">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Person know applicant" />
-
-                <RadioGroup
-                    android:id="@+id/person_know_radiogroup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/yes_person_know_applicant_radiobutton"
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Yes" />
+                        android:text="Person know applicant" />
 
-                    <RadioButton
-                        android:id="@+id/no_person_know_applicant_radiobutton"
+                    <RadioGroup
+                        android:id="@+id/person_know_radiogroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No" />
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/yes_person_know_applicant_radiobutton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Yes" />
+
+                        <RadioButton
+                            android:id="@+id/no_person_know_applicant_radiobutton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No" />
 
 
-                </RadioGroup>
-            </TableRow>
+                    </RadioGroup>
+                </TableRow>
 
-            <TableRow
-                android:id="@+id/address_belongs_to_row"
-                android:visibility="visible">
+                <TableRow
+                    android:id="@+id/address_belongs_to_row"
+                    android:visibility="visible">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Address Belongs To" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Address Belongs To" />
 
-                <EditText
-                    android:id="@+id/address_belongs_to_edittext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
+                    <EditText
+                        android:id="@+id/address_belongs_to_edittext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
 
-            <TableRow
-                android:id="@+id/reason_row"
-                android:visibility="visible">
+            </TableLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/card_padding"
+                android:stretchColumns="1"
+                android:id="@+id/untraceable_row"
+                >
+                <TableRow
+                    android:id="@+id/reason_row"
+                    android:visibility="visible">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Reason" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reason" />
 
-                <EditText
-                    android:id="@+id/reason_edittext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
+                    <EditText
+                        android:id="@+id/reason_edittext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
 
-            <TableRow
-                android:id="@+id/locality_row"
-                android:visibility="visible">
+                <TableRow
+                    android:id="@+id/locality_row"
+                    android:visibility="visible"
+                    android:layout_marginTop="@dimen/spinner_marginTop"
+                    >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Locality" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Locality" />
 
-                <Spinner
-                    android:id="@+id/locality_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
+                    <Spinner
+                        android:id="@+id/locality_spinner_not_confirmed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
 
-            <TableRow
-                android:id="@+id/result_of_calling_row"
-                android:visibility="visible">
+                <TableRow
+                    android:id="@+id/result_of_calling_row"
+                    android:visibility="visible">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Result of Calling" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Result of Calling" />
 
-                <EditText
-                    android:id="@+id/result_of_calling_edittext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
+                    <EditText
+                        android:id="@+id/result_of_calling_edittext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
 
 
-        </TableLayout>
+            </TableLayout>
+
+
+        </LinearLayout>
 
 
         <TextView

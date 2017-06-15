@@ -55,7 +55,8 @@
                 android:layout_height="wrap_content" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:layout_marginTop="@dimen/spinner_marginTop">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -174,21 +175,23 @@
                 android:layout_height="wrap_content" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:layout_marginTop="@dimen/spinner_marginTop">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Needs Verification" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/need_verification_coapplicant_resident_radiobutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:layout_marginTop="@dimen/spinner_marginTop">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -208,7 +211,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Investigation Status" />
+                android:text="Status " />
 
             <TextView
                 android:id="@+id/investigationstatus_coapplicant_resident_textview"

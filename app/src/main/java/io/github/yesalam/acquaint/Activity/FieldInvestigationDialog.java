@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.opengl.EGLDisplay;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -16,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -24,7 +27,23 @@ import org.w3c.dom.Text;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Optional;
+import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.DateClick;
+import io.github.yesalam.acquaint.Util.HaveClickListener;
+
+import static io.github.yesalam.acquaint.Util.Util.getAccomodationType;
+import static io.github.yesalam.acquaint.Util.Util.getAddressConfirmedByType;
+import static io.github.yesalam.acquaint.Util.Util.getAssignedToType;
+import static io.github.yesalam.acquaint.Util.Util.getEaseofLocatingType;
+import static io.github.yesalam.acquaint.Util.Util.getFamilyMemberType;
+import static io.github.yesalam.acquaint.Util.Util.getLivingStandardType;
+import static io.github.yesalam.acquaint.Util.Util.getLocalityType;
+import static io.github.yesalam.acquaint.Util.Util.getMonthType;
+import static io.github.yesalam.acquaint.Util.Util.getRecommendationType;
+import static io.github.yesalam.acquaint.Util.Util.getRelationType;
+import static io.github.yesalam.acquaint.Util.Util.getResidenceProofType;
+import static io.github.yesalam.acquaint.Util.Util.getYearType;
 
 /**
  * Created by yesalam on 10-06-2017.
@@ -73,7 +92,7 @@ public class FieldInvestigationDialog extends Activity {
 
     ///include_address_confirmed_resident
     @BindView(R.id.address_confirmed_resident_frame)
-    FrameLayout addressconfirmed_resident_frame;
+    LinearLayout addressconfirmed_resident_frame;
     @BindView(R.id.name_plate_seen_radiogroup)
     RadioGroup nameplateseen_radiogroup;
     @BindView(R.id.applicant_name_edittext)
@@ -171,6 +190,37 @@ public class FieldInvestigationDialog extends Activity {
     @BindView(R.id.occupation_edittext)
     EditText occupation_edittext;
 
+    //include_address_not_confirmed
+    @BindView(R.id.address_not_confirmed_frame)
+    LinearLayout address_notconfirmed_frame;
+    @BindView(R.id.reason_not_confirmed_radiogroup)
+    RadioGroup reason_radiogruop;
+    @BindView(R.id.person_know_applicant_row)
+    TableRow person_know_applicant_row;
+    @BindView(R.id.person_know_radiogroup)
+    RadioGroup person_know;
+    @BindView(R.id.address_belongs_to_row)
+    TableRow address_belongto_row;
+    @BindView(R.id.address_belongs_to_edittext)
+    EditText address_belongto_edittext;
+    @BindView(R.id.reason_row)
+    TableRow reason_row;
+    @BindView(R.id.reason_edittext)
+    EditText reason_edittext;
+    @BindView(R.id.locality_row)
+    TableRow locality_row;
+    @BindView(R.id.locality_spinner_not_confirmed)
+    Spinner locality_spinner_not;
+    @BindView(R.id.result_of_calling_row)
+    TableRow resultOfCalling_row;
+    @BindView(R.id.result_of_calling_edittext)
+    EditText resultOfCalling_edittex;
+    @BindView(R.id.mismatch_row)
+    TableLayout mismatch_row;
+    @BindView(R.id.untraceable_row)
+    TableLayout untraceable_row;
+
+
     //include_client_address_verification2
     @BindView(R.id.proof_attached_radiogroup)
     RadioGroup proofattached_radiogroup;
@@ -234,9 +284,113 @@ public class FieldInvestigationDialog extends Activity {
         ButterKnife.bind(this);
 
 
+        initForm();
 
 
     }
 
+
+    private void initForm() {
+        addressconfirmed_resident_frame.setVisibility(View.GONE);
+        address_notconfirmed_frame.setVisibility(View.GONE);
+        addressconfirmed_radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                if (checkedId == R.id.yes_address_confirmed_radiobutton) {
+                    addressconfirmed_resident_frame.setVisibility(View.VISIBLE);
+                    address_notconfirmed_frame.setVisibility(View.GONE);
+                } else {
+                    addressconfirmed_resident_frame.setVisibility(View.GONE);
+                    address_notconfirmed_frame.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        ArrayAdapter<SpinnerItem> confirmedByAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        confirmedByAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        confirmedByAdapter.addAll(getAddressConfirmedByType());
+        confirmedby_spinner.setAdapter(confirmedByAdapter);
+
+        ArrayAdapter<SpinnerItem> typeOfProofAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        typeOfProofAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeOfProofAdapter.addAll(getResidenceProofType());
+        typeofproof_spinner.setAdapter(typeOfProofAdapter);
+
+        ArrayAdapter<SpinnerItem> recommendation_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        recommendation_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        recommendation_adapter.addAll(getRecommendationType());
+        recommendation_spinner.setAdapter(recommendation_adapter);
+
+        visitdate_edittext.setOnClickListener(new DateClick(this));
+
+        //address confirmed initialization
+        dateofbirth_edittext.setOnClickListener(new DateClick(this));
+
+        ArrayAdapter<SpinnerItem> relation_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        relation_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        relation_adapter.addAll(getRelationType());
+        relation_spinner.setAdapter(relation_adapter);
+        relationwith_applicant_spinner.setAdapter(relation_adapter);
+
+        ArrayAdapter<SpinnerItem> totalMember_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        totalMember_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        totalMember_adapter.addAll(getFamilyMemberType());
+        totalfamilymember_spinner.setAdapter(totalMember_adapter);
+        earningmember_spinner.setAdapter(totalMember_adapter);
+
+        ArrayAdapter<SpinnerItem> residing_Month = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        residing_Month.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        residing_Month.addAll(getMonthType());
+        residencestatus_month_spinner.setAdapter(residing_Month);
+        livingsince_month_spinner.setAdapter(residing_Month);
+
+        ArrayAdapter<SpinnerItem> residing_Year = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        residing_Year.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        residing_Year.addAll(getYearType());
+        residencestatus_year_spinner.setAdapter(residing_Year);
+        livingsince_year_spinner.setAdapter(residing_Year);
+
+
+        ArrayAdapter<SpinnerItem> locationEase_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        locationEase_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        locationEase_adapter.addAll(getEaseofLocatingType());
+        easeoflocation_spinner.setAdapter(locationEase_adapter);
+
+        ArrayAdapter<SpinnerItem> locality_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        locality_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        locality_adapter.addAll(getLocalityType());
+        locality_spinner.setAdapter(locality_adapter);
+        locality_spinner_not.setAdapter(locality_adapter);
+
+        ArrayAdapter<SpinnerItem> accomodation_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        accomodation_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        accomodation_adapter.addAll(getAccomodationType());
+        accomadationtype_spinner.setAdapter(accomodation_adapter);
+
+        ArrayAdapter<SpinnerItem> livingStandard_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        livingStandard_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        livingStandard_adapter.addAll(getLivingStandardType());
+        statndard_living_spinner.setAdapter(livingStandard_adapter);
+
+        mismatch_row.setVisibility(View.GONE);
+        reason_radiogruop.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                if (checkedId == R.id.untraceable_reason_not_confirmed_radiobutton) {
+                    untraceable_row.setVisibility(View.VISIBLE);
+                    mismatch_row.setVisibility(View.GONE);
+                } else {
+                    untraceable_row.setVisibility(View.GONE);
+                    mismatch_row.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        //residence specific
+        isrcb_row.setVisibility(View.GONE);
+        companyname_row.setVisibility(View.GONE);
+
+
+    }
 
 }

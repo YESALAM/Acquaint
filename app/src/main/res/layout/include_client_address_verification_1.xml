@@ -34,7 +34,9 @@
         </RadioGroup>
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:layout_marginTop="@dimen/spinner_marginTop"
+        >
 
         <TextView
             android:layout_width="wrap_content"

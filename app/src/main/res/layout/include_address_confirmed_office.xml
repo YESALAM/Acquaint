@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/address_confirmed_office_frame"
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/address_confirmed_office_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/card_padding">
@@ -124,20 +124,38 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Company Board Seen" />
 
-                <Spinner
-                    android:id="@+id/company_board_seen_spinner"
+                <RadioGroup
+                    android:id="@+id/company_board_seen_radiogroup"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/yes_board_seen_radiobutton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yes" />
+
+                    <RadioButton
+                        android:id="@+id/no_board_seen_radiobutton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No" />
+                </RadioGroup>
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -150,8 +168,9 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
-
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -189,8 +208,9 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
-
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -228,7 +248,9 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -241,7 +263,9 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -280,8 +304,9 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
-
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -306,7 +331,9 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -319,7 +346,9 @@
                     android:layout_height="wrap_content" />
             </TableRow>
 
-            <TableRow>
+            <TableRow
+                android:layout_marginTop="@dimen/spinner_marginTop"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -333,12 +362,12 @@
 
                     <Spinner
                         android:id="@+id/grade_spinner"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                     <EditText
                         android:id="@+id/grade_edittext"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
             </TableRow>

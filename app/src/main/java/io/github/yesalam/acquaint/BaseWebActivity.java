@@ -3,6 +3,7 @@ package io.github.yesalam.acquaint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,7 +13,25 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.io.IOException;
+
 import io.github.yesalam.acquaint.Util.Util;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
@@ -23,59 +42,107 @@ import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
  * Created by yesalam on 05-06-2017.
  */
 
-public abstract class BaseWebActivity extends AppCompatActivity implements HtmlJsInterface.JsCallbackInterface{
-    protected static WebView webView;
-    public HtmlJsInterface htmlJsInterface ;
+public abstract class BaseWebActivity extends AppCompatActivity implements Callback {
+
     String LOG_TAG = "BaseWebActivity";
 
+    public SharedPreferences app_preferences;
+    public OkHttpClient okHttpClient;
     public static int count = 0;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        webView = (WebView) getLayoutInflater().inflate(R.layout.webview,null);
-        //webView.loadUrl(ACQUAINT_URL);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return false;
-            }
 
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                webView.loadUrl("javascript:window.html.getHtml('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
-                Log.d(getLocalClassName(),"Page loaded with url: "+url);
-            }
-        });
-        CookieManager.getInstance().setAcceptCookie(true);
-
-        htmlJsInterface = new HtmlJsInterface();
-        htmlJsInterface.setJsCallbackInterface(this);
-        webView.addJavascriptInterface(htmlJsInterface,"html");
 
     }
 
-    public void checkLogin() {
-        Log.e(LOG_TAG, "checking login");
-        htmlJsInterface.setRequestType(Util.AcquaintRequestType.LOGIN);
-        webView.loadUrl(ACQUAINT_URL);
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        super.setContentView(layoutResID);
+        init();
     }
 
-    public void login() {
-        SharedPreferences app_preferences =
+    public void init(){
+        //CookieJar for webclient
+        ClearableCookieJar cookieJar =
+                new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
+        okHttpClient = new OkHttpClient.Builder()
+                .cookieJar(cookieJar)
+                .build();
+        app_preferences =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    }
+
+    public void login(){
         String userid = app_preferences.getString(USER_ID_KEY, "NA");
         String password = app_preferences.getString(PASSWORD_KEY, "NA");
         if (userid.equalsIgnoreCase("NA")) {
             //should no happen
         } else {
             Log.e(LOG_TAG, "trying to login");
-            htmlJsInterface.setRequestType(Util.AcquaintRequestType.LOGIN);
-            webView.postUrl(ACQUAINT_URL, byteCodeit(userid, password));
+            RequestBody formBody = new FormBody.Builder()
+                    .add("UserName", userid)
+                    .add("Password", password)
+                    .add("RememberMe", "true")
+                    .build();
+            final Request request = new Request.Builder()
+                    .url(ACQUAINT_URL)
+                    .post(formBody)
+                    .build();
+            okHttpClient.newCall(request).enqueue(this);
+        }
 
+
+    }
+
+    @Override
+    public void onFailure(Call call, IOException e) {
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onResponse(Call call,final Response response) throws IOException {
+        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        final String html = response.body().string();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                loginResponseReader(html);
+
+            }
+        });
+    }
+
+
+    private void loginResponseReader(String html){
+        Document document = Jsoup.parse(html);
+        Log.e(LOG_TAG,"login request");
+        Element welcome = document.getElementById("wel");
+        if (welcome == null) {
+            Element useridnode_error = document.getElementById("UserName");
+            if (useridnode_error == null) {
+                //noservice
+                Log.e(LOG_TAG, "problem with service.retrying");
+                if(count<1){
+                    login();
+                }else{
+                    count=0;
+                    Toast.makeText(this, "Service Unavailable! Please Try later", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                //credentials mismatch
+                //should not happen
+                count=0;
+                Log.e(LOG_TAG, "credential mismatch");
+            }
+        } else {
+            count=0;
+            //logged in
+            Log.e(LOG_TAG, "login successfull.New Session started ");
+            //NEw session started
         }
     }
 

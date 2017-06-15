@@ -30,7 +30,7 @@
 
                 <include layout="@layout/include_applicant_resident_details" />
 
-                <RadioButton
+                <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Have Company Address"
@@ -41,7 +41,7 @@
 
                 <include layout="@layout/include_applicant_office_details"/>
 
-                <RadioButton
+                <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Have Permanent Address"
@@ -56,11 +56,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Save"
-                    android:textAlignment="viewEnd"
                     android:layout_gravity="end"
-                    android:padding="@dimen/card_margin"
                     android:layout_marginTop="20dp"
-                    android:background="@null"
                     />
             </LinearLayout>
 

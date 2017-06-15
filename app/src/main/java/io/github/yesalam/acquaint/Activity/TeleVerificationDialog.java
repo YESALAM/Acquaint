@@ -3,6 +3,10 @@ package io.github.yesalam.acquaint.Activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -10,7 +14,12 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
+
+import static io.github.yesalam.acquaint.Util.Util.getAssignedToType;
+import static io.github.yesalam.acquaint.Util.Util.getRelationType;
+import static io.github.yesalam.acquaint.Util.Util.getStatusType;
 
 /**
  * Created by yesalam on 10-06-2017.
@@ -95,13 +104,36 @@ public class TeleVerificationDialog extends Activity {
 
 
 
+    String LOG_TAG = "TeleVerificationDialog" ;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_televerification);
-
         ButterKnife.bind(this);
+        initForm();
+
+    }
+
+    private void initForm(){
+        ArrayAdapter<SpinnerItem> relation_adapter = new ArrayAdapter<SpinnerItem>(this,android.R.layout.simple_spinner_item);
+        relation_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        relation_adapter.addAll(getRelationType());
+        relation_residence_spinner.setAdapter(relation_adapter);
+        relation_office_spinner.setAdapter(relation_adapter);
+
+
+        ArrayAdapter<SpinnerItem> status_adapter = new ArrayAdapter<SpinnerItem>(this,android.R.layout.simple_spinner_item);
+        status_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        status_adapter.addAll(getStatusType());
+        status_residence_spinner.setAdapter(status_adapter);
+        status_office_spinner.setAdapter(status_adapter);
+
+    }
+
+    public void cancel(View view){finish();}
+
+    public void save(View view){
     }
 }

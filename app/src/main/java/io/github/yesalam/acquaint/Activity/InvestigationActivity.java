@@ -38,7 +38,6 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 public class InvestigationActivity extends BaseDrawerActivity {
 
     String LOG_TAG = "InvestigatonActivity";
-    ProgressDialog progressDialog;
     boolean isLoading;
     boolean isRequested;
 
@@ -47,9 +46,6 @@ public class InvestigationActivity extends BaseDrawerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading Data");
-        progressDialog.setCancelable(false);
 
     }
 

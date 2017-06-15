@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/address_confirmed_resident_frame"
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/address_confirmed_resident_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/card_padding">
@@ -75,9 +75,12 @@
                        android:text="Date of Birth" />
 
                    <EditText
+
                        android:id="@+id/date_of_birth_edittext"
                        android:layout_width="wrap_content"
-                       android:layout_height="wrap_content" />
+                       android:layout_height="wrap_content"
+                       android:focusable="false"
+                       />
                </TableRow>
 
                <TableRow>
@@ -93,7 +96,9 @@
                        android:layout_height="wrap_content" />
                </TableRow>
 
-               <TableRow>
+               <TableRow
+                   android:layout_marginTop="@dimen/spinner_marginTop"
+                   >
 
                    <TextView
                        android:layout_width="wrap_content"
@@ -106,7 +111,9 @@
                        android:layout_height="wrap_content" />
                </TableRow>
 
-               <TableRow>
+               <TableRow
+                   android:layout_marginTop="@dimen/spinner_marginTop"
+                   >
 
                    <TextView
                        android:layout_width="wrap_content"
@@ -119,7 +126,9 @@
                        android:layout_height="wrap_content" />
                </TableRow>
 
-               <TableRow>
+               <TableRow
+                   android:layout_marginTop="@dimen/spinner_marginTop"
+                   >
 
                    <TextView
                        android:layout_width="wrap_content"
@@ -132,7 +141,9 @@
                        android:layout_height="wrap_content" />
                </TableRow>
 
-               <TableRow>
+               <TableRow
+                   android:layout_marginTop="@dimen/spinner_marginTop"
+                   >
 
                    <TextView
                        android:layout_width="wrap_content"
@@ -142,17 +153,23 @@
                    <LinearLayout
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:orientation="horizontal">
+                       android:orientation="horizontal"
+                       android:weightSum="2"
+                       >
 
                        <Spinner
                            android:id="@+id/residence_status_month_spinner"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content" />
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="1"
+                           />
 
                        <Spinner
                            android:id="@+id/residence_status_year_spinner"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content" />
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="1"
+                           />
                    </LinearLayout>
 
 
@@ -246,7 +263,9 @@
                        android:textSize="15sp" />
                </TableRow>
 
-               <TableRow>
+               <TableRow
+                   android:layout_marginTop="@dimen/spinner_marginTop"
+                   >
 
                    <TextView
                        android:layout_width="wrap_content"
@@ -259,7 +278,9 @@
                        android:layout_height="wrap_content" />
                </TableRow>
 
-               <TableRow>
+               <TableRow
+                   android:layout_marginTop="@dimen/spinner_marginTop"
+                   >
 
                    <TextView
                        android:layout_width="wrap_content"
@@ -272,7 +293,9 @@
                        android:layout_height="wrap_content" />
                </TableRow>
 
-               <TableRow>
+               <TableRow
+                   android:layout_marginTop="@dimen/spinner_marginTop"
+                   >
 
                    <TextView
                        android:layout_width="wrap_content"
@@ -467,7 +490,9 @@
                        android:layout_height="wrap_content" />
                </TableRow>
 
-               <TableRow>
+               <TableRow
+                   android:layout_marginTop="@dimen/spinner_marginTop"
+                   >
 
                    <TextView
                        android:layout_width="wrap_content"

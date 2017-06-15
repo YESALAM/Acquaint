@@ -39,7 +39,7 @@ import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 
 public class IndiCaseActivity extends BaseWebActivity {
 
-    String caseid;
+    public String caseid;
     String LOG_TAG = "IndiCaseActivity";
 
 
@@ -69,17 +69,15 @@ public class IndiCaseActivity extends BaseWebActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        checkLogin();
+
     }
 
 
     private void loadCasePage() {
         Log.e(LOG_TAG, "loading case page");
         final String case_url = ACQUAINT_URL + "/Users/Cases/Edit/" + "4644878";
-        //final String case_url = "http://myacquaint.com/Users/Cases/Edit/4644878";
         Log.e(LOG_TAG, "loading url " + case_url);
-        htmlJsInterface.setRequestType(AcquaintRequestType.COMPLETE_CASES);
-        webView.loadUrl(case_url);
+
 
     }
 
@@ -118,42 +116,16 @@ public class IndiCaseActivity extends BaseWebActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), CoApplicantDialog.class);
+                intent.putExtra("caseid",caseid);
                 v.getContext().startActivity(intent);
             }
         });
     }
 
 
-    @Override
-    public void onDataParsedPasitive(String response) {
-        if (htmlJsInterface.requestType == AcquaintRequestType.LOGIN) {
-            Log.e(LOG_TAG, "login successfull.");
-            loadCasePage();
-        } else if(htmlJsInterface.requestType == AcquaintRequestType.COMPLETE_CASES){
-            Document document = Jsoup.parse(response);
-            Element element = document.getElementById("ContactId");
-            Log.e(LOG_TAG, element.ownText());
-            parseData(response);
-        }
 
 
-    }
 
-    @Override
-    public void onDataParserdNegative(String negative) {
-        if(htmlJsInterface.requestType == AcquaintRequestType.LOGIN){
-            if (negative.equalsIgnoreCase("loginerror")) {
-                Log.e(LOG_TAG, "credential mismatch");
-                //should not happen
-            } else if (negative.equalsIgnoreCase("noservice")) {
-                Log.e(LOG_TAG, "problem with service.retrying");
-                if (count < 1) {
-                    login();
-                    count++;
-                }
-            }
-        }
-    }
 
     private void parseData(String html){
         Document document = Jsoup.parse(html);

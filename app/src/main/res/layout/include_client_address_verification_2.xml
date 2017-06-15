@@ -34,7 +34,9 @@
         </RadioGroup>
     </TableRow>
 
-    <TableRow>
+    <TableRow
+        android:layout_marginTop="@dimen/spinner_marginTop"
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -84,6 +86,7 @@
             android:text="Visit Date" />
 
         <EditText
+            android:focusable="false"
             android:id="@+id/visit_date_edittext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -135,6 +138,7 @@
     <TableRow
         android:id="@+id/is_rcb_case_row"
         android:visibility="visible"
+        android:layout_marginTop="@dimen/spinner_marginTop"
         >
 
 
@@ -223,7 +227,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </TableRow>
-    <TableRow>
+    <TableRow
+        android:layout_marginTop="@dimen/spinner_marginTop"
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -250,7 +256,9 @@
             android:layout_gravity="center"
             />
     </TableRow>
-    <TableRow>
+    <TableRow
+        android:layout_marginTop="@dimen/spinner_marginTop"
+        >
 
         <TextView
             android:layout_width="wrap_content"

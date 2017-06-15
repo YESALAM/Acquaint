@@ -43,7 +43,7 @@
                 android:value="io.github.yesalam.acquaint.Activity.CaseActivity" />
         </activity>
         <activity android:name=".Activity.CoApplicantDialog"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".Activity.IndiCaseActivity">
             <meta-data
@@ -51,7 +51,7 @@
                 android:value="io.github.yesalam.acquaint.Activity.IndiCaseActivity" />
         </activity>
         <activity android:name=".Activity.CreateCaseDialog"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".Activity.CaseActivity">
             <meta-data
@@ -59,7 +59,7 @@
                 android:value="io.github.yesalam.acquaint.Activity.CaseActivity" />
         </activity>
         <activity android:name=".Activity.FieldInvestigationDialog"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".Activity.InvestigationActivity">
             <meta-data
@@ -67,7 +67,7 @@
                 android:value="io.github.yesalam.acquaint.Activity.InvestigationActivity" />
         </activity>
         <activity android:name=".Activity.TeleVerificationDialog"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".Activity.InvestigationActivity">
             <meta-data
@@ -75,7 +75,7 @@
                 android:value="io.github.yesalam.acquaint.Activity.InvestigationActivity" />
         </activity>
         <activity android:name=".Activity.FieldInvestigationOfficeDialoog"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".Activity.InvestigationActivity">
             <meta-data
