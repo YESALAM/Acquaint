@@ -6,6 +6,6 @@ package io.github.yesalam.acquaint.Pojo;
 
 public class ApplicantPermanentAddress extends AddressWithoutPin {
 
-    public int pin;
+    public String pin;
 
 }

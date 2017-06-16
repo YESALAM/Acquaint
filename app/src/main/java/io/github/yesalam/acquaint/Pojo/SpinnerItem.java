@@ -16,7 +16,12 @@ public class SpinnerItem {
     String name;
     String value;
 
-    public SpinnerItem(String name,String value){
+    @Override
+    public boolean equals(Object obj) {
+        return this.name.equalsIgnoreCase(obj.toString());
+    }
+
+    public SpinnerItem(String name, String value){
         this.name = name ;
         this.value = value;
     }

@@ -10,5 +10,7 @@ public class ApplicantResidentDetail extends ApplicantPermanentAddress {
     public String dateOfBirth;
     public String pan;
     public String gender;
+    public String email;
+    public String haveCompany;
 
 }

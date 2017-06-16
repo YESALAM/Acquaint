@@ -10,11 +10,10 @@ public class AddressWithoutPin {
     public String address;
     public String city;
     public String state;
-    public int mobile;
-    public int phone;
+    public String mobile;
+    public String phone;
     public String status;
-    public String[] assignedTo;
+    public String assignedTo;
     public boolean needVerification;
-    public AddressWithoutPin(){}
 
 }

@@ -1,8 +1,10 @@
 package io.github.yesalam.acquaint.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,20 +18,42 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.github.yesalam.acquaint.Activity.IndiCaseActivity;
+import io.github.yesalam.acquaint.BaseWebActivity;
+import io.github.yesalam.acquaint.Pojo.Card.CasePojo;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.CaseBasicId;
 import io.github.yesalam.acquaint.Util.DateClick;
 import io.github.yesalam.acquaint.Util.HaveClickListener;
+import io.github.yesalam.acquaint.Util.OfficeId;
+import io.github.yesalam.acquaint.Util.ResidentialId;
+import io.github.yesalam.acquaint.Util.SpinnerSelectedListener;
+import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
+import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.getAssignedToType;
 import static io.github.yesalam.acquaint.Util.Util.getBranchHash;
 import static io.github.yesalam.acquaint.Util.Util.getClientHash;
@@ -41,7 +65,7 @@ import static io.github.yesalam.acquaint.Util.Util.getPickupByType;
  * Created by yesalam on 08-06-2017.
  */
 
-public class CaseBasicDetail extends Fragment {
+public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
 
     //View Binding
     //basic detail
@@ -120,6 +144,8 @@ public class CaseBasicDetail extends Fragment {
     EditText mobile_office_edittext;
     @BindView(R.id.phon_office_detail_edittext)
     EditText phone_office_edittext;
+    @BindView(R.id.office_needVerification_row)
+    TableRow needVerificatin_office_row;
     @BindView(R.id.need_verification_office_detail_radiobutton)
     CheckBox needverification_office_radiobutton;
     @BindView(R.id.assigned_to_office_detail_spinner)
@@ -155,6 +181,17 @@ public class CaseBasicDetail extends Fragment {
     @BindView(R.id.investigationstatus_permanent_resident_textview)
     TextView investigatonstatus_permanent_textview;
 
+    String LOG_TAG = "CaseBasicDetail" ;
+    boolean spinnerupdated=false ;
+
+    IndiCaseActivity activity;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (IndiCaseActivity) context;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -162,9 +199,23 @@ public class CaseBasicDetail extends Fragment {
         ButterKnife.bind(this,view);
         prepareForm();
 
+        loadData();
         return view;
     }
 
+
+    private void loadData(){
+        Log.e(LOG_TAG, "loading case page");
+        final String CASE_EDIT_URL = "/Users/Cases/Edit/" + activity.caseid;
+
+        Log.e(LOG_TAG, "loading url " + ACQUAINT_URL+CASE_EDIT_URL);
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL+CASE_EDIT_URL)
+                .build();
+
+        WebHelper helper = WebHelper.getInstance(getContext());
+        helper.requestCall(request,this);
+    }
 
 
     private void prepareForm(){
@@ -182,34 +233,8 @@ public class CaseBasicDetail extends Fragment {
         branchadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         branchadapter.add(new SpinnerItem("Select Branch","0"));
         branch_spinner.setAdapter(branchadapter);
-        branch_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int val = Integer.parseInt(item.getValue());
-                if(val==0)return;
-                String clientstring = getBranchHash().get(val);
-                try {
-                    JSONArray array = new JSONArray(clientstring);
-                    ArrayList<SpinnerItem> list = new ArrayList<SpinnerItem>();
-                    for (int i=0;i<array.length();i++){
-                        JSONObject object = array.getJSONObject(i);
-                        String value = object.getString("id");
-                        String name = object.getString("name");
-                        list.add(new SpinnerItem(name,value));
-                    }
-                    contactadapter.clear();
-                    contactadapter.addAll(list);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+        branch_spinner.setOnItemSelectedListener(new SpinnerSelectedListener(false,contact_person_spinner,null));
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
 
 
@@ -218,34 +243,8 @@ public class CaseBasicDetail extends Fragment {
         clientadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         clientadapter.addAll(getClientType());
         client_spinner.setAdapter(clientadapter);
-        client_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int val = Integer.parseInt(item.getValue());
-                if(val==0)return;
-                String branchstring = getClientHash().get(val);
-                try {
-                    JSONArray array = new JSONArray(branchstring);
-                    ArrayList<SpinnerItem> list = new ArrayList<SpinnerItem>();
-                    for (int i=0;i<array.length();i++){
-                        JSONObject object = array.getJSONObject(i);
-                        String value = object.getString("id");
-                        String name = object.getString("name");
-                        list.add(new SpinnerItem(name,value));
-                    }
-                    branchadapter.clear();
-                    branchadapter.addAll(list);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+        client_spinner.setOnItemSelectedListener(new SpinnerSelectedListener(true,branch_spinner,null));
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
 
 
@@ -254,10 +253,10 @@ public class CaseBasicDetail extends Fragment {
         ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        //loantype_spinner
+
         adapter.addAll(getLoanTypes());
         loan_type_spinner.setAdapter(adapter);
-        //loan_type_spinner.getSelectedItem();
+
 
 
         pickup_date_edittext.setOnClickListener(new DateClick(getContext()));
@@ -282,21 +281,174 @@ public class CaseBasicDetail extends Fragment {
         HaveClickListener haveClickListener = new HaveClickListener(applicant_office_frame);
         havecompany_radiobutton.setOnClickListener(haveClickListener);
 
-        ArrayAdapter<SpinnerItem> assignedto_officeadapter = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
-        assignedto_officeadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedto_officeadapter.addAll(getAssignedToType());
-        assignedto_office_spinner.setAdapter(assignedto_officeadapter);
+
+        assignedto_office_spinner.setAdapter(assignedtoadapter);
 
         havepermanentaddress_radiobutton.setChecked(false);
         permanent_address_frame.setVisibility(View.GONE);
         HaveClickListener permanentHave = new HaveClickListener(permanent_address_frame);
         havepermanentaddress_radiobutton.setOnClickListener(permanentHave);
 
-        ArrayAdapter<SpinnerItem> assignedto_permanet = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
-        assignedto_permanet.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedto_permanet.addAll(getAssignedToType());
-        assigneto_permanent_spinner.setAdapter(assignedto_permanet);
+
+        assigneto_permanent_spinner.setAdapter(assignedtoadapter);
+
+        investigaionstatusrow_permanent_tablerow.setVisibility(View.GONE);
+        statusrow_office_tablerow.setVisibility(View.GONE);
+    }
 
 
+
+    public void CaseEditResponesReader(String html){
+        Log.e(LOG_TAG,"called CaseEDit");
+        Document document = Jsoup.parse(html);
+        Element element = document.getElementById("ClientId");
+        if(element == null){
+            Log.e(LOG_TAG,"CaseEdit not loaded");
+            Element useridnode_error = document.getElementById("UserName");
+            if (useridnode_error == null) {
+                //noservice
+                Log.e(LOG_TAG, "problem with service.retrying");
+                //progressBar.setVisibility(View.GONE);
+                Toast.makeText(activity, "Service Unavailable! Please try later", Toast.LENGTH_SHORT).show();
+            } else {
+                //credentials mismatch
+                Log.e(LOG_TAG, "not LoggedIn. try to login");
+                activity.login();
+                loadData();
+            }
+        }else{
+            Log.e(LOG_TAG,"CaseEdit loaded");
+            //progressBar.setVisibility(View.GONE);
+            Map map = parseAData(html);
+            update(map);
+        }
+    }
+
+
+    private void update(Map<String,String> map){
+        spinnerupdated=true ;
+        String client =  map.get(CaseBasicId.client);
+        int position = ((ArrayAdapter)client_spinner.getAdapter()).getPosition(new SpinnerItem(client));
+        client_spinner.setSelection(position);
+
+
+        ((SpinnerSelectedListener)client_spinner.getOnItemSelectedListener()).setNextDefault(map.get(CaseBasicId.branch));
+
+
+        ((SpinnerSelectedListener)branch_spinner.getOnItemSelectedListener()).setNextDefault(map.get(CaseBasicId.contactPerson));
+
+
+        String loantype =  map.get(CaseBasicId.loantype);
+        int positinloantype = ((ArrayAdapter)loan_type_spinner.getAdapter()).getPosition(new SpinnerItem(loantype));
+        loan_type_spinner.setSelection(positinloantype);
+
+        pickup_date_edittext.setText(map.get(CaseBasicId.pickupDate));
+
+        int radiobutton = CaseBasicId.isReVerification.equalsIgnoreCase("Yes")?R.id.radio_button_yes_reverification:R.id.radio_button_no_reverification;
+        reverification_radiogroup.check(radiobutton);
+
+        String pickup =  map.get(CaseBasicId.pickupBy);
+        int positionpickup = ((ArrayAdapter)pickupby_spinner.getAdapter()).getPosition(new SpinnerItem(pickup));
+        pickupby_spinner.setSelection(positionpickup);
+
+        loanamount_edittext.setText(map.get(CaseBasicId.loanAmount));
+        loantenure_edittext.setText(map.get(CaseBasicId.loanTenure));
+        applicationrefno_edittext.setText(map.get(CaseBasicId.applicationRefNo));
+        status_textview.setText(map.get(CaseBasicId.status));
+        email_senton_textview.setText(map.get(CaseBasicId.emailSentOn));
+
+        name_resident_edittext.setText(map.get(ResidentialId.name));
+        dob_edittext.setText(map.get(ResidentialId.dateOfBirth));
+        pan_edittext.setText(map.get(ResidentialId.pan));
+
+        int gender = ResidentialId.gender.equalsIgnoreCase("Male")? R.id.radio_button_male_residential_detail:R.id.radio_button_female_residential_detail ;
+        gender_radiogroup.check(gender);
+
+        address_residential_edittext.setText(map.get(ResidentialId.address));
+        city_residential_edittext.setText(map.get(ResidentialId.city));
+        state_residential_edittxt.setText(map.get(ResidentialId.state));
+        pin_residential_edittext.setText(map.get(ResidentialId.pin));
+        email_residential_edittext.setText(map.get(ResidentialId.email));
+        mobile_residential_edittext.setText(map.get(ResidentialId.mobile));
+        phone_residential_edittext.setText(map.get(ResidentialId.phone));
+
+
+        String assignedto =  map.get(ResidentialId.assignedTo);
+        int positionassignedto = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
+        assignedto_residential_spinner.setSelection(positionassignedto);
+
+        investigationstatus_residential.setText(map.get(ResidentialId.status));
+
+        boolean haveCompany = !map.get(OfficeId.companyAddressId).equalsIgnoreCase("0");
+        havecompany_radiobutton.setChecked(haveCompany);
+        if(haveCompany){
+            applicant_office_frame.setVisibility(View.VISIBLE);
+            needVerificatin_office_row.setVisibility(View.GONE);
+            statusrow_office_tablerow.setVisibility(View.VISIBLE);
+        }
+
+        companyname_office_edittext.setText(map.get(OfficeId.companyName));
+        address_office_edittext.setText(map.get(OfficeId.address));
+        city_office_edittext.setText(map.get(OfficeId.city));
+        state_office_edittext.setText(map.get(OfficeId.state));
+        mobile_office_edittext.setText(map.get(OfficeId.mobile));
+        phone_office_edittext.setText(map.get(OfficeId.phone));
+        status_office_textview.setText(map.get(OfficeId.status));
+
+        String assignedtooffice =  map.get(ResidentialId.assignedTo);
+        int positionassignedtooffice = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtooffice));
+        assignedto_office_spinner.setSelection(positionassignedtooffice);
+
+    }
+
+
+
+    private Map<String,String> parseAData(String html){
+        Map<String,String> map = new HashMap<>();
+
+        Document document = Jsoup.parse(html);
+        String emailsent = document.select("#body > section > form > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > aside > table > tbody > tr:nth-child(6) > td.table-number > table > tbody > tr > td:nth-child(3)").text();
+        String residence = document.select("#body > section > form > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > aside > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(8) > td:nth-child(4)").text();
+        String office = document.select("#trOfficeAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
+        String permanent = document.select("#trPerAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
+        map.put("emailsentstatus",emailsent);
+        map.put("ResidenceStatus",residence);
+        map.put("officestatus",office);
+        map.put("permanentstatus",permanent);
+
+        Element body = document.getElementById("body");
+        Element form = body.getElementsByTag("form").first();
+        Elements elements = form.getElementsByTag("input");
+        for(Element input:elements){
+            map.put(input.id(),input.val());
+            //Log.e(LOG_TAG,input.id()+" -> "+input.val());
+        }
+
+        Elements selects = form.getElementsByTag("select");
+        for(Element select:selects){
+            String id = select.id();
+            //Log.e(LOG_TAG,id);
+            try{
+                String value = select.getElementsByAttributeValue("selected","selected").first().text();
+                //Log.e(LOG_TAG,value);
+                map.put(id,value);
+            }catch (NullPointerException npe){
+                npe.printStackTrace();
+            }
+        }
+
+        return map;
+    }
+
+    @Override
+    public void onPositiveResponse(final String htmldoc) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                CaseEditResponesReader(htmldoc);
+
+            }
+        });
     }
 }

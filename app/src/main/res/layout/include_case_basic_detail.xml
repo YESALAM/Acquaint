@@ -176,6 +176,8 @@
             android:id="@+id/email_senton_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
+            android:textSize="18sp"
             />
     </TableRow>
     <TableRow
@@ -192,6 +194,7 @@
             android:id="@+id/status_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/StatusTheme"
             />
     </TableRow>
 

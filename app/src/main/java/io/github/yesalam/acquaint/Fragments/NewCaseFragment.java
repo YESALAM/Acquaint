@@ -30,6 +30,7 @@ import java.util.List;
 
 import io.github.yesalam.acquaint.Activity.CaseActivity;
 import io.github.yesalam.acquaint.Adapters.CaseRecyclerAdapter;
+import io.github.yesalam.acquaint.BaseWebActivity;
 import io.github.yesalam.acquaint.Pojo.Card.CasePojo;
 import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.R;
@@ -112,7 +113,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
                 .url(ACQUAINT_URL+NEW_CASES_URL)
                 .build();
 
-        activity.okHttpClient.newCall(request).enqueue(this);
+        BaseWebActivity.okHttpClient.newCall(request).enqueue(this);
     }
 
     @Override

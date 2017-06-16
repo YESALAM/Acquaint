@@ -20,7 +20,11 @@ import android.widget.TextView;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import io.github.yesalam.acquaint.Adapters.FragmentAdapter;
@@ -28,6 +32,7 @@ import io.github.yesalam.acquaint.BaseWebActivity;
 import io.github.yesalam.acquaint.Fragments.CaseBasicDetail;
 import io.github.yesalam.acquaint.Fragments.CaseCoApplicant;
 import io.github.yesalam.acquaint.Fragments.CaseGuarantor;
+import io.github.yesalam.acquaint.Pojo.ApplicantResidentDetail;
 import io.github.yesalam.acquaint.Pojo.CaseBasicDetailPojo;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Util.*;
@@ -125,6 +130,35 @@ public class IndiCaseActivity extends BaseWebActivity {
 
 
 
+    private void parseAData(String html){
+        Map<String,String> map = new HashMap<>();
+
+        Document document = Jsoup.parse(html);
+        String emailsent = document.select("#body > section > form > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > aside > table > tbody > tr:nth-child(6) > td.table-number > table > tbody > tr > td:nth-child(3)").text();
+        String residence = document.select("#body > section > form > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > aside > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(8) > td:nth-child(4)").text();
+        String office = document.select("#trOfficeAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
+        String permanent = document.select("#trPerAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
+        map.put("emailsentstatus",emailsent);
+        map.put("residencestatus",residence);
+        map.put("officestatus",office);
+        map.put("permanentstatus",permanent);
+
+        Element body = document.getElementById("body");
+        Element form = body.getElementsByTag("form").first();
+        Elements elements = form.getElementsByTag("input");
+        for(Element input:elements){
+            map.put(input.id(),input.val());
+        }
+
+        Elements selects = form.getElementsByTag("select");
+        for(Element select:selects){
+            String id = select.id();
+            String value = select.getElementsByAttributeValue("selected","selected").first().text();
+            map.put(id,value);
+        }
+
+
+    }
 
 
     private void parseData(String html){
@@ -146,7 +180,30 @@ public class IndiCaseActivity extends BaseWebActivity {
         detail.loanTenure = tbody.getElementById("LoanTenure").val();
         detail.applicationRefNo = tbody.getElementById("ApplicationRefNo").val();
         detail.pickupBy = tbody.getElementById("PunchedBy").getElementsByAttributeValue(selected,selected).first().text();
-        detail.status = tbody.getElementById("Status").val();
+        Element status = tbody.getElementById("Status");
+        detail.status = status.val();
+        Element email = status.parent().parent().lastElementSibling();
+        detail.emailSentOn = email.text();
+
+
+        ApplicantResidentDetail ardetail = new ApplicantResidentDetail();
+        ardetail.name = tbody.getElementById("Name").val();
+        ardetail.dateOfBirth = tbody.getElementById("DOB").val();
+        ardetail.pan = tbody.getElementById("DOB").val();
+        ardetail.gender = tbody.getElementById("Gender").getElementsByAttributeValue(selected,selected).first().text();
+        ardetail.address = tbody.getElementById("Address").val();
+        ardetail.city = tbody.getElementById("City").val();
+        ardetail.state = tbody.getElementById("State").val();
+        ardetail.pin = tbody.getElementById("Pin").val();
+        ardetail.email = tbody.getElementById("EMail").val();
+        ardetail.mobile = tbody.getElementById("Mobile").val();
+        ardetail.phone = tbody.getElementById("Phone").val();
+        ardetail.assignedTo = tbody.getElementById("AssignedTo").getElementsByAttributeValue(selected,selected).first().text();
+        ardetail.status = tbody.getElementById("AssignedTo").parent().parent().lastElementSibling().text();
+        ardetail.haveCompany = tbody.getElementById("HaveCompanyAddress").text();
+
+
+
 
     }
 

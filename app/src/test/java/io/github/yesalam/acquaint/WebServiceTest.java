@@ -26,44 +26,18 @@ public class WebServiceTest {
     WebService webService = new WebService();
 
     @Test
-    public void loginTest() throws Exception {
-        String UrlParam = "UserName=Gwalioroffice1&Password=Mohnish123&RememberMe=false";
-        HashMap<String,String> map = new HashMap();
-        map.put("UserName","Gwalioroffice1");
-        map.put("Password","Mohnish123");
-        map.put("RememberMe","true");
-        map.put("RememberMe","false");
-        //webService.sendGet(ACQUAINT_URL);
-        String response = webService.sendPost(ACQUAINT_URL,getPostDataString(map));
+    public void test(){
+        String select = "<select class=\"data-txt Impair valid\" data-val=\"true\" data-val-number=\"The field Client must be a number.\" data-val-required=\"Please select a Client.\" id=\"ClientId\" name=\"ClientId\"><option value=\"\">Select a Client</option>\n" +
+                "<option value=\"101\">Indiabulls</option>\n" +
+                "<option selected=\"selected\" value=\"100\">State Bank of India</option>\n" +
+                "</select>";
 
-        Document document = Jsoup.parse(response);
-        Element elementuser = document.getElementById("UserName");
-        Element elementwel = document.getElementById("wel");
-        assertNotNull(elementuser);
-        assertNotNull(elementwel);
+        Document document = Jsoup.parse(select);
+        Element element = document.getElementsByTag("select").first();
+        Element selected = element.getElementsByAttributeValue("selected","selected").first();
+        String value = selected.text();
+        assertEquals(value,"State Bank of India");
 
-
-    }
-
-    @Test
-    public void testPost() throws IOException {
-        String response = webService.testPost(ACQUAINT_URL);
-        Document document = Jsoup.parse(response);
-        Element elementuser = document.getElementById("UserName");
-        Element elementwel = document.getElementById("wel");
-        assertNotNull(elementuser);
-        assertNotNull(elementwel);
-    }
-
-    @Test
-    public void postTest() throws UnsupportedEncodingException {
-        HashMap<String,String> map = new HashMap();
-        map.put("name","sadare");
-        map.put("email","abc@gmail.com");
-
-        String url = "http://localhost/welcome.php";
-        String response = webService.sendPost(url,getPostDataString(map));
-        assertEquals("sadare",response);
     }
 
 

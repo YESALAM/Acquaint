@@ -27,6 +27,7 @@ import java.io.IOException;
 import io.github.yesalam.acquaint.Util.Util;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Dispatcher;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -47,8 +48,10 @@ public abstract class BaseWebActivity extends AppCompatActivity implements Callb
     String LOG_TAG = "BaseWebActivity";
 
     public SharedPreferences app_preferences;
-    public OkHttpClient okHttpClient;
+    public static OkHttpClient okHttpClient;
     public static int count = 0;
+    public static boolean logged = false ;
+
 
 
     @Override
@@ -68,14 +71,19 @@ public abstract class BaseWebActivity extends AppCompatActivity implements Callb
         //CookieJar for webclient
         ClearableCookieJar cookieJar =
                 new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.setMaxRequestsPerHost(1);
+        dispatcher.setMaxRequests(1);
         okHttpClient = new OkHttpClient.Builder()
                 .cookieJar(cookieJar)
+                .dispatcher(dispatcher)
                 .build();
         app_preferences =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     }
 
     public void login(){
+        if(logged) return;
         String userid = app_preferences.getString(USER_ID_KEY, "NA");
         String password = app_preferences.getString(PASSWORD_KEY, "NA");
         if (userid.equalsIgnoreCase("NA")) {
@@ -106,14 +114,7 @@ public abstract class BaseWebActivity extends AppCompatActivity implements Callb
     public void onResponse(Call call,final Response response) throws IOException {
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
         final String html = response.body().string();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                loginResponseReader(html);
-
-            }
-        });
+        loginResponseReader(html);
     }
 
 
@@ -122,6 +123,7 @@ public abstract class BaseWebActivity extends AppCompatActivity implements Callb
         Log.e(LOG_TAG,"login request");
         Element welcome = document.getElementById("wel");
         if (welcome == null) {
+            logged = false ;
             Element useridnode_error = document.getElementById("UserName");
             if (useridnode_error == null) {
                 //noservice
@@ -130,7 +132,12 @@ public abstract class BaseWebActivity extends AppCompatActivity implements Callb
                     login();
                 }else{
                     count=0;
-                    Toast.makeText(this, "Service Unavailable! Please Try later", Toast.LENGTH_LONG).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Service Unavailable! Please Try later", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             } else {
                 //credentials mismatch
@@ -141,6 +148,7 @@ public abstract class BaseWebActivity extends AppCompatActivity implements Callb
         } else {
             count=0;
             //logged in
+            logged = true ;
             Log.e(LOG_TAG, "login successfull.New Session started ");
             //NEw session started
         }

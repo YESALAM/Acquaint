@@ -100,6 +100,7 @@
 
 
         <TableRow
+            android:id="@+id/office_needVerification_row"
             android:layout_marginTop="@dimen/spinner_marginTop">
 
                 <TextView
@@ -130,7 +131,7 @@
 
         <TableRow
             android:id="@+id/status_row_office_detail"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -140,7 +141,8 @@
             <TextView
                 android:id="@+id/status_office_detail_textview"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="@style/StatusTheme" />
         </TableRow>
 
 
