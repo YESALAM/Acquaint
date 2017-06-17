@@ -183,6 +183,8 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
 
     String LOG_TAG = "CaseBasicDetail" ;
     boolean spinnerupdated=false ;
+    String branch;
+    String contact;
 
     IndiCaseActivity activity;
 
@@ -198,8 +200,9 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         View view = inflater.inflate(R.layout.fragment_case_basic_detail,container,false);
         ButterKnife.bind(this,view);
         prepareForm();
-
-        loadData();
+        if(activity.formMap!=null){
+            update(activity.formMap);
+        }
         return view;
     }
 
@@ -233,7 +236,21 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         branchadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         branchadapter.add(new SpinnerItem("Select Branch","0"));
         branch_spinner.setAdapter(branchadapter);
-        branch_spinner.setOnItemSelectedListener(new SpinnerSelectedListener(false,contact_person_spinner,null));
+        branch_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
+                int val = Integer.parseInt(item.getValue());
+                if (val == 0) return;
+                String jsonString = getBranchHash().get(val);
+                spinnerUpdate(jsonString,contact,contact_person_spinner,contactadapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
 
@@ -243,7 +260,21 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         clientadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         clientadapter.addAll(getClientType());
         client_spinner.setAdapter(clientadapter);
-        client_spinner.setOnItemSelectedListener(new SpinnerSelectedListener(true,branch_spinner,null));
+        client_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
+                int val = Integer.parseInt(item.getValue());
+                if (val == 0) return;
+                String jsonString = getClientHash().get(val);
+                spinnerUpdate(jsonString,branch,branch_spinner,branchadapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
 
@@ -297,45 +328,42 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
     }
 
 
-
-    public void CaseEditResponesReader(String html){
-        Log.e(LOG_TAG,"called CaseEDit");
-        Document document = Jsoup.parse(html);
-        Element element = document.getElementById("ClientId");
-        if(element == null){
-            Log.e(LOG_TAG,"CaseEdit not loaded");
-            Element useridnode_error = document.getElementById("UserName");
-            if (useridnode_error == null) {
-                //noservice
-                Log.e(LOG_TAG, "problem with service.retrying");
-                //progressBar.setVisibility(View.GONE);
-                Toast.makeText(activity, "Service Unavailable! Please try later", Toast.LENGTH_SHORT).show();
-            } else {
-                //credentials mismatch
-                Log.e(LOG_TAG, "not LoggedIn. try to login");
-                activity.login();
-                loadData();
+    private void spinnerUpdate(String jsonString,String value,Spinner spinner,ArrayAdapter adapter){
+        try {
+            JSONArray array = new JSONArray(jsonString);
+            ArrayList<SpinnerItem> list = new ArrayList<SpinnerItem>();
+            int positionBranch = 0 ;
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                String id = object.getString("id").trim();
+                String name = object.getString("name");
+                if(id.equalsIgnoreCase(value.trim())) positionBranch = i ;
+                list.add(new SpinnerItem(name, id));
             }
-        }else{
-            Log.e(LOG_TAG,"CaseEdit loaded");
-            //progressBar.setVisibility(View.GONE);
-            Map map = parseAData(html);
-            update(map);
+            adapter.clear();
+            adapter.addAll(list);
+            adapter.notifyDataSetChanged();
+            if(value==null)return;
+            spinner.setSelection(positionBranch);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
 
-    private void update(Map<String,String> map){
+
+
+    public void update(Map<String,String> map){
         spinnerupdated=true ;
         String client =  map.get(CaseBasicId.client);
-        int position = ((ArrayAdapter)client_spinner.getAdapter()).getPosition(new SpinnerItem(client));
-        client_spinner.setSelection(position);
+        int positinclient = ((ArrayAdapter)client_spinner.getAdapter()).getPosition(new SpinnerItem(client));
+        client_spinner.setSelection(positinclient);
+
+        branch = map.get(CaseBasicId.branch);
 
 
-        ((SpinnerSelectedListener)client_spinner.getOnItemSelectedListener()).setNextDefault(map.get(CaseBasicId.branch));
-
-
-        ((SpinnerSelectedListener)branch_spinner.getOnItemSelectedListener()).setNextDefault(map.get(CaseBasicId.contactPerson));
+        contact = map.get(CaseBasicId.contactPerson);
 
 
         String loantype =  map.get(CaseBasicId.loantype);
@@ -348,6 +376,7 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         reverification_radiogroup.check(radiobutton);
 
         String pickup =  map.get(CaseBasicId.pickupBy);
+        Log.e(LOG_TAG,map.get(CaseBasicId.pickupBy));
         int positionpickup = ((ArrayAdapter)pickupby_spinner.getAdapter()).getPosition(new SpinnerItem(pickup));
         pickupby_spinner.setSelection(positionpickup);
 
@@ -361,7 +390,8 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         dob_edittext.setText(map.get(ResidentialId.dateOfBirth));
         pan_edittext.setText(map.get(ResidentialId.pan));
 
-        int gender = ResidentialId.gender.equalsIgnoreCase("Male")? R.id.radio_button_male_residential_detail:R.id.radio_button_female_residential_detail ;
+
+        int gender = map.get(ResidentialId.gender).equalsIgnoreCase("M")? R.id.radio_button_male_residential_detail:R.id.radio_button_female_residential_detail ;
         gender_radiogroup.check(gender);
 
         address_residential_edittext.setText(map.get(ResidentialId.address));
@@ -399,6 +429,8 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         int positionassignedtooffice = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtooffice));
         assignedto_office_spinner.setSelection(positionassignedtooffice);
 
+
+
     }
 
 
@@ -420,8 +452,8 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         Element form = body.getElementsByTag("form").first();
         Elements elements = form.getElementsByTag("input");
         for(Element input:elements){
-            map.put(input.id(),input.val());
-            //Log.e(LOG_TAG,input.id()+" -> "+input.val());
+            map.put(input.attr("name"),input.val());
+            //Log.e(LOG_TAG,input.attr("name")+" -> "+input.val());
         }
 
         Elements selects = form.getElementsByTag("select");
@@ -446,7 +478,10 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
             @Override
             public void run() {
 
-                CaseEditResponesReader(htmldoc);
+                Log.e(LOG_TAG,"CaseEdit loaded");
+                //progressBar.setVisibility(View.GONE);
+                Map map = parseAData(htmldoc);
+                update(map);
 
             }
         });

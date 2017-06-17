@@ -5,6 +5,13 @@ package io.github.yesalam.acquaint.Util;
  */
 
 public class CaseBasicId {
+    static public String id = "Id" ;
+    static public String hftab_id = "hftab_id";
+    static public String action_changeTab = "action:ChangeTab1";
+    static public String requestVerificationToken = "__RequestVerificationToken" ;
+    static public String personId = "PersonId";
+    static public String addressId = "AddressId";
+    static public String companyaddressid = "CompanyAddressId";
     static public String client = "ClientId";
     static public String branch = "BranchId";
     static public String contactPerson = "ContactId";

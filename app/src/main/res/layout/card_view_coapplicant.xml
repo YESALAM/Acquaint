@@ -39,7 +39,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/CardHeaderText"
-                    android:hint="RANJANA RAJPUT"
                     android:text="RANJANA RAJPUT" />
             </TableRow>
 
@@ -57,7 +56,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/CardHeaderText"
-                    android:hint="ARYAN VILLA KESHAV BAGH KOTESHWAR COLONY KOTESHWAR TEMPLE "
                     android:text="ARYAN VILLA KESHAV BAGH KOTESHWAR COLONY KOTESHWAR TEMPLE "
                     />
             </TableRow>
@@ -76,7 +74,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:hint="123456789"
                     android:text="123456789" />
             </TableRow>
 
@@ -92,8 +89,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/assigned_to_coapplicant_card"
-
-                    android:hint="Some Employee"
                     android:text="Some Employee"
                     />
             </TableRow>
@@ -110,8 +105,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/status_coapplicant_card"
-
-                    android:hint="New"
                     android:text="New"
                     />
             </TableRow>
@@ -126,8 +119,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/companey_name_coapplicant_card"
-
-                    android:hint="Some Company"
                     android:text="Some Company"
                     />
             </TableRow>
@@ -142,8 +133,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/company_address_coapplicant_card"
-
-                    android:hint="ARYAN VILLA KESHAV BAGH KOTESHWAR COLONY KOTESHWAR TEMPLE"
                     android:text="ARYAN VILLA KESHAV BAGH KOTESHWAR COLONY KOTESHWAR TEMPLE"
                     />
             </TableRow>
@@ -158,8 +147,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/company_assigned_to_coapplicant_card"
-
-                    android:hint="Some employe"
                     android:text="Some employe"
                     />
             </TableRow>
@@ -175,8 +162,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/company_status_coapplicant_card"
-
-                    android:hint="In Progress "
                     android:text="In Progress "
                     />
             </TableRow>

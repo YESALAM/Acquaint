@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -23,7 +25,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -33,19 +37,31 @@ import io.github.yesalam.acquaint.Fragments.CaseBasicDetail;
 import io.github.yesalam.acquaint.Fragments.CaseCoApplicant;
 import io.github.yesalam.acquaint.Fragments.CaseGuarantor;
 import io.github.yesalam.acquaint.Pojo.ApplicantResidentDetail;
+import io.github.yesalam.acquaint.Pojo.Card.CoApplicantPojo;
 import io.github.yesalam.acquaint.Pojo.CaseBasicDetailPojo;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.CaseBasicId;
 import io.github.yesalam.acquaint.Util.Util.*;
+import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.FormBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
 import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
 import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 
-public class IndiCaseActivity extends BaseWebActivity {
+public class IndiCaseActivity extends BaseWebActivity implements WebHelper.CallBack {
 
     public String caseid;
     String LOG_TAG = "IndiCaseActivity";
+    public Map<String,String> formMap;
+    public List co_applicants ;
+    public boolean caseUpdate;
+    String CASE_EDIT_URL = "/Users/Cases/Edit/" ;
+    WebHelper webHelper;
+    CallType callType ;
 
 
     @Override
@@ -74,16 +90,22 @@ public class IndiCaseActivity extends BaseWebActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-
+        webHelper = WebHelper.getInstance(this);
+        loadCasePage();
     }
 
 
-    private void loadCasePage() {
+    public void loadCasePage() {
+        callType = CallType.BASIC_DETAIL;
         Log.e(LOG_TAG, "loading case page");
-        final String case_url = ACQUAINT_URL + "/Users/Cases/Edit/" + "4644878";
-        Log.e(LOG_TAG, "loading url " + case_url);
+        //final String CASE_EDIT_URL = "/Users/Cases/Edit/" + caseid;
 
+        Log.e(LOG_TAG, "loading url " + ACQUAINT_URL+CASE_EDIT_URL+caseid);
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL+CASE_EDIT_URL+caseid)
+                .build();
 
+        webHelper.requestCall(request,this);
     }
 
     private void setupViewPager(ViewPager viewPager, final FloatingActionButton fab) {
@@ -130,7 +152,7 @@ public class IndiCaseActivity extends BaseWebActivity {
 
 
 
-    private void parseAData(String html){
+    private Map<String,String> parseAData(String html){
         Map<String,String> map = new HashMap<>();
 
         Document document = Jsoup.parse(html);
@@ -139,7 +161,7 @@ public class IndiCaseActivity extends BaseWebActivity {
         String office = document.select("#trOfficeAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
         String permanent = document.select("#trPerAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
         map.put("emailsentstatus",emailsent);
-        map.put("residencestatus",residence);
+        map.put("ResidenceStatus",residence);
         map.put("officestatus",office);
         map.put("permanentstatus",permanent);
 
@@ -147,64 +169,119 @@ public class IndiCaseActivity extends BaseWebActivity {
         Element form = body.getElementsByTag("form").first();
         Elements elements = form.getElementsByTag("input");
         for(Element input:elements){
-            map.put(input.id(),input.val());
+            map.put(input.attr("name"),input.val());
+            //Log.e(LOG_TAG,input.id()+" -> "+input.val());
         }
 
         Elements selects = form.getElementsByTag("select");
         for(Element select:selects){
             String id = select.id();
-            String value = select.getElementsByAttributeValue("selected","selected").first().text();
-            map.put(id,value);
+            //Log.e(LOG_TAG,id);
+            try{
+                String value = select.getElementsByAttributeValue("selected","selected").first().attr("value");
+                //Log.e(LOG_TAG,value);
+                map.put(id,value);
+            }catch (NullPointerException npe){
+                npe.printStackTrace();
+            }
         }
 
 
+        return map;
     }
 
 
-    private void parseData(String html){
+    @Override
+    public void onPositiveResponse(String htmldoc) {
+        switch (callType){
+            case BASIC_DETAIL:
+                formMap = parseAData(htmldoc);
+                loadCoApplicant();
+                final CaseBasicDetail fragment = (CaseBasicDetail) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.viewpager+":"+0);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(fragment!=null)fragment.update(formMap);
+                    }
+                });
+                break;
+            case CO_APPLICANT:
+                co_applicants = parseCoApplicant(htmldoc);
+                final CaseCoApplicant caseCoApplicant = (CaseCoApplicant) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.viewpager+":"+1);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(caseCoApplicant!=null)caseCoApplicant.update(co_applicants);
+                    }
+                });
+                break;
+            case GUARANTOR:
+
+                break;
+        }
+
+    }
+
+    public void loadCoApplicant(){
+        callType = CallType.CO_APPLICANT;
+        FormBody.Builder formBody = new FormBody.Builder();
+        formBody.add(CaseBasicId.requestVerificationToken,formMap.get(CaseBasicId.requestVerificationToken));
+        formBody.add(CaseBasicId.id,formMap.get(CaseBasicId.id));
+        formBody.add(CaseBasicId.hftab_id,formMap.get(CaseBasicId.hftab_id));
+        formBody.add(CaseBasicId.personId,formMap.get(CaseBasicId.personId));
+        formBody.add(CaseBasicId.addressId,formMap.get(CaseBasicId.addressId));
+        formBody.add(CaseBasicId.companyaddressid,formMap.get(CaseBasicId.companyaddressid));
+        formBody.add(CaseBasicId.action_changeTab,formMap.get(CaseBasicId.action_changeTab));
+
+        RequestBody requestBody =  formBody.build();
+
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL+CASE_EDIT_URL+caseid)
+                .post(requestBody)
+                .build();
+        webHelper.requestCall(request,this);
+    }
+
+    private List parseCoApplicant(String html){
+        List<CoApplicantPojo> list = new ArrayList<>();
         Document document = Jsoup.parse(html);
-        Element body = document.getElementById("body");
-        Element form = body.getElementsByTag("form").first();
-        Log.e(LOG_TAG,form.val());
-        Element tbody = form.getElementsByTag("tbody").first();
-        //CaseBasicDetailPojo
-        CaseBasicDetailPojo detail = new CaseBasicDetailPojo();
-        String selected = "selected" ;
-        detail.client = tbody.getElementById("ClientId").getElementsByAttributeValue(selected,selected).first().text();
-        detail.branch = tbody.getElementById("BranchId").getElementsByAttributeValue(selected,selected).first().text();
-        detail.contactPerson = tbody.getElementById("ContactId").getElementsByAttributeValue(selected,selected).first().text();
-        detail.loantype = tbody.getElementById("LoanType").getElementsByAttributeValue(selected,selected).first().text();
-        detail.pickupDate = tbody.getElementById("PickupDate").val();
-        detail.isReVerification = tbody.getElementById("isReverification").getElementsByAttributeValue(selected,selected).text() == "Yes" ?true :false;
-        detail.loanAmount = tbody.getElementById("LoanAmount").val();
-        detail.loanTenure = tbody.getElementById("LoanTenure").val();
-        detail.applicationRefNo = tbody.getElementById("ApplicationRefNo").val();
-        detail.pickupBy = tbody.getElementById("PunchedBy").getElementsByAttributeValue(selected,selected).first().text();
-        Element status = tbody.getElementById("Status");
-        detail.status = status.val();
-        Element email = status.parent().parent().lastElementSibling();
-        detail.emailSentOn = email.text();
+        Element element = document.getElementById("btnaddcoapplicant");
+        if(element!= null) {
+            Log.e(LOG_TAG, "Oh hell!!!!!!!!!!!!!!!!!!");
+            Element tbody = document.select("#body > section > form > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > aside > table > tbody").first();
+            Elements rows = tbody.getElementsByTag("tr");
+            for(int i=1;i<rows.size();i++){
+                CoApplicantPojo pojo = new CoApplicantPojo();
+                Elements datarows = rows.get(i).getElementsByTag("td");
+                pojo.name = datarows.get(0).text();
+                Log.e(LOG_TAG,"CoApplicant : "+pojo.name);
+                String onClick = datarows.get(0).getElementsByTag("a").first().attr("onclick");
+                pojo.addressid = onClick.substring(17,24);
+                pojo.caseid = caseid ;
+                pojo.address = datarows.get(1).text();
+                pojo.mobile = datarows.get(2).text();
+                pojo.assignedto = datarows.get(3).text();
+                pojo.status = datarows.get(4).text();
+                pojo.company_name = datarows.get(5).text();
+                pojo.company_address = datarows.get(6).text();
+                pojo.company_assignedto = datarows.get(7).text();
+                pojo.company_status = datarows.get(8).text();
+                list.add(pojo);
+            }
 
 
-        ApplicantResidentDetail ardetail = new ApplicantResidentDetail();
-        ardetail.name = tbody.getElementById("Name").val();
-        ardetail.dateOfBirth = tbody.getElementById("DOB").val();
-        ardetail.pan = tbody.getElementById("DOB").val();
-        ardetail.gender = tbody.getElementById("Gender").getElementsByAttributeValue(selected,selected).first().text();
-        ardetail.address = tbody.getElementById("Address").val();
-        ardetail.city = tbody.getElementById("City").val();
-        ardetail.state = tbody.getElementById("State").val();
-        ardetail.pin = tbody.getElementById("Pin").val();
-        ardetail.email = tbody.getElementById("EMail").val();
-        ardetail.mobile = tbody.getElementById("Mobile").val();
-        ardetail.phone = tbody.getElementById("Phone").val();
-        ardetail.assignedTo = tbody.getElementById("AssignedTo").getElementsByAttributeValue(selected,selected).first().text();
-        ardetail.status = tbody.getElementById("AssignedTo").parent().parent().lastElementSibling().text();
-        ardetail.haveCompany = tbody.getElementById("HaveCompanyAddress").text();
-
-
-
-
+        }
+        if(list.size()==0){
+            CoApplicantPojo pojo = new CoApplicantPojo();
+            pojo.caseid = caseid ;
+            list.add(pojo);
+        }
+        return list;
     }
 
+    private enum CallType{
+        BASIC_DETAIL,
+        CO_APPLICANT,
+        GUARANTOR
+    }
 }

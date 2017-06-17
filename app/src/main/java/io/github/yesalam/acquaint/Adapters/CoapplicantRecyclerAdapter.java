@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +37,15 @@ public class CoapplicantRecyclerAdapter extends RecyclerView.Adapter<Coapplicant
         return new ViewHolder(view);
     }
 
+    public void setDataset(List list){
+        this.list = list ;
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
+
         if(list.size() == 1 && list.get(0).addressid == null){
+            Log.e("Adapter","address id null");
             holder.coapplicant_table.setVisibility(View.GONE);
             holder.no_coapplicant.setVisibility(View.VISIBLE);
             holder.view.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +57,9 @@ public class CoapplicantRecyclerAdapter extends RecyclerView.Adapter<Coapplicant
                 }
             });
         }else {
+            Log.e("Adapter","not null");
+            holder.coapplicant_table.setVisibility(View.VISIBLE);
+            holder.no_coapplicant.setVisibility(View.GONE);
 
             holder.name.setText(list.get(position).name);
             holder.address.setText(list.get(position).address);

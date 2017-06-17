@@ -355,7 +355,7 @@ public class Util {
         list.add(new SpinnerItem("Year","0"));
         int year = Calendar.getInstance().get(Calendar.YEAR);
         for (int i = year; i >= 1900; i--) {
-            list.add(new SpinnerItem(String.valueOf(i)));
+            list.add(new SpinnerItem(String.valueOf(i),String.valueOf(i)));
         }
 
         return list;

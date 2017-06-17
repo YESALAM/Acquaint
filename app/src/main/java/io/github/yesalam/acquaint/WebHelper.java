@@ -18,17 +18,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Dispatcher;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
@@ -39,7 +41,7 @@ import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
  */
 
 public class WebHelper implements Callback {
-    String LOG_TAG = "BaseWebActivity";
+    String LOG_TAG = "WebHelper";
 
     public SharedPreferences app_preferences;
     public OkHttpClient okHttpClient;
@@ -48,8 +50,8 @@ public class WebHelper implements Callback {
     private boolean loginrequest = false;
     private boolean ongoingrequest = false;
     private Context context;
-    private Queue<Request> requests = new PriorityQueue<>();
-    private Queue<CallBack> callbacks = new PriorityQueue<>();
+    private Queue<Request> requests = new LinkedList<>();
+    private Queue<CallBack> callbacks = new LinkedList<>();
 
     private static WebHelper helper;
 
@@ -80,6 +82,10 @@ public class WebHelper implements Callback {
     public void requestCall(Request request, CallBack callback) {
         requests.add(request);
         callbacks.add(callback);
+        if(!logged) {
+            login();
+            return;
+        };
         if (!(loginrequest && ongoingrequest)) callNext();
     }
 
@@ -114,9 +120,16 @@ public class WebHelper implements Callback {
     @Override
     public void onResponse(Call call, final Response response) throws IOException {
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-        final String html = response.body().string();
-        if (loginrequest) loginResponseReader(html);
-        else responseReader(html, call, response);
+        ResponseBody body = response.body() ;
+        MediaType type = body.contentType();
+        if(type.type().equalsIgnoreCase("application")){
+            jsonResponseReader(body.string());
+        }else{
+            final String html = body.string();
+            if (loginrequest) loginResponseReader(html);
+            else htmlResponseReader(html, call, response);
+        }
+
     }
 
 
@@ -157,9 +170,9 @@ public class WebHelper implements Callback {
         }
     }
 
-    private void responseReader(String html, Call call, Response response) {
+    private void htmlResponseReader(String html, Call call, Response response) {
         Document document = Jsoup.parse(html);
-        Log.e(LOG_TAG, "received Response");
+        Log.e(LOG_TAG, "Response :"+call.request().url()+" method:"+call.request().method());
         Element body = document.getElementById("body");
         if (body == null) {
             //noservice
@@ -183,10 +196,11 @@ public class WebHelper implements Callback {
                 count = 0;
                 logged = true;
                 Log.e(LOG_TAG, "response OK");
-                CallBack temp = callbacks.remove();
-                requests.remove();
-
-                temp.onPositiveResponse(html);
+                if(!requests.isEmpty()){
+                    CallBack temp = callbacks.remove();
+                    requests.remove();
+                    temp.onPositiveResponse(html);
+                }
 
                 callNext();
             } else {
@@ -202,8 +216,19 @@ public class WebHelper implements Callback {
 
     }
 
+    private void jsonResponseReader(String json){
+        Log.e(LOG_TAG, "json Response OK");
+        if(!requests.isEmpty()){
+            CallBack temp = callbacks.remove();
+            requests.remove();
+            temp.onPositiveResponse(json);
+        }
+    }
+
     private void callNext() {
         if (!requests.isEmpty()) {
+            Request request = requests.peek();
+            Log.e(LOG_TAG,request.url().toString()+"  "+request.method()+" ");
             okHttpClient.newCall(requests.peek()).enqueue(this);
             loginrequest = false;
             ongoingrequest = true;

@@ -18,7 +18,7 @@ public class SpinnerItem {
 
     @Override
     public boolean equals(Object obj) {
-        return this.name.equalsIgnoreCase(obj.toString());
+        return this.value.equalsIgnoreCase(((SpinnerItem)obj).value);
     }
 
     public SpinnerItem(String name, String value){
@@ -26,7 +26,7 @@ public class SpinnerItem {
         this.value = value;
     }
 
-    public SpinnerItem(String name){this.name=name;}
+    public SpinnerItem(String value){this.value=value;}
 
     public String getName(){
         return name;
