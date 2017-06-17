@@ -1,56 +1,38 @@
 package io.github.yesalam.acquaint.Activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
 import io.github.yesalam.acquaint.Adapters.FragmentAdapter;
 import io.github.yesalam.acquaint.BaseWebActivity;
 import io.github.yesalam.acquaint.Fragments.CaseBasicDetail;
 import io.github.yesalam.acquaint.Fragments.CaseCoApplicant;
 import io.github.yesalam.acquaint.Fragments.CaseGuarantor;
-import io.github.yesalam.acquaint.Pojo.ApplicantResidentDetail;
 import io.github.yesalam.acquaint.Pojo.Card.CoApplicantPojo;
-import io.github.yesalam.acquaint.Pojo.CaseBasicDetailPojo;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.CaseBasicId;
-import io.github.yesalam.acquaint.Util.Util.*;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
-import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
-import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
-import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 
 public class IndiCaseActivity extends BaseWebActivity implements WebHelper.CallBack {
 
@@ -152,7 +134,7 @@ public class IndiCaseActivity extends BaseWebActivity implements WebHelper.CallB
 
 
 
-    private Map<String,String> parseAData(String html){
+    private Map<String,String> parseData(String html){
         Map<String,String> map = new HashMap<>();
 
         Document document = Jsoup.parse(html);
@@ -195,7 +177,7 @@ public class IndiCaseActivity extends BaseWebActivity implements WebHelper.CallB
     public void onPositiveResponse(String htmldoc) {
         switch (callType){
             case BASIC_DETAIL:
-                formMap = parseAData(htmldoc);
+                formMap = parseData(htmldoc);
                 loadCoApplicant();
                 final CaseBasicDetail fragment = (CaseBasicDetail) getSupportFragmentManager().findFragmentByTag("android:switcher:"+R.id.viewpager+":"+0);
                 runOnUiThread(new Runnable() {

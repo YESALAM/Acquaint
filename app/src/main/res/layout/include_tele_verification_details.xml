@@ -37,20 +37,7 @@
                     android:text="4860674" />
             </TableRow>
 
-            <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Applicantion Ref No."
 
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/application_refno_tele_verification"
-                    android:text=""
-                    />
-            </TableRow>
 
             <TableRow>
 
@@ -68,6 +55,20 @@
                     style="@style/CardHeaderText"
                     android:hint="BRIJRAJ SINGH"
                     android:text="BRIJRAJ SINGH"
+                    />
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Applicantion Ref No."
+
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/application_refno_tele_verification"
+                    android:text=""
                     />
             </TableRow>
 
