@@ -148,6 +148,7 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         status_residence_spinner.setAdapter(status_adapter);
         status_office_spinner.setAdapter(status_adapter);
 
+        title_textview.setText("Tele Verification "+investigationId);
     }
 
     private void update(Map<String,String> map){
@@ -162,16 +163,8 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         personspoken_residence_edittext.setText(map.get(TeleId.personSpokenTo_residence));
 
         String relationResidence =  map.get(TeleId.relation_residence);
-        int position = 0 ;
-        for(SpinnerItem item:getRelationType()){
-            if(item.getValue().equalsIgnoreCase(relationResidence)){
-
-                break;
-            }
-            position++;
-        }
-        //int positionresidence = ((ArrayAdapter)relation_residence_spinner.getAdapter()).getPosition(new SpinnerItem(relationResidence));
-        relation_residence_spinner.setSelection(position);
+        int positionresidence = ((ArrayAdapter)relation_residence_spinner.getAdapter()).getPosition(new SpinnerItem(relationResidence));
+        relation_residence_spinner.setSelection(positionresidence);
 
 
 
@@ -184,15 +177,7 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         remark_residence_edittext.setText(map.get(TeleId.remark_residence));
 
         String statusResidence =  map.get(TeleId.status_residence);
-        int positionstatus = 0 ;
-        for(SpinnerItem item:getStatusType()){
-            if(item.getValue().equalsIgnoreCase(statusResidence)){
-
-                break;
-            }
-            positionstatus++;
-        }
-        //int positionstatus = ((ArrayAdapter)status_residence_spinner.getAdapter()).getPosition(new SpinnerItem(statusResidence));
+        int positionstatus = ((ArrayAdapter)status_residence_spinner.getAdapter()).getPosition(new SpinnerItem(statusResidence));
         status_residence_spinner.setSelection(positionstatus);
 
         companyname_textview.setText(map.get(TeleId.companyName));
@@ -203,15 +188,7 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         designation_office_edittext.setText(map.get(TeleId.personSpokenTo_residence));
 
         String relationoffice =  map.get(TeleId.relation_office);
-        int officerelation = 0 ;
-        for(SpinnerItem item:getRelationType()){
-            if(item.getValue().equalsIgnoreCase(relationoffice)){
-
-                break;
-            }
-            officerelation++;
-        }
-        //int officerelation = ((ArrayAdapter)relation_office_spinner.getAdapter()).getPosition(new SpinnerItem(relationoffice));
+        int officerelation = ((ArrayAdapter)relation_office_spinner.getAdapter()).getPosition(new SpinnerItem(relationoffice));
         relation_office_spinner.setSelection(officerelation);
 
         firstcallingdate_office_edittext.setText(map.get(TeleId.fdate_office));
@@ -223,15 +200,7 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         remark_office_edittext.setText(map.get(TeleId.remark_office));
 
         String statusoffice =  map.get(TeleId.status_office);
-        int officestatus = 0 ;
-        for(SpinnerItem item:getStatusType()){
-            if(item.getValue().equalsIgnoreCase(statusoffice)){
-
-                break;
-            }
-            officestatus++;
-        }
-        //int officestatus = ((ArrayAdapter)status_office_spinner.getAdapter()).getPosition(new SpinnerItem(statusoffice));
+        int officestatus = ((ArrayAdapter)status_office_spinner.getAdapter()).getPosition(new SpinnerItem(statusoffice));
         status_office_spinner.setSelection(officestatus);
 
 

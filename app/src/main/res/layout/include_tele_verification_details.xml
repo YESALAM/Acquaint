@@ -33,8 +33,7 @@
                     android:id="@+id/caseid_tele_verification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/CardHeaderText"
-                    android:text="4860674" />
+                    style="@style/CardHeaderText" />
             </TableRow>
 
 
@@ -53,8 +52,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/CardHeaderText"
-                    android:hint="BRIJRAJ SINGH"
-                    android:text="BRIJRAJ SINGH"
                     />
             </TableRow>
             <TableRow>
@@ -85,8 +82,7 @@
                     android:id="@+id/applicant_name_tele_verification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="BRIJRAJ SINGH" />
+                    android:fontFamily="sans-serif" />
             </TableRow>
 
             <TableRow>
@@ -101,7 +97,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/coapplicant_tele_verification"
-                    android:text="Some Person"
                     />
             </TableRow>
 
