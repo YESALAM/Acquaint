@@ -15,7 +15,7 @@
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:orientation="vertical"
-           android:layout_marginTop="15dp"
+           android:layout_marginTop="10dp"
            android:padding="@dimen/card_padding"
            android:background="@drawable/frame"
            >
@@ -23,6 +23,7 @@
            <TableLayout
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
+               android:layout_marginTop="10dp"
                android:stretchColumns="1">
 
                <TableRow>
@@ -551,7 +552,7 @@
             android:layout_marginStart="30dp"
             android:background="@android:color/white"
             android:padding="5dp"
-            android:text="Fill if Applicant or Family Member Confirmed" />
+            android:text="Applicant/Family Member Confirmed" />
     </FrameLayout>
 
     <include layout="@layout/include_address_confirmed_resident_2" />

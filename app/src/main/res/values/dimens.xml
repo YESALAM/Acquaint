@@ -6,7 +6,9 @@
     <dimen name="nav_header_height">192dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="card_margin">16dp</dimen>
+    <dimen name="card_margin_form">8dp</dimen>
     <dimen name="card_padding">10dp</dimen>
+    <dimen name="card_padding_form">5dp</dimen>
     <dimen name="spinner_marginTop">7dp</dimen>
 
 </resources>

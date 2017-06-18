@@ -146,7 +146,7 @@
             android:layout_marginStart="30dp"
             android:background="@android:color/white"
             android:padding="5dp"
-            android:text="If house locked fill following from neighbour" />
+            android:text="Fill following from neighbour" />
     </FrameLayout>
 
 

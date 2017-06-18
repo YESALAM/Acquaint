@@ -9,64 +9,88 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
         >
 
-        <TextView
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/case_card_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Investigation "
-            android:id="@+id/investigation_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            />
-
-        <include layout="@layout/include_address_verification_details"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/client_address_type_verification_textview"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:text="Residence Verification"
-            android:layout_marginTop="10dp"
-            />
-
-        <include layout="@layout/include_client_address_verification_1" />
-
-        <include layout="@layout/include_address_confirmed_resident" />
-
-        <include layout="@layout/include_address_not_confirmed" />
-
-        <include layout="@layout/include_client_address_verification_2" />
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_margin="@dimen/card_margin_form"
+            android:layout_marginBottom="@dimen/card_margin"
             >
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:layout_weight="1"
-                android:onClick="cancel"
-                android:id="@+id/cancel_dailog_indie_investigation_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Save"
-                android:onClick="save"
-                android:layout_weight="1"
-                android:id="@+id/save_dailog_indie_investigation_button"
-                />
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding_form"
+                >
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Investigation "
+                    android:id="@+id/investigation_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    />
+
+                <include layout="@layout/include_address_verification_details"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/client_address_type_verification_textview"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:text="Residence Verification"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <include layout="@layout/include_client_address_verification_1" />
+
+                <include layout="@layout/include_address_confirmed_resident" />
+
+                <include layout="@layout/include_address_not_confirmed" />
+
+                <include layout="@layout/include_client_address_verification_2" />
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    >
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel"
+                        android:layout_weight="1"
+                        android:onClick="cancel"
+                        android:id="@+id/cancel_dailog_indie_investigation_button"
+                        />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save"
+                        android:onClick="save"
+                        android:layout_weight="1"
+                        android:id="@+id/save_dailog_indie_investigation_button"
+                        />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
     </LinearLayout>
+
 
 </ScrollView>
