@@ -426,6 +426,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         //residence specific
         isrcb_row.setVisibility(View.GONE);
         companyname_row.setVisibility(View.GONE);
+        officeaddress_row.setVisibility(View.GONE);
 
 
     }
