@@ -238,6 +238,16 @@ public class Util {
         return list;
     }
 
+    public static ArrayList<SpinnerItem> getOfficeAddressConfirmedByType() {
+        ArrayList<SpinnerItem> list = new ArrayList<>();
+        list.add(new SpinnerItem("Select Option","0"));
+        list.add(new SpinnerItem("Self", "S"));
+        list.add(new SpinnerItem("Colleagues", "C"));
+        list.add(new SpinnerItem("Receptionist", "R"));
+        list.add(new SpinnerItem("Guard", "G"));
+        return list;
+    }
+
     public static ArrayList<SpinnerItem> getResidenceProofType() {
         ArrayList<SpinnerItem> list = new ArrayList<>();
         list.add(new SpinnerItem("Select Proof Type","0"));

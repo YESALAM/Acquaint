@@ -1,9 +1,11 @@
 package io.github.yesalam.acquaint.Activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,12 +20,26 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.DateClick;
+import io.github.yesalam.acquaint.Util.OVerificationId;
+import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.Request;
 
+import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.getAccomodationType;
 import static io.github.yesalam.acquaint.Util.Util.getAddressConfirmedByType;
 import static io.github.yesalam.acquaint.Util.Util.getBusinessLevelType;
@@ -36,7 +52,10 @@ import static io.github.yesalam.acquaint.Util.Util.getGradeType;
 import static io.github.yesalam.acquaint.Util.Util.getLivingStandardType;
 import static io.github.yesalam.acquaint.Util.Util.getLocalityType;
 import static io.github.yesalam.acquaint.Util.Util.getMonthType;
+import static io.github.yesalam.acquaint.Util.Util.getOfficeAddressConfirmedByType;
 import static io.github.yesalam.acquaint.Util.Util.getOfficeAmbienceType;
+import static io.github.yesalam.acquaint.Util.Util.getOfficeLocalityType;
+import static io.github.yesalam.acquaint.Util.Util.getOfficeProofType;
 import static io.github.yesalam.acquaint.Util.Util.getRecommendationType;
 import static io.github.yesalam.acquaint.Util.Util.getRelationType;
 import static io.github.yesalam.acquaint.Util.Util.getResidenceProofType;
@@ -46,8 +65,9 @@ import static io.github.yesalam.acquaint.Util.Util.getYearType;
  * Created by yesalam on 12-06-2017.
  */
 
-public class FieldInvestigationOfficeDialoog extends Activity {
+public class FieldInvestigationOfficeDialoog extends Activity implements WebHelper.CallBack {
 
+    private static final String LOG_TAG = "FieldInviOffice";
     //Address verification details
     @BindView(R.id.investigation_title)
     TextView investigaion_title_textview;
@@ -201,6 +221,8 @@ public class FieldInvestigationOfficeDialoog extends Activity {
 
 
     //include_client_address_verification2
+    @BindView(R.id.proof_attached_row)
+    TableRow proof_attached_row;
     @BindView(R.id.proof_attached_radiogroup)
     RadioGroup proofattached_radiogroup;
     @BindView(R.id.type_of_proof_spinner)
@@ -252,16 +274,21 @@ public class FieldInvestigationOfficeDialoog extends Activity {
     Button cancel_button;
     @BindView(R.id.save_dailog_indie_investigation_button)
     Button save_button;
+    String investigationId;
+    String client ;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_indie_field_office_investigation);
-
+        Intent intent = getIntent() ;
+        investigationId = intent.getStringExtra("investigationid");
+        client =intent.getStringExtra("client");
         ButterKnife.bind(this);
 
         initForm();
+        loadData();
     }
 
     private void initForm(){
@@ -282,12 +309,12 @@ public class FieldInvestigationOfficeDialoog extends Activity {
 
         ArrayAdapter<SpinnerItem> confirmedByAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item);
         confirmedByAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        confirmedByAdapter.addAll(getAddressConfirmedByType());
+        confirmedByAdapter.addAll(getOfficeAddressConfirmedByType());
         confirmedby_spinner.setAdapter(confirmedByAdapter);
 
         ArrayAdapter<SpinnerItem> typeOfProofAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item);
         typeOfProofAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        typeOfProofAdapter.addAll(getResidenceProofType());
+        typeOfProofAdapter.addAll(getOfficeProofType());
         typeofproof_spinner.setAdapter(typeOfProofAdapter);
 
         ArrayAdapter<SpinnerItem> recommendation_adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item);
@@ -330,7 +357,7 @@ public class FieldInvestigationOfficeDialoog extends Activity {
 
         ArrayAdapter<SpinnerItem> locality_adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item);
         locality_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        locality_adapter.addAll(getLocalityType());
+        locality_adapter.addAll(getOfficeLocalityType());
         locality_office_spinner.setAdapter(locality_adapter);
         locality_spinner_not.setAdapter(locality_adapter);
 
@@ -364,6 +391,7 @@ public class FieldInvestigationOfficeDialoog extends Activity {
 
 
         mismatch_row.setVisibility(View.GONE);
+        untraceable_row.setVisibility(View.GONE);
         reason_radiogruop.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
@@ -380,10 +408,7 @@ public class FieldInvestigationOfficeDialoog extends Activity {
         person_know_applicant_row.setVisibility(View.GONE);
         neighbour1_textview.setText("Collegue 1");
         neighbour2_textview.setText("Collegue 2");
-
-
-
-
+        proof_attached_row.setVisibility(View.GONE);
     }
 
 
@@ -392,4 +417,326 @@ public class FieldInvestigationOfficeDialoog extends Activity {
     }
 
     public void save(View view){}
+
+
+    private void loadData(){
+        String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/OfficeVerification/"+investigationId;
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL+TELE_VERIFICATION_DETAIL)
+                .build();
+        WebHelper.getInstance(this).requestCall(request,this);
+    }
+
+    @Override
+    public void onPositiveResponse(String htmldoc) {
+        final Map map = parse(htmldoc);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                update(map);
+            }
+        });
+    }
+
+    private void logId(Map<String,String> map){
+        for(String key:map.keySet()){
+            Log.e(LOG_TAG,key+" : "+map.get(key));
+        }
+    }
+
+    private void update(Map<String,String> map){
+        logId(map);
+
+        investigaion_title_textview.setText("Field Investigations "+investigationId);
+        if(client.contains("Indiabulls")){
+            clienttitle_textview.setText("Indiabulls Office Verification");
+        }else{
+            clienttitle_textview.setText("SBI Office Verification");
+        }
+
+        caseid_textview.setText(map.get(OVerificationId.caseid));
+        name_textview.setText(map.get(OVerificationId.name));
+        applicantname_textview.setText(map.get(OVerificationId.applicantName));
+        coapplicant_textview.setText(map.get(OVerificationId.coApplicantName));
+        companyname_textview.setText(map.get(OVerificationId.companyName));
+        address_textview.setText(map.get(OVerificationId.address));
+        applicantiorefno_textview.setText(map.get(OVerificationId.applicationRefNo));
+        contactno_textview.setText(map.get(OVerificationId.mobile));
+        fielexecutive_name.setText(map.get(OVerificationId.feName));
+
+       /* String proof_Attached = map.get(OVerificationId.proofAttached);
+        if(proof_Attached!=null){
+            boolean proofAttached = proof_Attached.equalsIgnoreCase("True");
+            proofattached_radiogroup.check(proofAttached?R.id.yes_proof_attached_radiobutton:R.id.no_proof_attached_radiobutton);
+
+            if(proofAttached){
+                String typeOfProof = map.get(RVerificationId.typeofProof);
+                if(typeOfProof!=null){
+                    int positionTOP = ((ArrayAdapter)typeofproof_spinner.getAdapter()).getPosition(new SpinnerItem(typeOfProof));
+                    typeofproof_spinner.setSelection(positionTOP);
+                }
+            }
+        }*/
+
+
+        officeaddress_edittext.setText(map.get(OVerificationId.officeAddress));
+        String typeOfProof = map.get(OVerificationId.typeofProof);
+        if(typeOfProof!=null){
+            int positionTOP = ((ArrayAdapter)typeofproof_spinner.getAdapter()).getPosition(new SpinnerItem(typeOfProof));
+            typeofproof_spinner.setSelection(positionTOP);
+        }
+
+
+        neighbour1_edittext.setText(map.get(OVerificationId.collegue1));
+        neighbour2_edittext.setText(map.get(OVerificationId.collegue2));
+        visitdate_edittext.setText(map.get(OVerificationId.firstVisitDate));
+        visittime_edittext.setText(map.get(OVerificationId.visitTime));
+        fieldexecutive_name_textview.setText(map.get(OVerificationId.feName));
+
+        String isRcbCase = map.get(OVerificationId.isRCB);
+        if(isRcbCase!=null){
+            boolean isRcb = isRcbCase.equalsIgnoreCase("True");
+            isrcb_radiogroup.check(isRcb ? R.id.yes_is_rcb_case_radiobutton : R.id.no_is_rcb_case_radiobutton);
+        }
+
+
+        addressupdateion_edittext.setText(map.get(OVerificationId.updateAddress));
+        mobilenoupdation_edittext.setText(map.get(OVerificationId.updateMobileNo));
+        phonenoupdation_edittext.setText(map.get(OVerificationId.updatePhoneNo));
+        employementupdation_edittext.setText(map.get(OVerificationId.updateEmploymentDetail));
+
+
+        String recommendation = map.get(OVerificationId.status);
+        if(recommendation!=null){
+            int positionrecommendation = ((ArrayAdapter)recommendation_spinner.getAdapter()).getPosition(new SpinnerItem(recommendation));
+            recommendation_spinner.setSelection(positionrecommendation);
+        }
+
+        String address_confirmed = map.get(OVerificationId.addressConfirmed);
+        if(address_confirmed == null){
+            return;
+        }else {
+            boolean addressConfirmed = map.get(OVerificationId.addressConfirmed).equalsIgnoreCase("True");
+            addressconfirmed_radiogroup.check(addressConfirmed ? R.id.yes_address_confirmed_radiobutton : R.id.no_address_confirmed_radiobutton);
+
+
+            String confirmedBy = map.get(OVerificationId.addressConfirmedBy);
+            if (confirmedBy != null) {
+                int positonConfirmedBy = ((ArrayAdapter) confirmedby_spinner.getAdapter()).getPosition(new SpinnerItem(confirmedBy));
+                confirmedby_spinner.setSelection(positonConfirmedBy);
+            }
+
+
+            if (addressConfirmed) {
+
+                nameofemployer_edittext.setText(map.get(OVerificationId.nameofEmployer));
+                personmet_office_edittext.setText(map.get(OVerificationId.personMet));
+                personment_designation_edittext.setText(map.get(OVerificationId.personMetDesignation));
+                addressof_employer_edittext.setText(map.get(OVerificationId.addressofEmployer));
+                phone_office_edittext.setText(map.get(OVerificationId.phone));
+                extension_edittext.setText(map.get(OVerificationId.extension));
+                residence_edittext.setText(map.get(OVerificationId.residenceNo));
+                mobile_edittext.setText(map.get(OVerificationId.mobileNo));
+
+                String board_seen = map.get(OVerificationId.companyBoardSeen);
+                if(board_seen!=null){
+                    boolean boardseen = board_seen.equalsIgnoreCase("True");
+                    company_boardseen_radiogroup.check(boardseen ? R.id.yes_board_seen_radiobutton : R.id.no_board_seen_radiobutton);
+                }
+
+                String typeOfEmployer = map.get(OVerificationId.typeofEmployer);
+                if (typeOfEmployer != null) {
+                    int positionEmployerType = ((ArrayAdapter) typeofemployer_spinner.getAdapter()).getPosition(new SpinnerItem(typeOfEmployer));
+                    typeofemployer_spinner.setSelection(positionEmployerType);
+                }
+
+                String natureOfBusiness = map.get(OVerificationId.natureofBusiness);
+                if (natureOfBusiness != null) {
+                    int positionBusinessNature = ((ArrayAdapter) natureof_business_spinner.getAdapter()).getPosition(new SpinnerItem(natureOfBusiness));
+                    natureof_business_spinner.setSelection(positionBusinessNature);
+                }
+
+                lineof_business_edittext.setText(map.get(OVerificationId.lineofBusiness));
+                yearof_establishment_edittext.setText(map.get(OVerificationId.yearsofEstablishment));
+
+                String levelOfBusiness = map.get(OVerificationId.levelofBusinessActivity);
+                if (levelOfBusiness != null) {
+                    int positionBusinessLevel = ((ArrayAdapter) levelof_business_spinner.getAdapter()).getPosition(new SpinnerItem(levelOfBusiness));
+                    levelof_business_spinner.setSelection(positionBusinessLevel);
+                }
+
+                noofemployee_see_edittext.setText(map.get(OVerificationId.noofEmployees));
+                noofbranch_edittext.setText(map.get(OVerificationId.noofBranches));
+
+
+                String officeAmbience = map.get(OVerificationId.officeAmbience);
+                if (officeAmbience != null) {
+                    int positonOfficeAmbience = ((ArrayAdapter) office_abmience_spinner.getAdapter()).getPosition(new SpinnerItem(officeAmbience));
+                    office_abmience_spinner.setSelection(positonOfficeAmbience);
+                }
+
+                String typeOfLocality = map.get(OVerificationId.typeofLocality);
+                if (typeOfLocality != null) {
+                    int positionLocality = ((ArrayAdapter) locality_office_spinner.getAdapter()).getPosition(new SpinnerItem(typeOfLocality));
+                    locality_office_spinner.setSelection(positionLocality);
+                }
+
+                area_edittext.setText(map.get(OVerificationId.area));
+                nearest_landmark_edittext.setText(map.get(OVerificationId.nearestLandMark));
+
+                String easeOfLocating = map.get(OVerificationId.easeofLocating);
+                if (easeOfLocating != null) {
+                    int positionEaseOfLocating = ((ArrayAdapter) easeof_locating_spinner.getAdapter()).getPosition(new SpinnerItem(easeOfLocating));
+                    easeof_locating_spinner.setSelection(positionEaseOfLocating);
+                }
+
+                yearsofcurrent_employement_edittext.setText(map.get(OVerificationId.yearsofCurrentEmployment));
+
+
+                String termsOfEmployement = map.get(OVerificationId.termsofEmployement);
+                if (termsOfEmployement != null) {
+                    int positionEmployementTerms = ((ArrayAdapter) termsof_employement_spinner.getAdapter()).getPosition(new SpinnerItem(termsOfEmployement));
+                    termsof_employement_spinner.setSelection(positionEmployementTerms);
+                }
+
+                String grade = map.get(OVerificationId.grade);
+                if (grade != null) {
+                    int positionGrade = ((ArrayAdapter) grade_spinner.getAdapter()).getPosition(new SpinnerItem(grade));
+                    grade_spinner.setSelection(positionGrade);
+                }
+
+                grade_edittext.setText(map.get(OVerificationId.otherGrade));
+                current_salary_edittext.setText(map.get(OVerificationId.cuurentSalary));
+
+                applicantage_office2_edittext.setText(map.get(OVerificationId.applicantAge));
+                nameofcompany_office2_edittext.setText(map.get(OVerificationId.nameofCompany));
+                establishmentyear_office2_edittext.setText(map.get(OVerificationId.estiblishmentYear));
+                designation_office2_edittext.setText(map.get(OVerificationId.designation));
+                phone_office2_edittext.setText(map.get(OVerificationId.phoneOffice));
+                extension_office2_edittext.setText(map.get(OVerificationId.offExtension));
+
+
+                String typeOfCompany = map.get(OVerificationId.typeofCompany);
+                if (typeOfCompany != null) {
+                    int positionCompanyType = ((ArrayAdapter) typeofcompany_spinner.getAdapter()).getPosition(new SpinnerItem(typeOfCompany));
+                    typeofcompany_spinner.setSelection(positionCompanyType);
+                }
+
+
+                String natureOfCompany = map.get(OVerificationId.natureofCompany);
+                if (natureOfCompany != null) {
+                    int positionCompanyNature = ((ArrayAdapter) natureofcompany_office2_spinner.getAdapter()).getPosition(new SpinnerItem(natureOfCompany));
+                    natureofcompany_office2_spinner.setSelection(positionCompanyNature);
+                }
+
+                noofemployees_office2_edittext.setText(map.get(OVerificationId.noofCompEmployee));
+                noofbranches_office2_edittext.setText(map.get(OVerificationId.noofCompBranches));
+                area_office2_edittext.setText(map.get(OVerificationId.compArea));
+                nearestlandmark_office2_edittext.setText(map.get(OVerificationId.compLandMark));
+
+            } else {
+                String reason = map.get(OVerificationId.notConfirmedType);
+                if (reason != null) {
+                    boolean untraceable = reason.equalsIgnoreCase("U");
+                    reason_radiogruop.check(untraceable ? R.id.untraceable_reason_not_confirmed_radiobutton : R.id.mismatch_reason_not_confirmed_radiobutton);
+                }
+
+
+
+                address_belongto_edittext.setText(map.get(OVerificationId.toWhomAddressBelongs));
+
+                reason_edittext.setText(map.get(OVerificationId.reasonNotConfirmed));
+                resultOfCalling_edittex.setText(map.get(OVerificationId.resultofCalling));
+
+                String notConfirmedLocality = map.get(OVerificationId.notConfirmedLocality);
+                if (notConfirmedLocality != null) {
+                    int positionNotConfirmedLocality = ((ArrayAdapter) locality_spinner_not.getAdapter()).getPosition(new SpinnerItem(notConfirmedLocality));
+                    locality_spinner_not.setSelection(positionNotConfirmedLocality);
+                }
+
+            }
+
+
+        }
+
+
+
+    }
+
+
+
+
+    private Map<String,String> parse(String html){
+        Map<String,String> map = new HashMap<>();
+
+        Document document = Jsoup.parse(html);
+
+        String applicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(2) > td.table-number.Impair").text();
+        String coApplicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(4) > td.table-number").text();
+        map.put("applicantName",applicantName);
+        map.put("coApplicantName",coApplicantName);
+
+        Element body = document.getElementById("body");
+        Element form = body.getElementsByTag("form").first();
+        Elements elements = form.getElementsByTag("input");
+        String lastName = "" ;
+        for(Element input:elements){
+            String name = input.attr("name");
+            String value =input.attr("value");
+
+            String type = input.attr("type");
+            if(type.equalsIgnoreCase("radio")){
+                String checked = input.attr("checked");
+                if(checked.equalsIgnoreCase("checked")){
+                    map.put(name,value);
+                }
+            }else{
+                map.put(name,value);
+            }
+
+           /* if(name.equalsIgnoreCase(lastName)){
+                //we are repeating
+                String checked = input.attr("checked");
+                if(checked.equalsIgnoreCase("checked")){
+                    map.put(name,value);
+                }
+          *//*  }
+
+            if(name.equalsIgnoreCase("ResiStatus") || name.equalsIgnoreCase("OfficeStatus")){
+                String checked = input.attr("checked");
+                if(checked.equalsIgnoreCase("checked")){
+                    map.put(name,value);
+                }*//*
+            }else map.put(input.attr("name"),input.val());*/
+            //Log.e(LOG_TAG,input.id()+" -> "+input.val());
+            lastName = name ;
+        }
+
+        Elements selects = form.getElementsByTag("select");
+        for(Element select:selects){
+            String id = select.id();
+            //Log.e(LOG_TAG,id);
+            try{
+                String value = select.getElementsByAttributeValue("selected","selected").first().attr("value");
+                //Log.e(LOG_TAG,value);
+                map.put(id,value);
+            }catch (NullPointerException npe){
+                npe.printStackTrace();
+                map.put(id,"0");
+            }
+        }
+
+        Element img = form.getElementsByTag("img").first();
+        if(img!=null){
+
+            String src = img.attr("abs:src");
+            map.put("img_src",src);
+        }
+
+
+
+
+
+        return map;
+    }
 }
