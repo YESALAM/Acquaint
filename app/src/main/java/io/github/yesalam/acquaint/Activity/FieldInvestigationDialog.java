@@ -1,19 +1,17 @@
 package io.github.yesalam.acquaint.Activity;
 
+
 import android.app.Activity;
 import android.content.Intent;
-import android.opengl.EGLDisplay;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -22,19 +20,28 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Optional;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.DateClick;
-import io.github.yesalam.acquaint.Util.HaveClickListener;
+import io.github.yesalam.acquaint.Util.RVerificationId;
+import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.Request;
 
+import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.getAccomodationType;
 import static io.github.yesalam.acquaint.Util.Util.getAddressConfirmedByType;
-import static io.github.yesalam.acquaint.Util.Util.getAssignedToType;
 import static io.github.yesalam.acquaint.Util.Util.getEaseofLocatingType;
 import static io.github.yesalam.acquaint.Util.Util.getFamilyMemberType;
 import static io.github.yesalam.acquaint.Util.Util.getLivingStandardType;
@@ -43,14 +50,16 @@ import static io.github.yesalam.acquaint.Util.Util.getMonthType;
 import static io.github.yesalam.acquaint.Util.Util.getRecommendationType;
 import static io.github.yesalam.acquaint.Util.Util.getRelationType;
 import static io.github.yesalam.acquaint.Util.Util.getResidenceProofType;
+import static io.github.yesalam.acquaint.Util.Util.getResidenceStatus;
 import static io.github.yesalam.acquaint.Util.Util.getYearType;
 
 /**
  * Created by yesalam on 10-06-2017.
  */
 
-public class FieldInvestigationDialog extends Activity {
+public class FieldInvestigationDialog extends Activity implements WebHelper.CallBack {
 
+    private static final String LOG_TAG = "FieldInvestigation" ;
     //Address verification details
     @BindView(R.id.investigation_title)
     TextView investigaion_title_textview;
@@ -107,6 +116,8 @@ public class FieldInvestigationDialog extends Activity {
     Spinner totalfamilymember_spinner;
     @BindView(R.id.earning_family_member_spinner)
     Spinner earningmember_spinner;
+    @BindView(R.id.residence_status_spinner)
+    Spinner residence_status_spinner;
     @BindView(R.id.residence_status_month_spinner)
     Spinner residencestatus_month_spinner;
     @BindView(R.id.residence_status_year_spinner)
@@ -140,7 +151,7 @@ public class FieldInvestigationDialog extends Activity {
     CheckBox curtains_interior_checkbox;
     //exterior condition checkbox
     @BindView(R.id.plastered_exterior_condition_checkbox)
-    CheckBox palstered_exterior_checkbox;
+    CheckBox plastered_exterior_checkbox;
     @BindView(R.id.painted_exterior_condition_checkbox)
     CheckBox painted_exterior_checkbox;
     @BindView(R.id.security_guard_condition_checkbox)
@@ -198,7 +209,7 @@ public class FieldInvestigationDialog extends Activity {
     @BindView(R.id.person_know_applicant_row)
     TableRow person_know_applicant_row;
     @BindView(R.id.person_know_radiogroup)
-    RadioGroup person_know;
+    RadioGroup person_know_chekbox;
     @BindView(R.id.address_belongs_to_row)
     TableRow address_belongto_row;
     @BindView(R.id.address_belongs_to_edittext)
@@ -274,19 +285,39 @@ public class FieldInvestigationDialog extends Activity {
     Button cancel_button;
     @BindView(R.id.save_dailog_indie_investigation_button)
     Button save_button;
+    String investigationId;
+    String client ;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_indie_field_investigation);
-
+        Intent intent = getIntent();
+        investigationId = intent.getStringExtra("investigationid");
+        client = intent.getStringExtra("client");
         ButterKnife.bind(this);
 
 
         initForm();
+        loadData();
+
+    }
+
+    public void save(View view){}
+
+    public void cancel(View view){
+        finish();
+    }
 
 
+    private void loadData(){
+        String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/"+investigationId;
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL+TELE_VERIFICATION_DETAIL)
+                .build();
+
+        WebHelper.getInstance(this).requestCall(request,this);
     }
 
 
@@ -350,6 +381,11 @@ public class FieldInvestigationDialog extends Activity {
         residencestatus_year_spinner.setAdapter(residing_Year);
         livingsince_year_spinner.setAdapter(residing_Year);
 
+        ArrayAdapter<SpinnerItem> residence_status = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        residence_status.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        residence_status.addAll(getResidenceStatus());
+        residence_status_spinner.setAdapter(residence_status);
+
 
         ArrayAdapter<SpinnerItem> locationEase_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
         locationEase_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -373,6 +409,7 @@ public class FieldInvestigationDialog extends Activity {
         statndard_living_spinner.setAdapter(livingStandard_adapter);
 
         mismatch_row.setVisibility(View.GONE);
+        untraceable_row.setVisibility(View.GONE);
         reason_radiogruop.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
@@ -393,4 +430,328 @@ public class FieldInvestigationDialog extends Activity {
 
     }
 
+    @Override
+    public void onPositiveResponse(String htmldoc) {
+            final Map map = parse(htmldoc);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    update(map);
+                }
+            });
+    }
+
+    private void logId(Map<String,String> map){
+        for(String key:map.keySet()){
+            Log.e(LOG_TAG,key+" : "+map.get(key));
+        }
+    }
+
+    private void update(Map<String,String> map){
+        logId(map);
+
+        investigaion_title_textview.setText("Field Investigations "+investigationId);
+        if(client.contains("Indiabulls")){
+            clienttitle_textview.setText("Indiabulls Residence Verification");
+        }else{
+            clienttitle_textview.setText("SBI Residence Verification");
+        }
+
+        caseid_textview.setText(map.get(RVerificationId.caseid));
+        name_textview.setText(map.get(RVerificationId.name));
+        applicantname_textview.setText(map.get(RVerificationId.applicantName));
+        coapplicant_textview.setText(map.get(RVerificationId.coApplicantName));
+        address_textview.setText(map.get(RVerificationId.address));
+        applicantiorefno_textview.setText(map.get(RVerificationId.applicationRefNo));
+        contactno_textview.setText(map.get(RVerificationId.mobile));
+        fielexecutive_name.setText(map.get(RVerificationId.feName));
+
+        String proof_Attached = map.get(RVerificationId.proofAttached);
+        if(proof_Attached!=null){
+            boolean proofAttached = proof_Attached.equalsIgnoreCase("True");
+            proofattached_radiogroup.check(proofAttached?R.id.yes_proof_attached_radiobutton:R.id.no_proof_attached_radiobutton);
+
+            if(proofAttached){
+                String typeOfProof = map.get(RVerificationId.typeofProof);
+                if(typeOfProof!=null){
+                    int positionTOP = ((ArrayAdapter)typeofproof_spinner.getAdapter()).getPosition(new SpinnerItem(typeOfProof));
+                    typeofproof_spinner.setSelection(positionTOP);
+                }
+            }
+        }
+
+
+        neighbour1_edittext.setText(map.get(RVerificationId.neighbour1));
+        neighbour2_edittext.setText(map.get(RVerificationId.neighbour2));
+        visitdate_edittext.setText(map.get(RVerificationId.firstVisitDate));
+        visittime_edittext.setText(map.get(RVerificationId.visitTime));
+        fieldexecutive_name_textview.setText(map.get(RVerificationId.feName));
+        addressupdateion_edittext.setText(map.get(RVerificationId.updateAddress));
+        mobilenoupdation_edittext.setText(map.get(RVerificationId.updateMobileNo));
+        phonenoupdation_edittext.setText(map.get(RVerificationId.updatePhoneNo));
+
+
+        String recommendation = map.get(RVerificationId.status);
+        if(recommendation!=null){
+            int positionrecommendation = ((ArrayAdapter)recommendation_spinner.getAdapter()).getPosition(new SpinnerItem(recommendation));
+            recommendation_spinner.setSelection(positionrecommendation);
+        }
+
+        String address_confirmed = map.get(RVerificationId.addressConfirmed);
+        if(address_confirmed == null){
+            return;
+        }else {
+            boolean addressConfirmed = map.get(RVerificationId.addressConfirmed).equalsIgnoreCase("True");
+            addressconfirmed_radiogroup.check(addressConfirmed ? R.id.yes_address_confirmed_radiobutton : R.id.no_address_confirmed_radiobutton);
+
+
+            String confirmedBy = map.get(RVerificationId.addressConfirmedBy);
+            if (confirmedBy != null) {
+                int positonConfirmedBy = ((ArrayAdapter) confirmedby_spinner.getAdapter()).getPosition(new SpinnerItem(confirmedBy));
+                confirmedby_spinner.setSelection(positonConfirmedBy);
+            }
+
+
+            if (addressConfirmed) {
+                boolean namePlateSeen = map.get(RVerificationId.namePlateSeen).equalsIgnoreCase("True");
+                nameplateseen_radiogroup.check(namePlateSeen ? R.id.yes_name_plate_seen_radiobutton : R.id.no_name_plate_seen_radiobutton);
+
+                applicantname_edittext.setText(map.get(RVerificationId.applicant_name));
+                dateofbirth_edittext.setText(map.get(RVerificationId.dateOfBirth));
+                personmet_edittext.setText(map.get(RVerificationId.personMet));
+
+                String relation = map.get(RVerificationId.relation);
+                if (relation != null) {
+                    int positionrelation = ((ArrayAdapter) relation_spinner.getAdapter()).getPosition(new SpinnerItem(relation));
+                    relation_spinner.setSelection(positionrelation);
+                }
+
+                String totalMember = map.get(RVerificationId.totalFamilyMembers);
+                if (totalMember != null) {
+                    int positiontotal = ((ArrayAdapter) totalfamilymember_spinner.getAdapter()).getPosition(new SpinnerItem(totalMember));
+                    totalfamilymember_spinner.setSelection(positiontotal);
+                }
+
+                String earningMemeber = map.get(RVerificationId.earningFamilyMembers);
+                if (earningMemeber != null) {
+                    int positionEarning = ((ArrayAdapter) earningmember_spinner.getAdapter()).getPosition(new SpinnerItem(earningMemeber));
+                    earningmember_spinner.setSelection(positionEarning);
+                }
+
+                String residenceStatus = map.get(RVerificationId.residenceStatus);
+                if (residenceStatus != null) {
+                    int positionResidenceStatus = ((ArrayAdapter) residence_status_spinner.getAdapter()).getPosition(new SpinnerItem(residenceStatus));
+                    residence_status_spinner.setSelection(positionResidenceStatus);
+                }
+
+                String residingMonth = map.get(RVerificationId.residingSinceMonth);
+                if (residingMonth != null) {
+                    int positionResidingMonth = ((ArrayAdapter) residencestatus_month_spinner.getAdapter()).getPosition(new SpinnerItem(residingMonth));
+                    residencestatus_month_spinner.setSelection(positionResidingMonth);
+                }
+
+                String residingYear = map.get(RVerificationId.residingSinceYear);
+                if (residingYear != null) {
+                    int positionResidingYear = ((ArrayAdapter) residencestatus_year_spinner.getAdapter()).getPosition(new SpinnerItem(residingYear));
+                    residencestatus_year_spinner.setSelection(positionResidingYear);
+                }
+
+                approxarea_edittext.setText(map.get(RVerificationId.approxArea));
+                approxvalue_edittext.setText(map.get(RVerificationId.approxValue));
+                rentmonthly_edittext.setText(map.get(RVerificationId.rent));
+                employer_edittext.setText(map.get(RVerificationId.nameofEmployer));
+                employeraddress_edittext.setText(map.get(RVerificationId.employerAddress));
+                designation_edittext.setText(map.get(RVerificationId.designation));
+
+
+                String easeOfLocation = map.get(RVerificationId.easeofLocation);
+                if (easeOfLocation != null) {
+                    int positionEaseOfLocation = ((ArrayAdapter) easeoflocation_spinner.getAdapter()).getPosition(new SpinnerItem(easeOfLocation));
+                    easeoflocation_spinner.setSelection(positionEaseOfLocation);
+                }
+
+
+                String locality = map.get(RVerificationId.locality);
+                if (locality != null) {
+                    int positonLocality = ((ArrayAdapter) locality_spinner.getAdapter()).getPosition(new SpinnerItem(locality));
+                    locality_spinner.setSelection(positonLocality);
+                }
+
+                String accomodationType = map.get(RVerificationId.accomodationType);
+                if (accomodationType != null) {
+                    int positionAccomodationType = ((ArrayAdapter) accomadationtype_spinner.getAdapter()).getPosition(new SpinnerItem(accomodationType));
+                    accomadationtype_spinner.setSelection(positionAccomodationType);
+                }
+
+                String standardOfLiving = map.get(RVerificationId.standardofLiving);
+                if (standardOfLiving != null) {
+                    int positionStandardOfLiving = ((ArrayAdapter) statndard_living_spinner.getAdapter()).getPosition(new SpinnerItem(standardOfLiving));
+                    statndard_living_spinner.setSelection(positionStandardOfLiving);
+                }
+
+                String interior = map.get(RVerificationId.interiorCondition);
+                List<String> interiorConditions = Arrays.asList(interior.split(","));
+                painted_interior_checkbox.setChecked(interiorConditions.contains("P"));
+                furnished_interior_checkbox.setChecked(interiorConditions.contains("F"));
+                carpeted_interior_checkbox.setChecked(interiorConditions.contains("C"));
+                curtains_interior_checkbox.setChecked(interiorConditions.contains("U"));
+
+                String exterior = map.get(RVerificationId.exteriorCondition);
+                List<String> exteriorConditions = Arrays.asList(exterior.split(","));
+                plastered_exterior_checkbox.setChecked(exteriorConditions.contains("P"));
+                painted_exterior_checkbox.setChecked(exteriorConditions.contains("A"));
+                securityguard_exterior_checkbox.setChecked(exteriorConditions.contains("S"));
+                parking_exterior_checkbox.setChecked(exteriorConditions.contains("R"));
+                garden_exterior_checkbox.setChecked(exteriorConditions.contains("G"));
+
+                String assetSeen = map.get(RVerificationId.assetsSeen);
+                List<String> assets = Arrays.asList(assetSeen.split(","));
+                television_asset_checkbox.setChecked(assets.contains("T"));
+                refrigerator_asset_checkbox.setChecked(assets.contains("R"));
+                ac_asset_checkbox.setChecked(assets.contains("A"));
+                musicsystem_asset_checkbox.setChecked(assets.contains("M"));
+
+                String vehicleType = map.get(RVerificationId.vehicleType);
+                List<String> vehicleTypes = Arrays.asList(vehicleType.split(","));
+                two_wheeler_checkbox.setChecked(vehicleTypes.contains("T"));
+                four_wheeler_checkbox.setChecked(vehicleTypes.contains("F"));
+                other_vehicle_checkbox.setChecked(vehicleTypes.contains("O"));
+
+                vehicledetail_edittext.setText(map.get(RVerificationId.vehicleDetail));
+                nearestlandmark_edittext.setText(map.get(RVerificationId.nearestLandMark));
+
+                applicantname2_textview.setText(map.get(RVerificationId.applicant_name));
+                personcontacted_edittext.setText(map.get(RVerificationId.personContacted));
+                applicantapproxage_edittext.setText(map.get(RVerificationId.applicantApproxAge));
+                noofresident_edittext.setText(map.get(RVerificationId.noofResidents));
+                occupation_edittext.setText(map.get(RVerificationId.occupation));
+
+
+                String relationWith = map.get(RVerificationId.relationWithApplicant);
+                if (relationWith != null) {
+                    int positionRelationWith = ((ArrayAdapter) relationwith_applicant_spinner.getAdapter()).getPosition(new SpinnerItem(relationWith));
+                    relationwith_applicant_spinner.setSelection(positionRelationWith);
+                }
+
+                String livingSinceMonth = map.get(RVerificationId.livingSinceMonth);
+                if (livingSinceMonth != null) {
+                    int positionLivingSince = ((ArrayAdapter) livingsince_month_spinner.getAdapter()).getPosition(new SpinnerItem(livingSinceMonth));
+                    livingsince_month_spinner.setSelection(positionLivingSince);
+                }
+
+                String livingSinceYear = map.get(RVerificationId.livingSinceYear);
+                if (livingSinceYear != null) {
+                    int positionLivingYear = ((ArrayAdapter) livingsince_year_spinner.getAdapter()).getPosition(new SpinnerItem(livingSinceYear));
+                    livingsince_year_spinner.setSelection(positionLivingYear);
+                }
+
+
+            } else {
+                String reason = map.get(RVerificationId.notConfirmedType);
+                if (reason != null) {
+                    boolean untraceable = reason.equalsIgnoreCase("U");
+                    reason_radiogruop.check(untraceable ? R.id.untraceable_reason_not_confirmed_radiobutton : R.id.mismatch_reason_not_confirmed_radiobutton);
+                }
+
+                String person_know = map.get(RVerificationId.personKnowApplicant);
+                if (person_know != null) {
+                    boolean personKnow = person_know.equalsIgnoreCase("True");
+                    person_know_chekbox.check(personKnow ? R.id.yes_person_know_applicant_radiobutton : R.id.no_person_know_applicant_radiobutton);
+                    address_belongto_edittext.setText(map.get(RVerificationId.addressBelongsTo));
+                }
+
+                reason_edittext.setText(map.get(RVerificationId.notConfirmedReason));
+                resultOfCalling_edittex.setText(map.get(RVerificationId.resultofCalling));
+
+                String notConfirmedLocality = map.get(RVerificationId.notConfirmedLocality);
+                if (notConfirmedLocality != null) {
+                    int positionNotConfirmedLocality = ((ArrayAdapter) locality_spinner_not.getAdapter()).getPosition(new SpinnerItem(notConfirmedLocality));
+                    locality_spinner_not.setSelection(positionNotConfirmedLocality);
+                }
+
+            }
+
+
+        }
+
+
+
+    }
+
+
+
+
+    private Map<String,String> parse(String html){
+        Map<String,String> map = new HashMap<>();
+
+        Document document = Jsoup.parse(html);
+
+        String applicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(2) > td.table-number.Impair").text();
+        String coApplicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(4) > td.table-number").text();
+        map.put("applicantName",applicantName);
+        map.put("coApplicantName",coApplicantName);
+
+        Element body = document.getElementById("body");
+        Element form = body.getElementsByTag("form").first();
+        Elements elements = form.getElementsByTag("input");
+        String lastName = "" ;
+        for(Element input:elements){
+            String name = input.attr("name");
+            String value =input.attr("value");
+
+            String type = input.attr("type");
+            if(type.equalsIgnoreCase("radio")){
+                String checked = input.attr("checked");
+                if(checked.equalsIgnoreCase("checked")){
+                    map.put(name,value);
+                }
+            }else{
+                map.put(name,value);
+            }
+
+           /* if(name.equalsIgnoreCase(lastName)){
+                //we are repeating
+                String checked = input.attr("checked");
+                if(checked.equalsIgnoreCase("checked")){
+                    map.put(name,value);
+                }
+          *//*  }
+
+            if(name.equalsIgnoreCase("ResiStatus") || name.equalsIgnoreCase("OfficeStatus")){
+                String checked = input.attr("checked");
+                if(checked.equalsIgnoreCase("checked")){
+                    map.put(name,value);
+                }*//*
+            }else map.put(input.attr("name"),input.val());*/
+            //Log.e(LOG_TAG,input.id()+" -> "+input.val());
+            lastName = name ;
+        }
+
+        Elements selects = form.getElementsByTag("select");
+        for(Element select:selects){
+            String id = select.id();
+            //Log.e(LOG_TAG,id);
+            try{
+                String value = select.getElementsByAttributeValue("selected","selected").first().attr("value");
+                //Log.e(LOG_TAG,value);
+                map.put(id,value);
+            }catch (NullPointerException npe){
+                npe.printStackTrace();
+                map.put(id,"0");
+            }
+        }
+
+        Element img = form.getElementsByTag("img").first();
+        if(img!=null){
+
+            String src = img.attr("abs:src");
+            map.put("img_src",src);
+        }
+
+
+
+
+
+        return map;
+    }
 }

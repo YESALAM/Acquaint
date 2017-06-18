@@ -35,8 +35,7 @@
                     android:id="@+id/caseid_address_verification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/CardHeaderText"
-                    android:text="4860674" />
+                    style="@style/CardHeaderText" />
             </TableRow>
 
             <TableRow>
@@ -53,8 +52,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/CardHeaderText"
-                    android:hint="BRIJRAJ SINGH"
-                    android:text="BRIJRAJ SINGH"
                     />
             </TableRow>
 
@@ -72,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="BRIJRAJ SINGH" />
+                    />
             </TableRow>
 
             <TableRow>
@@ -87,7 +84,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/coapplicant_address_verification"
-                    android:text="Some Person"
                     />
             </TableRow>
 
@@ -105,7 +101,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/company_name_address_verificaion"
-                    android:text="Some Company"
                     />
             </TableRow>
 
@@ -123,9 +118,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/address_address_verification"
-                    android:text="13 BITTALION GUDA GUDI KA NAKA GATE KE PASS , GWALIOR, MADHYA PRADESH "
-                    />
+                    android:id="@+id/address_address_verification"/>
             </TableRow>
             <TableRow>
                 <TextView
@@ -138,7 +131,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/application_refno_address_verification"
-                    android:text=""
+
                     />
             </TableRow>
             <TableRow>
@@ -152,7 +145,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/contact_no_address_verification"
-                    android:text="7697383528"
                     />
             </TableRow>
             <TableRow>
@@ -160,14 +152,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Field Executive Name"
+                    android:text="Field Executive Name   "
 
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/field_executive_name"
-                    android:text="R.S. TOMAR"
                     />
             </TableRow>
 

@@ -1,4 +1,4 @@
-package io.github.yesalam.acquaint.Pojo;
+package io.github.yesalam.acquaint.Util;
 
 /**
  * Created by yesalam on 18-06-2017.

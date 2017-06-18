@@ -49,8 +49,10 @@ public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<Investiga
                         Context context = v.getContext();
                         Intent intent = new Intent(context,FieldInvestigationDialog.class);
                         TextView textView = (TextView) v.findViewById(R.id.investigationId_investigation_card);
+                        TextView temp = (TextView) v.findViewById(R.id.client_investigation_card);
                         String investigationid = (String) textView.getText();
                         intent.putExtra("investigationid",investigationid);
+                        intent.putExtra("client",temp.getText());
                         context.startActivity(intent);
                     }
                 });
@@ -61,8 +63,10 @@ public class InvestigationRecyclerAdapter extends RecyclerView.Adapter<Investiga
                         Context context = v.getContext();
                         Intent intent = new Intent(context,FieldInvestigationOfficeDialoog.class);
                         TextView textView = (TextView) v.findViewById(R.id.investigationId_investigation_card);
+                        TextView temp = (TextView) v.findViewById(R.id.client_investigation_card);
                         String investigationid = (String) textView.getText();
                         intent.putExtra("investigationid",investigationid);
+                        intent.putExtra("client",temp.getText());
                         context.startActivity(intent);
                     }
                 });
