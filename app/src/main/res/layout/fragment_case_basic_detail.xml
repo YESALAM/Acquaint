@@ -26,6 +26,7 @@
                 android:padding="@dimen/card_padding"
                 >
 
+
                 <include layout="@layout/include_case_basic_detail"/>
 
                 <include layout="@layout/include_applicant_resident_details" />

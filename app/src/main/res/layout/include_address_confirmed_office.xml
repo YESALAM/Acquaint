@@ -29,7 +29,8 @@
 
                 <EditText
                     android:id="@+id/name_of_employer_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -42,7 +43,8 @@
 
                 <EditText
                     android:id="@+id/person_met_office_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -55,7 +57,8 @@
 
                 <EditText
                     android:id="@+id/person_met_designation_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -68,7 +71,8 @@
 
                 <EditText
                     android:id="@+id/address_of_employer_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -81,7 +85,8 @@
 
                 <EditText
                     android:id="@+id/phone_offic_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -94,7 +99,8 @@
 
                 <EditText
                     android:id="@+id/extension_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -107,7 +113,8 @@
 
                 <EditText
                     android:id="@+id/residence_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -120,7 +127,8 @@
 
                 <EditText
                     android:id="@+id/mobile_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -135,20 +143,24 @@
 
                 <RadioGroup
                     android:id="@+id/company_board_seen_radiogroup"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:weightSum="2"
                     android:orientation="horizontal">
 
                     <RadioButton
                         android:id="@+id/yes_board_seen_radiobutton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="Yes" />
 
                     <RadioButton
                         android:id="@+id/no_board_seen_radiobutton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="No" />
                 </RadioGroup>
             </TableRow>
@@ -164,7 +176,8 @@
 
                 <Spinner
                     android:id="@+id/type_of_employer_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -178,7 +191,8 @@
 
                 <Spinner
                     android:id="@+id/nature_of_business_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -191,7 +205,8 @@
 
                 <EditText
                     android:id="@+id/line_of_business_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -204,7 +219,8 @@
 
                 <EditText
                     android:id="@+id/year_of_establishment_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -218,7 +234,8 @@
 
                 <Spinner
                     android:id="@+id/level_of_business_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -231,7 +248,8 @@
 
                 <EditText
                     android:id="@+id/no_of_employee_seen_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -244,7 +262,8 @@
 
                 <EditText
                     android:id="@+id/no_of_branches_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -259,7 +278,8 @@
 
                 <Spinner
                     android:id="@+id/office_abmience_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -274,7 +294,8 @@
 
                 <Spinner
                     android:id="@+id/locality_office_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -287,7 +308,8 @@
 
                 <EditText
                     android:id="@+id/area_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -300,7 +322,8 @@
 
                 <EditText
                     android:id="@+id/nearest_landmark_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -314,7 +337,8 @@
 
                 <Spinner
                     android:id="@+id/ease_of_locating_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -327,7 +351,8 @@
 
                 <EditText
                     android:id="@+id/years_of_current_employement_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -342,7 +367,8 @@
 
                 <Spinner
                     android:id="@+id/terms_of_employement_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -356,7 +382,8 @@
                     android:text="Grade" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
@@ -381,7 +408,8 @@
 
                 <EditText
                     android:id="@+id/current_salary_edittext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
             </TableRow>
 

@@ -31,7 +31,8 @@
 
                 <TextView
                     android:id="@+id/caseid_tele_verification"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     style="@style/CardHeaderText" />
             </TableRow>
@@ -49,7 +50,8 @@
 
                 <TextView
                     android:id="@+id/name_tele_verification"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     style="@style/CardHeaderText"
                     />
@@ -62,7 +64,8 @@
 
                     />
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:id="@+id/application_refno_tele_verification"
                     android:text=""
@@ -80,7 +83,8 @@
 
                 <TextView
                     android:id="@+id/applicant_name_tele_verification"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif" />
             </TableRow>
@@ -94,7 +98,8 @@
 
                     />
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:id="@+id/coapplicant_tele_verification"
                     />

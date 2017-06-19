@@ -26,7 +26,8 @@
                 style="@style/CardHeaderText"
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/investigationId_investigation_card"
                 style="@style/CardHeaderText"
@@ -43,7 +44,8 @@
                 style="@style/CardHeaderText"
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/applicant_name_investigation_card"
                 style="@style/CardHeaderText"
@@ -61,7 +63,8 @@
                 style="@style/CardHeaderText"
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/location_type_investigation_card"
                 style="@style/CardHeaderText"
@@ -79,7 +82,8 @@
                 style="@style/CardHeaderText"
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/address_investigation_card"
                 style="@style/CardHeaderText"
@@ -101,7 +105,8 @@ GWALIOR,MADHAYA PRADESH  "
 
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/client_investigation_card"
 
@@ -119,7 +124,8 @@ GWALIOR (NA) "
 
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/case_detail_investigation_card"
                 android:hint="Case Id : 1852372

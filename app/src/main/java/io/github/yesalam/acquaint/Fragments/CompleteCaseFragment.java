@@ -179,7 +179,8 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
             CasePojo casePojo = new CasePojo();
             Elements childs = rows.get(i).getElementsByTag("td");
             casePojo.caseid = childs.get(0).text();
-            casePojo.client = childs.get(1).text();
+            String candb = childs.get(1).html();
+            casePojo.client = candb.replaceAll("<br>","\n");
             casePojo.contactperson = childs.get(2).text();
             casePojo.name = childs.get(3).text();
             casePojo.loantype = childs.get(4).text();

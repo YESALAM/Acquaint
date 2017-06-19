@@ -16,20 +16,24 @@
 
         <RadioGroup
             android:id="@+id/address_confirmed_radiogroup"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:weightSum="2"
             android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/yes_address_confirmed_radiobutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Yes" />
 
             <RadioButton
                 android:id="@+id/no_address_confirmed_radiobutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="No" />
         </RadioGroup>
     </TableRow>
@@ -45,7 +49,8 @@
 
         <Spinner
             android:id="@+id/address_confirmed_by_spinner"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content" />
     </TableRow>
 
@@ -60,7 +65,8 @@
 
         <EditText
             android:id="@+id/office_address_edittex"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content" />
     </TableRow>
 

@@ -23,7 +23,8 @@
 
             <EditText
                 android:id="@+id/address_permanent_resident_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -36,7 +37,8 @@
 
             <EditText
                 android:id="@+id/city_permanent_resident_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -49,7 +51,8 @@
 
             <EditText
                 android:id="@+id/state_permanent_resident_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -66,7 +69,8 @@
 
             <EditText
                 android:id="@+id/mobile_permanent_resident_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -79,7 +83,8 @@
 
             <EditText
                 android:id="@+id/phon_permanent_resident_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -95,7 +100,8 @@
                 />
             <CheckBox
                 android:id="@+id/need_verification_permanent_resident_radiobutton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
 
         </TableRow>
@@ -110,7 +116,8 @@
 
             <Spinner
                 android:id="@+id/assigned_to_permanent_resident_spinner"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -125,7 +132,8 @@
 
             <TextView
                 android:id="@+id/investigationstatus_permanent_resident_textview"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 style="@style/StatusTheme"
                 />

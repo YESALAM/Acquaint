@@ -36,20 +36,24 @@
 
                     <RadioGroup
                         android:id="@+id/reason_not_confirmed_radiogroup"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:weightSum="2"
                         android:orientation="horizontal">
 
                         <RadioButton
                             android:id="@+id/untraceable_reason_not_confirmed_radiobutton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="Untraceable" />
 
                         <RadioButton
                             android:id="@+id/mismatch_reason_not_confirmed_radiobutton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="Mismatch" />
 
 
@@ -75,20 +79,24 @@
 
                     <RadioGroup
                         android:id="@+id/person_know_radiogroup"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:weightSum="2"
                         android:orientation="horizontal">
 
                         <RadioButton
                             android:id="@+id/yes_person_know_applicant_radiobutton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="Yes" />
 
                         <RadioButton
                             android:id="@+id/no_person_know_applicant_radiobutton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="No" />
 
 
@@ -106,7 +114,8 @@
 
                     <EditText
                         android:id="@+id/address_belongs_to_edittext"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content" />
                 </TableRow>
 
@@ -129,7 +138,8 @@
 
                     <EditText
                         android:id="@+id/reason_edittext"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content" />
                 </TableRow>
 
@@ -146,7 +156,8 @@
 
                     <Spinner
                         android:id="@+id/locality_spinner_not_confirmed"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content" />
                 </TableRow>
 
@@ -161,7 +172,8 @@
 
                     <EditText
                         android:id="@+id/result_of_calling_edittext"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content" />
                 </TableRow>
 

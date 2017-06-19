@@ -23,7 +23,8 @@
                 android:text="Residence Address    "
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/residence_address_residence_tele"
                 />
@@ -35,7 +36,8 @@
                 android:text="Mobile"
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/mobile_residence_tele"
                 />
@@ -67,7 +69,8 @@
 
                     <EditText
                         android:id="@+id/person_spoken_to_residence"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content" />
                 </TableRow>
 
@@ -80,7 +83,8 @@
 
                         />
                     <Spinner
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:id="@+id/relation_residence_spinner"
                         />
@@ -104,7 +108,8 @@
 
                     <EditText
                         android:id="@+id/first_calling_date_residence"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         />
                 </TableRow>
@@ -118,7 +123,8 @@
 
                     <EditText
                         android:id="@+id/first_time_of_calling_residence"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         />
                 </TableRow>
@@ -132,7 +138,8 @@
 
                     <EditText
                         android:id="@+id/second_calling_date_residence"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         />
                 </TableRow>
@@ -146,7 +153,8 @@
 
                     <EditText
                         android:id="@+id/second_time_of_calling_residence"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         />
                 </TableRow>
@@ -161,7 +169,8 @@
 
                     <EditText
                         android:id="@+id/third_calling_date_residence"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         />
                 </TableRow>
@@ -175,7 +184,8 @@
 
                     <EditText
                         android:id="@+id/third_time_of_calling_residence"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         />
                 </TableRow>
@@ -189,7 +199,8 @@
 
                     <EditText
                         android:id="@+id/remark_residence"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         />
                 </TableRow>
@@ -205,7 +216,8 @@
 
                     <Spinner
                         android:id="@+id/status_residence_spinner"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         />
                 </TableRow>

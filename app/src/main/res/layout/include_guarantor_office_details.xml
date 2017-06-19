@@ -22,7 +22,8 @@
 
             <EditText
                 android:id="@+id/company_name_guarantor_office_details_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -35,7 +36,8 @@
 
             <EditText
                 android:id="@+id/address_guarantor_office_details_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -48,7 +50,8 @@
 
             <EditText
                 android:id="@+id/city_guarantor_office_details_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -61,7 +64,8 @@
 
             <EditText
                 android:id="@+id/state_guarantor_office_details_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -75,7 +79,8 @@
 
             <EditText
                 android:id="@+id/mobile_guarantor_office_details_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -88,7 +93,8 @@
 
             <EditText
                 android:id="@+id/phon_guarantor_office_details_edittext"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 
@@ -103,7 +109,8 @@
 
             <CheckBox
                 android:id="@+id/need_verification_guarantor_office_details_radiobutton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
 
         </TableRow>
@@ -118,7 +125,8 @@
 
             <Spinner
                 android:id="@+id/assigned_to_guarantor_office_details_spinner"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
 

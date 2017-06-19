@@ -29,10 +29,10 @@
 
             <TextView
                 android:id="@+id/caseno_case_card"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 style="@style/CardHeaderText"
-                android:hint="4860674"
                 android:text="4860674" />
         </TableRow>
 
@@ -47,10 +47,10 @@
 
             <TextView
                 android:id="@+id/applicant_name_case_card"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 style="@style/CardHeaderText"
-                android:hint="BRIJRAJ SINGH"
                 android:text="BRIJRAJ SINGH"
                  />
         </TableRow>
@@ -66,11 +66,11 @@
 
             <TextView
                 android:id="@+id/loan_type_case_card"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
 
                 android:fontFamily="sans-serif"
-                android:hint="Personal Loan "
                 android:text="Personal Loan " />
         </TableRow>
 
@@ -83,14 +83,11 @@
 
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/client_case_card"
-
-                android:hint="State Bank of India
-CITY CENTER (4352) "
-                android:text="State Bank of India
-CITY CENTER (4352) "
+                android:text="State Bank of India CITY CENTER (4352) "
                 />
         </TableRow>
 
@@ -103,11 +100,10 @@ CITY CENTER (4352) "
 
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/contact_person_case_card"
-
-                android:hint="SHAILESH BANJARE "
                 android:text="SHAILESH BANJARE "
                 />
         </TableRow>
@@ -119,11 +115,10 @@ CITY CENTER (4352) "
 
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/pickup_date_case_card"
-
-                android:hint="05-06-2017"
                 android:text="05-06-2017"
                 />
         </TableRow>
@@ -135,11 +130,10 @@ CITY CENTER (4352) "
 
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/punchedby_case_card"
-
-                android:hint="MANISH JAIN"
                 android:text="MANISH JAIN"
                 />
         </TableRow>
@@ -152,11 +146,10 @@ CITY CENTER (4352) "
 
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/status_case_card"
-
-                android:hint="In Progress "
                 android:text="In Progress "
                 />
         </TableRow>
