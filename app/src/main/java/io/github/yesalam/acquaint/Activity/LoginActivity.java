@@ -250,7 +250,7 @@ public class LoginActivity extends AppCompatActivity implements Callback{
                 count=0;
                 progressDialog.cancel();
                 Log.e(LOG_TAG, "credential mismatch");
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mEmailView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
         } else {

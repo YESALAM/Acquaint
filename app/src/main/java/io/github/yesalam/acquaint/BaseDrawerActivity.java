@@ -166,10 +166,10 @@ public abstract class BaseDrawerActivity extends AppCompatActivity  {
                         //Yes button clicked
                         app_preferences.edit().clear().commit();
                         deleteCache(getApplicationContext());
-                        finish();
-                        /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(intent);*/
 
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
+                        finish();
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
