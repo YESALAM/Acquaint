@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -19,6 +20,8 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,6 +39,7 @@ import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.DateClick;
 import io.github.yesalam.acquaint.Util.OVerificationId;
+import io.github.yesalam.acquaint.Util.RVerificationId;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Request;
 
@@ -242,8 +246,10 @@ public class FieldInvestigationOfficeDialoog extends Activity implements WebHelp
     EditText employementupdation_edittext;
     @BindView(R.id.recommendation_spinner)
     Spinner recommendation_spinner;
-    @BindView(R.id.uploaded_images_imageview)
-    ImageView uploadedimages_imageview;
+    @BindView(R.id.uploaded_images_scrollview)
+    HorizontalScrollView uploadedimages_scrollview;
+    @BindView(R.id.image_holder)
+    LinearLayout image_holder;
     @BindView(R.id.upload_file_button)
     Button uploadfile_button;
     @BindView(R.id.supervisor_remark_edittext)
@@ -486,6 +492,27 @@ public class FieldInvestigationOfficeDialoog extends Activity implements WebHelp
         phonenoupdation_edittext.setText(map.get(OVerificationId.updatePhoneNo));
         employementupdation_edittext.setText(map.get(OVerificationId.updateEmploymentDetail));
 
+        for(int i=0;i<5;i++){
+            String img = map.get("img_src"+i);
+            if(img == null) break;
+
+            ImageView imageView = new ImageView(this);
+            imageView.setId(i);
+            imageView.setPadding(5, 5, 5, 5);
+            imageView.setAdjustViewBounds(true);
+            imageView.setMaxHeight(250);
+            imageView.setMaxWidth(380);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            Picasso.with(this).load(ACQUAINT_URL+img).error(R.mipmap.logo).into(imageView);
+
+            image_holder.addView(imageView);
+
+        }
+
+        verifierremark_edittext.setText(map.get(OVerificationId.verifierRemark));
+        supervisorremark_edittext.setText(map.get(OVerificationId.superVisorRemark));
+
+
 
         String recommendation = map.get(OVerificationId.status);
         if(recommendation!=null){
@@ -707,13 +734,19 @@ public class FieldInvestigationOfficeDialoog extends Activity implements WebHelp
             }
         }
 
-        Element img = form.getElementsByTag("img").first();
-        if(img!=null){
-
-            String src = img.attr("abs:src");
-            map.put("img_src",src);
+        Elements imgs = form.getElementsByTag("img");
+        if(imgs!=null){
+            for(int i=0;i<imgs.size();i++){
+                String src = imgs.get(i).attr("src");
+                map.put("img_src"+i,src);
+                Log.e(LOG_TAG,"img : "+src);
+            }
         }
 
+        Elements textareas = form.getElementsByTag("textarea");
+        for(Element textarea:textareas){
+            map.put(textarea.id(),textarea.text());
+        }
 
 
 

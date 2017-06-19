@@ -140,11 +140,16 @@
             android:text="Auto Remark" />
 
 
+
+    </TableRow>
+
+    <TableRow>
         <EditText
             android:id="@+id/verifier_remark_edittext"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_span="2"
+            android:textSize="14sp"
             android:hint="Verifier Remark" />
     </TableRow>
 
@@ -271,12 +276,29 @@
             android:layout_height="wrap_content"
             android:text="Uploaded Images" />
 
-        <ImageView
-            android:id="@+id/uploaded_images_imageview"
-            android:layout_width="100px"
-            android:layout_height="200px"
+
+    </TableRow>
+    <TableRow>
+        <HorizontalScrollView
+            android:id="@+id/uploaded_images_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
             android:layout_gravity="center"
-            />
+            android:layout_span="2"
+            >
+            <LinearLayout
+                android:id="@+id/image_holder"
+                android:layout_width="150dp"
+                android:layout_height="100dp"
+                android:orientation="horizontal"
+                >
+
+
+
+
+            </LinearLayout>
+
+            </HorizontalScrollView>
     </TableRow>
     <TableRow
         android:layout_marginTop="@dimen/spinner_marginTop"
@@ -305,13 +327,17 @@
             android:id="@+id/autoremark_supervisor_button"
             android:text="Auto Remark" />
 
+    </TableRow>
 
+    <TableRow>
         <EditText
             android:id="@+id/supervisor_remark_edittext"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Supervisor Remark" />
+            android:hint="Supervisor Remark"
+            android:layout_span="2"
+            android:textSize="14sp"
+            />
     </TableRow>
 
 </TableLayout>
