@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.yesalam.acquaint.Adapters.FragmentAdapter;
-import io.github.yesalam.acquaint.BaseWebActivity;
 import io.github.yesalam.acquaint.Fragments.CaseBasicDetail;
 import io.github.yesalam.acquaint.Fragments.CaseCoApplicant;
 import io.github.yesalam.acquaint.Fragments.CaseGuarantor;
@@ -34,7 +34,7 @@ import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 
-public class IndiCaseActivity extends BaseWebActivity implements WebHelper.CallBack {
+public class IndiCaseActivity extends AppCompatActivity implements WebHelper.CallBack {
 
     public String caseid;
     String LOG_TAG = "IndiCaseActivity";

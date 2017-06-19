@@ -154,7 +154,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
             } else {
                 //credentials mismatch
                 Log.e(LOG_TAG, "not LoggedIn. try to login");
-                activity.login();
+                //activity.login();
                 loadData();
             }
         } else {
@@ -205,12 +205,15 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
     }
 
     @Override
-    public void onPositiveResponse(final String htmldoc) {
+    public void onPositiveResponse(final String html) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
-                completeInvestigationsResponesReader(htmldoc);
+                Log.e(LOG_TAG, "completeField loaded");
+                progressBar.setVisibility(View.GONE);
+                ArrayList<InvestigationPojo> dataset = parseData(html);
+                passData(dataset);
 
             }
         });

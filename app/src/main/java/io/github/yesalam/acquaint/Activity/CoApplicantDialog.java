@@ -26,18 +26,17 @@ import java.lang.reflect.Field;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.github.yesalam.acquaint.BaseWebActivity;
+
 import io.github.yesalam.acquaint.Pojo.CoApplicantDetailPojo;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.DateClick;
 import io.github.yesalam.acquaint.Util.HaveClickListener;
-import io.github.yesalam.acquaint.Util.ResidentialId;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
-import static io.github.yesalam.acquaint.Util.Util.getAssignedToType;
+import static io.github.yesalam.acquaint.Util.SpinnerLists.getAssignedToType;
 
 /**
  * Created by yesalam on 09-06-2017.

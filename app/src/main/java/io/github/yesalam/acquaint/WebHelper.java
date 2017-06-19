@@ -47,8 +47,8 @@ public class WebHelper implements Callback {
     public OkHttpClient okHttpClient;
     public int count = 0;
     public boolean logged = false;
-    private boolean loginrequest = false;
-    private boolean ongoingrequest = false;
+    private volatile boolean loginrequest = false;
+    private volatile boolean ongoingrequest = false;
     private Context context;
     private Queue<Request> requests = new LinkedList<>();
     private Queue<CallBack> callbacks = new LinkedList<>();
@@ -79,25 +79,32 @@ public class WebHelper implements Callback {
 
     }
 
-    public void requestCall(Request request, CallBack callback) {
+   synchronized public void requestCall(Request request, CallBack callback) {
         requests.add(request);
         callbacks.add(callback);
-        if(!logged) {
+        if(!(logged || loginrequest)) {
             login();
             return;
         };
-        if (!(loginrequest && ongoingrequest)) callNext();
+        if (!(loginrequest || ongoingrequest)) callNext();
     }
 
 
     public void login() {
+        Log.e(LOG_TAG, "trying to login");
         loginrequest = true;
         String userid = app_preferences.getString(USER_ID_KEY, "NA");
         String password = app_preferences.getString(PASSWORD_KEY, "NA");
         if (userid.equalsIgnoreCase("NA")) {
-            //should no happen
+            //Called from Login Activity
+            /*if (!requests.isEmpty()) {
+                Request request = requests.peek();
+                Log.e(LOG_TAG,request.url().toString()+"  "+request.method()+" ");
+                okHttpClient.newCall(requests.peek()).enqueue(this);
+                loginrequest = true;
+                ongoingrequest = true;
+            }*/
         } else {
-            Log.e(LOG_TAG, "trying to login");
             RequestBody formBody = new FormBody.Builder()
                     .add("UserName", userid)
                     .add("Password", password)
@@ -166,6 +173,7 @@ public class WebHelper implements Callback {
             logged = true;
             Log.e(LOG_TAG, "login successfull.New Session started ");
             //NEw session started
+
             callNext();
         }
     }
@@ -240,7 +248,6 @@ public class WebHelper implements Callback {
 
 
     public interface CallBack {
-        void onPositiveResponse(String htmldoc);
-
+        void onPositiveResponse(String html);
     }
 }

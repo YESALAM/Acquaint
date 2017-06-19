@@ -28,8 +28,8 @@ import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
-import static io.github.yesalam.acquaint.Util.Util.getRelationType;
-import static io.github.yesalam.acquaint.Util.Util.getStatusType;
+import static io.github.yesalam.acquaint.Util.SpinnerLists.getRelationType;
+import static io.github.yesalam.acquaint.Util.SpinnerLists.getStatusType;
 
 /**
  * Created by yesalam on 10-06-2017.

@@ -40,26 +40,7 @@ import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
-import static io.github.yesalam.acquaint.Util.Util.getAccomodationType;
-import static io.github.yesalam.acquaint.Util.Util.getAddressConfirmedByType;
-import static io.github.yesalam.acquaint.Util.Util.getBusinessLevelType;
-import static io.github.yesalam.acquaint.Util.Util.getBusinessType;
-import static io.github.yesalam.acquaint.Util.Util.getEaseofLocatingType;
-import static io.github.yesalam.acquaint.Util.Util.getEmployementTermType;
-import static io.github.yesalam.acquaint.Util.Util.getEmployerType;
-import static io.github.yesalam.acquaint.Util.Util.getFamilyMemberType;
-import static io.github.yesalam.acquaint.Util.Util.getGradeType;
-import static io.github.yesalam.acquaint.Util.Util.getLivingStandardType;
-import static io.github.yesalam.acquaint.Util.Util.getLocalityType;
-import static io.github.yesalam.acquaint.Util.Util.getMonthType;
-import static io.github.yesalam.acquaint.Util.Util.getOfficeAddressConfirmedByType;
-import static io.github.yesalam.acquaint.Util.Util.getOfficeAmbienceType;
-import static io.github.yesalam.acquaint.Util.Util.getOfficeLocalityType;
-import static io.github.yesalam.acquaint.Util.Util.getOfficeProofType;
-import static io.github.yesalam.acquaint.Util.Util.getRecommendationType;
-import static io.github.yesalam.acquaint.Util.Util.getRelationType;
-import static io.github.yesalam.acquaint.Util.Util.getResidenceProofType;
-import static io.github.yesalam.acquaint.Util.Util.getYearType;
+import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
 
 /**
  * Created by yesalam on 12-06-2017.

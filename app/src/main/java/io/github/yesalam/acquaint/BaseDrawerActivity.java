@@ -1,5 +1,6 @@
 package io.github.yesalam.acquaint;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,6 +40,7 @@ import java.io.IOException;
 import io.github.yesalam.acquaint.Activity.CaseActivity;
 import io.github.yesalam.acquaint.Activity.CreateCaseDialog;
 import io.github.yesalam.acquaint.Activity.InvestigationActivity;
+import io.github.yesalam.acquaint.Activity.LoginActivity;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -51,18 +54,21 @@ import static io.github.yesalam.acquaint.Util.Util.IS_LOGGED_KEY;
 import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
 import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
 import static io.github.yesalam.acquaint.Util.Util.USER_KEY;
+import static io.github.yesalam.acquaint.Util.Util.deleteCache;
+import static io.github.yesalam.acquaint.Util.Util.deletePreference;
 
 /**
  * Created by yesalam on 07-06-2017.
  */
 
-public abstract class BaseDrawerActivity extends BaseWebActivity implements Callback {
+public abstract class BaseDrawerActivity extends AppCompatActivity  {
 
     protected DrawerLayout mDrawerLayout;
 
 
 
     String LOG_TAG = "BaseDrawerActivity" ;
+    private SharedPreferences app_preferences;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -71,6 +77,8 @@ public abstract class BaseDrawerActivity extends BaseWebActivity implements Call
     }
 
     public void onCreateView() {
+        app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -130,27 +138,54 @@ public abstract class BaseDrawerActivity extends BaseWebActivity implements Call
                     case R.id.case_menu_drawer:
                         intent = new Intent(getApplicationContext(), CaseActivity.class);
                         startActivity(intent);
+                        finish();
                         break;
                     case R.id.investigation_menu_drawer:
                         intent = new Intent(getApplicationContext(), InvestigationActivity.class);
                         startActivity(intent);
+                        finish();
                         break;
                     case R.id.signout_menu_drawer:
-                        SharedPreferences.Editor editor = app_preferences.edit();
-                        editor.remove(USER_KEY);
-                        editor.remove(USER_ID_KEY);
-                        editor.remove(PASSWORD_KEY);
-                        editor.remove(IS_LOGGED_KEY);
-                        editor.apply();
+
+                        signOut();
                         break;
                 }
-                finish();
+
                 return true;
             }
         });
     }
 
 
+    public void signOut(){
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        app_preferences.edit().clear().commit();
+                        deleteCache(getApplicationContext());
+                        finish();
+                        /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);*/
+
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+
+    }
 
 
     @Override

@@ -25,7 +25,7 @@ import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.DateClick;
 import io.github.yesalam.acquaint.Util.HaveClickListener;
 
-import static io.github.yesalam.acquaint.Util.Util.getAssignedToType;
+import static io.github.yesalam.acquaint.Util.SpinnerLists.getAssignedToType;
 
 /**
  * Created by yesalam on 09-06-2017.

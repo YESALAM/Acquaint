@@ -155,7 +155,7 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
             } else {
                 //credentials mismatch
                 Log.e(LOG_TAG, "not LoggedIn. try to login");
-                activity.login();
+                //activity.login();
                 loadData();
             }
         } else {
@@ -195,12 +195,15 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
     }
 
     @Override
-    public void onPositiveResponse(final String htmldoc) {
+    public void onPositiveResponse(final String html) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
-                teleVerificationResponesReader(htmldoc);
+                Log.e(LOG_TAG, "teleVerification loaded");
+                //progressBar.setVisibility(View.GONE);
+                ArrayList<TelePojo> dataset = parseData(html);
+                passData(dataset);
 
             }
         });

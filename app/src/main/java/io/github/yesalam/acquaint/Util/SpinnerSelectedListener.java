@@ -15,8 +15,8 @@ import java.util.ArrayList;
 
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 
-import static io.github.yesalam.acquaint.Util.Util.getBranchHash;
-import static io.github.yesalam.acquaint.Util.Util.getClientHash;
+import static io.github.yesalam.acquaint.Util.Maps.getBranchHash;
+import static io.github.yesalam.acquaint.Util.Maps.getClientHash;
 
 /**
  * Created by yesalam on 16-06-2017.

@@ -36,8 +36,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.yesalam.acquaint.Activity.IndiCaseActivity;
-import io.github.yesalam.acquaint.BaseWebActivity;
-import io.github.yesalam.acquaint.Pojo.Card.CasePojo;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.CaseBasicId;
@@ -53,13 +51,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static io.github.yesalam.acquaint.Util.Maps.getBranchHash;
+import static io.github.yesalam.acquaint.Util.Maps.getClientHash;
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
-import static io.github.yesalam.acquaint.Util.Util.getAssignedToType;
-import static io.github.yesalam.acquaint.Util.Util.getBranchHash;
-import static io.github.yesalam.acquaint.Util.Util.getClientHash;
-import static io.github.yesalam.acquaint.Util.Util.getClientType;
-import static io.github.yesalam.acquaint.Util.Util.getLoanTypes;
-import static io.github.yesalam.acquaint.Util.Util.getPickupByType;
+import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
 
 /**
  * Created by yesalam on 08-06-2017.

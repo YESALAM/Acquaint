@@ -30,6 +30,7 @@ import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WaitingForData;
+import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -41,7 +42,7 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
  * Created by yesalam on 08-06-2017.
  */
 
-public class CompleteCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener {
+public class CompleteCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener, WebHelper.CallBack {
 
 
     String LOG_TAG = "CompleteCaseFragment" ;
@@ -116,8 +117,8 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL+COMPLETE_CASES_URL)
                 .build();
-
-        activity.okHttpClient.newCall(request).enqueue(this);
+        WebHelper.getInstance(getContext()).requestCall(request,this);
+        //activity.okHttpClient.newCall(request).enqueue(this);
     }
 
     @Override
@@ -155,7 +156,7 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
             } else {
                 //credentials mismatch
                 Log.e(LOG_TAG, "not LoggedIn. try to login");
-                activity.login();
+                //activity.login();
                 loadData();
             }
         }else{
@@ -201,5 +202,19 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
     @Override
     public void onRefresh() {
         loadData();
+    }
+
+    @Override
+    public void onPositiveResponse(final String html) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.e(LOG_TAG,"compelteCases loaded");
+                //
+                // progressBar.setVisibility(View.GONE);
+                ArrayList<CasePojo> dataset = parseData(html);
+                passData(dataset);
+            }
+        });
     }
 }

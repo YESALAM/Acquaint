@@ -31,11 +31,12 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.github.yesalam.acquaint.BaseWebActivity;
+
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.DateClick;
 import io.github.yesalam.acquaint.Util.HaveClickListener;
+import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -43,19 +44,14 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
-import static io.github.yesalam.acquaint.Util.Util.getAssignedToType;
-import static io.github.yesalam.acquaint.Util.Util.getBinaryType;
-import static io.github.yesalam.acquaint.Util.Util.getBranchHash;
-import static io.github.yesalam.acquaint.Util.Util.getClientHash;
-import static io.github.yesalam.acquaint.Util.Util.getClientType;
-import static io.github.yesalam.acquaint.Util.Util.getLoanTypes;
-import static io.github.yesalam.acquaint.Util.Util.getPickupByType;
+import static io.github.yesalam.acquaint.Util.Maps.*;
+import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
 
 /**
  * Created by yesalam on 09-06-2017.
  */
 
-public class CreateCaseDialog extends BaseWebActivity implements Callback {
+public class CreateCaseDialog extends AppCompatActivity  {
 
     //View Binding
     //basic detail
@@ -363,31 +359,5 @@ public class CreateCaseDialog extends BaseWebActivity implements Callback {
 
     }
 
-    public void updateClientDetail(String clientid){
-        Request request = new Request.Builder()
-                .url(ACQUAINT_URL+"/GetBranches?client_id="+clientid)
-                .build();
-
-        okHttpClient.newCall(request).enqueue(this);
-
-    }
-
-    @Override
-    public void onFailure(Call call, IOException e) {
-        e.printStackTrace();
-    }
-
-    @Override
-    public void onResponse(Call call,final Response response) throws IOException {
-        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-        try {
-            //call.request().url().
-            JSONArray array = new JSONArray(response.body().string());
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 }

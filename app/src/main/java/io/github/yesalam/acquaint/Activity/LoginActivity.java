@@ -38,9 +38,10 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 
-import io.github.yesalam.acquaint.BaseWebActivity;
+
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Util.*;
+import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -59,7 +60,7 @@ import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements Callback {
+public class LoginActivity extends AppCompatActivity implements Callback{
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -181,6 +182,7 @@ public class LoginActivity extends AppCompatActivity implements Callback {
 
 
     private void login(){
+        Log.e(LOG_TAG,"login called");
         ClearableCookieJar cookieJar =
                 new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(this));
 
@@ -265,12 +267,21 @@ public class LoginActivity extends AppCompatActivity implements Callback {
             editor.putString(USER_KEY,username);
             editor.putString(USER_ID_KEY,userid);
             editor.putString(PASSWORD_KEY,password);
-            editor.apply();
+            editor.commit();
             Intent intent = new Intent(this,CaseActivity.class) ;
             startActivity(intent);
             finish();
         }
     }
 
+
+    public void onPositiveResponse(final String htmldoc) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loginResponseReader(htmldoc);
+            }
+        });
+    }
 }
 

@@ -88,6 +88,7 @@ public abstract class BaseWebActivity extends AppCompatActivity implements Callb
         String password = app_preferences.getString(PASSWORD_KEY, "NA");
         if (userid.equalsIgnoreCase("NA")) {
             //should no happen
+
         } else {
             Log.e(LOG_TAG, "trying to login");
             RequestBody formBody = new FormBody.Builder()

@@ -31,12 +31,12 @@ import java.util.List;
 
 import io.github.yesalam.acquaint.Activity.CaseActivity;
 import io.github.yesalam.acquaint.Adapters.CaseRecyclerAdapter;
-import io.github.yesalam.acquaint.BaseWebActivity;
 import io.github.yesalam.acquaint.Pojo.Card.CasePojo;
 import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WaitingForData;
+import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -51,7 +51,7 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
  * Created by yesalam on 08-06-2017.
  */
 
-public class NewCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener {
+public class NewCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener, WebHelper.CallBack {
 
     private String LOG_TAG = "NewCaseFragment" ;
 
@@ -126,7 +126,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
                 .url(ACQUAINT_URL+NEW_CASES_URL)
                 .build();
         Log.e(LOG_TAG,ACQUAINT_URL+NEW_CASES_URL);
-        BaseWebActivity.okHttpClient.newCall(request).enqueue(this);
+        WebHelper.getInstance(getContext()).requestCall(request,this);
     }
 
     @Override
@@ -164,7 +164,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
             } else {
                 //credentials mismatch
                 Log.e(LOG_TAG, "not LoggedIn. try to login");
-                activity.login();
+                //activity.login();
                 loadData();
             }
         }else{
@@ -208,5 +208,18 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
     @Override
     public void onRefresh() {
         loadData();
+    }
+
+    @Override
+    public void onPositiveResponse(final String html) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.e(LOG_TAG,"newCases loaded");
+                //progressBar.setVisibility(View.GONE);
+                ArrayList<CasePojo> dataset = parseData(html);
+                passData(dataset);
+            }
+        });
     }
 }

@@ -37,11 +37,6 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
-import static io.github.yesalam.acquaint.BaseWebActivity.count;
-import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
-import static io.github.yesalam.acquaint.Util.Util.PASSWORD_KEY;
-import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
-import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 
 public class CaseActivity extends BaseDrawerActivity {
 
@@ -54,7 +49,7 @@ public class CaseActivity extends BaseDrawerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //checkLogin();
-
+        Log.e(LOG_TAG,"Main started");
 
 
 

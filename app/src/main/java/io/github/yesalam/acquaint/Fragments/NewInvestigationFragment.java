@@ -151,7 +151,7 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
             } else {
                 //credentials mismatch
                 Log.e(LOG_TAG, "not LoggedIn. try to login");
-                activity.login();
+                //activity.login();
                 loadData();
             }
         } else {
@@ -202,12 +202,15 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
     }
 
     @Override
-    public void onPositiveResponse(final String htmldoc) {
+    public void onPositiveResponse(final String html) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
-                newInvestigationsResponesReader(htmldoc);
+                Log.e(LOG_TAG, "newField loaded");
+                progressBar.setVisibility(View.GONE);
+                ArrayList<InvestigationPojo> dataset = parseData(html);
+                passData(dataset);
 
             }
         });
