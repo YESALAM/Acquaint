@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -50,27 +51,36 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
  * Created by yesalam on 08-06-2017.
  */
 
-public class NewCaseFragment extends Fragment implements WaitingForData, Callback {
+public class NewCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener {
 
     private String LOG_TAG = "NewCaseFragment" ;
 
+    SwipeRefreshLayout refreshLayout;
     CaseRecyclerAdapter adapter;
     ProgressBar progressBar;
-
     CaseActivity activity;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         activity= (CaseActivity) context;
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_card,container,false);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
 
         adapter = new CaseRecyclerAdapter(new ArrayList<CasePojo>());
         setupRecyclerView(recyclerView);
@@ -78,9 +88,10 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
         try {
             List<CasePojo> cachedEntries_newcase = (List<CasePojo>) Util.readObject(getContext(), "newcases");
             if(cachedEntries_newcase.size()>0){
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
                 passData(cachedEntries_newcase);
             }else{
+                //refreshLayout.setRefreshing(true);
                 loadData();
             }
         } catch (IOException e) {
@@ -105,14 +116,16 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
     public void passData(List<? extends Object> data) {
         adapter.setDataset((ArrayList<CasePojo>) data);
         adapter.notifyDataSetChanged();
+        refreshLayout.setRefreshing(false);
     }
 
     private void loadData(){
+        refreshLayout.setRefreshing(true);
         String NEW_CASES_URL = "/Users/Cases/NewCases";
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL+NEW_CASES_URL)
                 .build();
-
+        Log.e(LOG_TAG,ACQUAINT_URL+NEW_CASES_URL);
         BaseWebActivity.okHttpClient.newCall(request).enqueue(this);
     }
 
@@ -145,7 +158,8 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
             if (useridnode_error == null) {
                 //noservice
                 Log.e(LOG_TAG, "problem with service.retrying");
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
+                refreshLayout.setRefreshing(false);
                 Toast.makeText(activity, "Service Unavailable! Please try later", Toast.LENGTH_SHORT).show();
             } else {
                 //credentials mismatch
@@ -155,7 +169,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
             }
         }else{
             Log.e(LOG_TAG,"newCases loaded");
-            progressBar.setVisibility(View.GONE);
+            //progressBar.setVisibility(View.GONE);
             ArrayList<CasePojo> dataset = parseData(html);
             passData(dataset);
         }
@@ -189,5 +203,10 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
             e.printStackTrace();
         }
         return dataset;
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
     }
 }

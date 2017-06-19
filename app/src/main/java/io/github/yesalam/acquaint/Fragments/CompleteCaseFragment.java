@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -40,12 +41,13 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
  * Created by yesalam on 08-06-2017.
  */
 
-public class CompleteCaseFragment extends Fragment implements WaitingForData, Callback {
+public class CompleteCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener {
 
 
     String LOG_TAG = "CompleteCaseFragment" ;
     CaseRecyclerAdapter adapter;
     ProgressBar progressBar;
+    SwipeRefreshLayout refreshLayout;
 
     CaseActivity activity;
 
@@ -61,15 +63,25 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_card,container,false);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
 
         adapter = new CaseRecyclerAdapter(new ArrayList<CasePojo>());
         try {
             List<CasePojo> cachedEntries_completecases = (List<CasePojo>) Util.readObject(getContext(), "completecases");
             if(cachedEntries_completecases.size()>0){
                 passData(cachedEntries_completecases);
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
             }else{
                 loadData();
             }
@@ -95,9 +107,11 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
     public void passData(List<? extends Object> data) {
         adapter.setDataset((ArrayList<CasePojo>) data);
         adapter.notifyDataSetChanged();
+        refreshLayout.setRefreshing(false);
     }
 
     private void loadData(){
+        refreshLayout.setRefreshing(true);
         String COMPLETE_CASES_URL = "/Users/Cases";
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL+COMPLETE_CASES_URL)
@@ -135,7 +149,8 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
             if (useridnode_error == null) {
                 //noservice
                 Log.e(LOG_TAG, "problem with service.retrying");
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
+                refreshLayout.setRefreshing(false);
                 Toast.makeText(activity, "Service Unavailable! Please try later", Toast.LENGTH_SHORT).show();
             } else {
                 //credentials mismatch
@@ -145,7 +160,8 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
             }
         }else{
             Log.e(LOG_TAG,"compelteCases loaded");
-            progressBar.setVisibility(View.GONE);
+            //
+            // progressBar.setVisibility(View.GONE);
             ArrayList<CasePojo> dataset = parseData(html);
             passData(dataset);
         }
@@ -178,6 +194,12 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return dataset;
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,6 +30,7 @@ import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Adapters.TeleVeriRecyclerAdapter;
 import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WaitingForData;
+import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -40,13 +42,13 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
  * Created by yesalam on 08-06-2017.
  */
 
-public class TeleVerificationFragment extends Fragment implements WaitingForData, Callback {
+public class TeleVerificationFragment extends Fragment implements WaitingForData, Callback, WebHelper.CallBack, SwipeRefreshLayout.OnRefreshListener {
 
     private String LOG_TAG = "TeleVeriFragment";
 
     TeleVeriRecyclerAdapter adapter;
     ProgressBar progressBar;
-
+    SwipeRefreshLayout refreshLayout;
     InvestigationActivity activity;
 
 
@@ -61,8 +63,16 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_card, container, false);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
 
         adapter = new TeleVeriRecyclerAdapter(new ArrayList<TelePojo>());
         setupRecyclerView(recyclerView);
@@ -70,7 +80,7 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
         try {
             List<InvestigationPojo> cachedEntries_tele = (List<InvestigationPojo>) Util.readObject(getContext(), "tele");
             if(cachedEntries_tele.size()>0){
-                progressBar.setVisibility(View.GONE);
+
                 passData(cachedEntries_tele);
             }else{
                 loadData();
@@ -97,15 +107,17 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
     public void passData(List<? extends Object> data) {
         adapter.setDataset((ArrayList<TelePojo>) data);
         adapter.notifyDataSetChanged();
+        refreshLayout.setRefreshing(false);
     }
 
     private void loadData() {
+        refreshLayout.setRefreshing(true);
         String PAGE_URL = "/Users/Verifications";
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL + PAGE_URL)
                 .build();
 
-        activity.okHttpClient.newCall(request).enqueue(this);
+        WebHelper.getInstance(getContext()).requestCall(request,this);
     }
 
     @Override
@@ -180,5 +192,22 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
             e.printStackTrace();
         }
         return dataset;
+    }
+
+    @Override
+    public void onPositiveResponse(final String htmldoc) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                teleVerificationResponesReader(htmldoc);
+
+            }
+        });
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
     }
 }

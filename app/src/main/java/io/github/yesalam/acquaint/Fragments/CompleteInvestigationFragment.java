@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,6 +29,7 @@ import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WaitingForData;
+import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -39,13 +41,13 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
  * Created by yesalam on 08-06-2017.
  */
 
-public class CompleteInvestigationFragment extends Fragment implements WaitingForData, Callback {
+public class CompleteInvestigationFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener, WebHelper.CallBack {
 
     private String LOG_TAG = "CompletInvesFragment";
 
     InvestigationRecyclerAdapter adapter ;
     ProgressBar progressBar;
-
+    SwipeRefreshLayout refreshLayout;
     InvestigationActivity activity;
 
 
@@ -62,16 +64,23 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_card, container, false);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-
+        progressBar.setVisibility(View.GONE);
         adapter = new InvestigationRecyclerAdapter(new ArrayList<InvestigationPojo>());
         setupRecyclerView(recyclerView);
 
         try {
             List<InvestigationPojo> cachedEntries_complete = (List<InvestigationPojo>) Util.readObject(getContext(), "completefield");
             if(cachedEntries_complete.size()>0){
-                progressBar.setVisibility(View.GONE);
+
                 passData(cachedEntries_complete);
             }else{
                 loadData();
@@ -96,16 +105,18 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
     public void passData(List<? extends Object> data) {
         adapter.setDataset((ArrayList<InvestigationPojo>) data);
         adapter.notifyDataSetChanged();
+        refreshLayout.setRefreshing(false);
     }
 
 
     private void loadData() {
+        refreshLayout.setRefreshing(true);
         String PAGE_URL = "/Users/FieldInvestigation";
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL + PAGE_URL)
                 .build();
 
-        activity.okHttpClient.newCall(request).enqueue(this);
+        WebHelper.getInstance(getContext()).requestCall(request,this);
     }
 
     @Override
@@ -186,5 +197,22 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
 
 
         return dataset;
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
+    }
+
+    @Override
+    public void onPositiveResponse(final String htmldoc) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                completeInvestigationsResponesReader(htmldoc);
+
+            }
+        });
     }
 }
