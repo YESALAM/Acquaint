@@ -427,6 +427,19 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         officeaddress_row.setVisibility(View.GONE);
 
 
+        autoremark_verifier_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifierremark_edittext.setText(autoRemark());
+            }
+        });
+        supervisorremark_edittext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                supervisorremark_edittext.setText(autoRemark());
+            }
+        });
+
     }
 
     @Override
@@ -796,4 +809,25 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
         return map;
     }
+
+    private String autoRemark(){
+        String format = "VISIT DONE ADDRESS CONFIRMED MET WITH %s (%s) AS PER RESPONDED APPLICANT IS RESIDING IN %s PREMISES SINCE LAST %s;TOTAL FAMILY MEMBERS ARE %s OUT OF %s ARE EARNING;%s LOCALITY;%s DOMINATED AREA;APPROXIMATE BUILT UP SIZE IS %s SQFT;BUILT UP TYPE %s;LIVING STANDARD IS %s;NEIGHBOUR CHECK DONE WITH MR. %s AND NO ADVERSE FEEDBACK FOUND;";
+        String personMet = String.valueOf(personmet_edittext.getText());
+        String relation = ((SpinnerItem)relation_spinner.getSelectedItem()).getText();
+        String residenceStatus = ((SpinnerItem)residence_status_spinner.getSelectedItem()).getText();
+        String sinceLast = ((SpinnerItem)residencestatus_month_spinner.getSelectedItem()).getText()+((SpinnerItem)residencestatus_year_spinner.getSelectedItem()).getText();
+        String familyMember = ((SpinnerItem)totalfamilymember_spinner.getSelectedItem()).getText();
+        String earningMemeber = ((SpinnerItem)earningmember_spinner.getSelectedItem()).getText();
+        String easeOfLocation = ((SpinnerItem)easeoflocation_spinner.getSelectedItem()).getText();
+        String locality = ((SpinnerItem)locality_spinner.getSelectedItem()).getText();
+        String area = String.valueOf(approxarea_edittext.getText());
+        String buildType = ((SpinnerItem)accomadationtype_spinner.getSelectedItem()).getText();
+        String livingStandard = ((SpinnerItem)statndard_living_spinner.getSelectedItem()).getText();
+        String neighbour = String.valueOf(neighbour1_edittext.getText());
+
+        String output = String.format(format,personMet.toUpperCase(),relation.toUpperCase(),residenceStatus.toUpperCase(),sinceLast.toUpperCase(),familyMember.toUpperCase(),earningMemeber.toUpperCase(),easeOfLocation.toUpperCase(),locality.toUpperCase(),area,buildType.toUpperCase(),livingStandard.toUpperCase(),neighbour.toUpperCase());
+        return output;
+    }
+
+
 }

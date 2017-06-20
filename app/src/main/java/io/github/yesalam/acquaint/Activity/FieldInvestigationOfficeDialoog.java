@@ -396,6 +396,20 @@ public class FieldInvestigationOfficeDialoog extends Activity implements WebHelp
         neighbour1_textview.setText("Collegue 1");
         neighbour2_textview.setText("Collegue 2");
         proof_attached_row.setVisibility(View.GONE);
+
+        autoremark_verifier_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifierremark_edittext.setText(autoRemark());
+            }
+        });
+
+        autoremark_supervisor_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                supervisorremark_edittext.setText(autoRemark());
+            }
+        });
     }
 
 
@@ -752,5 +766,23 @@ public class FieldInvestigationOfficeDialoog extends Activity implements WebHelp
 
 
         return map;
+    }
+
+
+    private String autoRemark(){
+        String format = "VISIT DONE AND MET WITH MR. %s (%s) WHO CONFIRMED THE EMPLOYMENT EXISTENCE OF APPLICANT; AS PER HIM APPLICANT IS WORKING WITH %s FROM LAST %s YEARS AS (%s IN %s); APPROXIMATE SALARY IS RS. %s; COMPANY IS A %s; TOTAL EMPLOYEE %s WAS SEEN; CO-WORKER CHECK DONE WITH MR. %s ";
+        String personMet = String.valueOf(personmet_office_edittext.getText());
+        String designation = String.valueOf(personment_designation_edittext.getText());
+        String employer = String.valueOf(nameofemployer_edittext.getText());
+        String sinceLast = String.valueOf(yearsofcurrent_employement_edittext.getText());
+        String designationApplicant = String.valueOf(grade_edittext.getText());
+        String terms = ((SpinnerItem) termsof_employement_spinner.getSelectedItem()).getText();
+        String salary = String.valueOf(current_salary_edittext.getText());
+        String companyType = ((SpinnerItem)typeofemployer_spinner.getSelectedItem()).getText();
+        String totalEmployee = String.valueOf(noofemployee_see_edittext.getText());
+        String collegue = String.valueOf(neighbour1_edittext.getText());
+
+        String output = String.format(format,personMet,designation,employer,sinceLast,designationApplicant,terms,salary,companyType,totalEmployee,collegue);
+        return output;
     }
 }

@@ -32,6 +32,18 @@ public class SpinnerItem {
         return name;
     }
 
+    public String getText(){
+        String ret = "" ;
+        try {
+            int key = Integer.parseInt(value);
+            if(key==0) name = "";
+            else ret = name ;
+        }catch (NumberFormatException nfe){
+            ret = name ;
+        }
+        return ret;
+    }
+
     public String getValue(){
         if(value==null) return name;
         return value;
