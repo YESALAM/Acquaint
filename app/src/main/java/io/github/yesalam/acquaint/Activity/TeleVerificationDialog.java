@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -35,7 +36,7 @@ import static io.github.yesalam.acquaint.Util.SpinnerLists.getStatusType;
  * Created by yesalam on 10-06-2017.
  */
 
-public class TeleVerificationDialog extends Activity implements WebHelper.CallBack {
+public class TeleVerificationDialog extends Activity implements WebHelper.CallBack, SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.televerification_title_textview)
     TextView title_textview;
@@ -116,6 +117,7 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
 
     String LOG_TAG = "TeleVerificationDialog" ;
     String investigationId ;
+    SwipeRefreshLayout refreshLayout;
 
 
     @Override
@@ -126,6 +128,14 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         investigationId = intent.getStringExtra("investigationid");
         ButterKnife.bind(this);
         initForm();
+
+        refreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         loadData();
 
     }
@@ -148,6 +158,7 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
     }
 
     private void update(Map<String,String> map){
+        refreshLayout.setRefreshing(false);
         caseid_textview.setText(map.get(TeleId.caseId));
         applicatiorefno_textview.setText(map.get(TeleId.applicationRefNo));
         name_textview.setText(map.get(TeleId.name));
@@ -213,6 +224,7 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
     }
 
     private void loadData(){
+        refreshLayout.setRefreshing(true);
         String TELE_VERIFICATION_DETAIL = "/Users/Verifications/TeleVerification/"+investigationId;
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL+TELE_VERIFICATION_DETAIL)
@@ -291,5 +303,10 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
 
 
         return map;
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
     }
 }

@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -58,7 +59,7 @@ import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
  * Created by yesalam on 12-06-2017.
  */
 
-public class FieldInvestigationOfficeDialoog extends AppCompatActivity implements WebHelper.CallBack {
+public class FieldInvestigationOfficeDialoog extends AppCompatActivity implements WebHelper.CallBack, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "FieldInviOffice";
     private static final int PERMISSION_REQUEST = 10101;
@@ -275,6 +276,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
     String investigationId;
     String client ;
     List<String> image_list ;
+    SwipeRefreshLayout refreshLayout;
 
 
     @Override
@@ -287,6 +289,14 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         ButterKnife.bind(this);
         image_list = new ArrayList<>();
         initForm();
+
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         loadData();
     }
 
@@ -516,6 +526,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
 
 
     private void loadData(){
+        refreshLayout.setRefreshing(true);
         String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/OfficeVerification/"+investigationId;
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL+TELE_VERIFICATION_DETAIL)
@@ -541,7 +552,8 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
     }
 
     private void update(Map<String,String> map){
-        logId(map);
+        refreshLayout.setRefreshing(false);
+        //logId(map);
 
         investigaion_title_textview.setText("Field Investigations "+investigationId);
         if(client.contains("Indiabulls")){
@@ -863,5 +875,10 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
 
         String output = String.format(format,personMet,designation,employer,sinceLast,designationApplicant,terms,salary,companyType,totalEmployee,collegue);
         return output;
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
     }
 }

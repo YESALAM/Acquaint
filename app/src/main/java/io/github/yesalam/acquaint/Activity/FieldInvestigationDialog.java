@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -58,7 +59,7 @@ import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
  * Created by yesalam on 10-06-2017.
  */
 
-public class FieldInvestigationDialog extends Activity implements WebHelper.CallBack {
+public class FieldInvestigationDialog extends Activity implements WebHelper.CallBack, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "FieldInvestigation" ;
     private static final int PERMISSION_REQUEST = 10101;
@@ -294,6 +295,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
     String investigationId;
     String client ;
     List<String> image_list;
+    SwipeRefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -306,6 +308,14 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         image_list = new ArrayList<>();
 
         initForm();
+
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         loadData();
 
     }
@@ -318,6 +328,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
 
     private void loadData(){
+        refreshLayout.setRefreshing(true);
         String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/"+investigationId;
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL+TELE_VERIFICATION_DETAIL)
@@ -551,6 +562,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
     private void update(Map<String,String> map){
         //logId(map);
+        refreshLayout.setRefreshing(false);
 
         investigaion_title_textview.setText("Field Investigations "+investigationId);
         if(client.contains("Indiabulls")){
@@ -903,4 +915,8 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
     }
 
 
+    @Override
+    public void onRefresh() {
+        loadData();
+    }
 }
