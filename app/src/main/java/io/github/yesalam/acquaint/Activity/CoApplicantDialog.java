@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ import butterknife.ButterKnife;
 import io.github.yesalam.acquaint.Pojo.CoApplicantDetailPojo;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.Id.GuarantorId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
 import io.github.yesalam.acquaint.WebHelper;
@@ -37,7 +39,7 @@ import static io.github.yesalam.acquaint.Util.SpinnerLists.getAssignedToType;
  * Created by yesalam on 09-06-2017.
  */
 
-public class CoApplicantDialog extends Activity implements WebHelper.CallBack {
+public class CoApplicantDialog extends Activity implements WebHelper.CallBack, SwipeRefreshLayout.OnRefreshListener {
 
 
 
@@ -107,6 +109,10 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack {
 
     boolean editMode = false;
     String LOG_TAG = "CoApplicantDialog" ;
+    SwipeRefreshLayout refreshLayout;
+
+    String caseid ;
+    String addressid;
 
 
     @Override
@@ -114,13 +120,21 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_add_show_coapplicant);
         ButterKnife.bind(this);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         Intent intent = getIntent();
-        String caseid = intent.getStringExtra("caseid");
-        String addressid = intent.getStringExtra("addressid");
+        caseid = intent.getStringExtra("caseid");
+        addressid = intent.getStringExtra("addressid");
+
         Log.e(LOG_TAG,caseid+"  "+addressid);
         if(addressid!=null) editMode = true;
         initForm();
+
 
         loadData(caseid,addressid);
 
@@ -156,6 +170,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack {
     }
 
     private void loadData(String caseid,String addressid){
+        refreshLayout.setRefreshing(true);
         String GET_COAPPLICANT_DETAIL_URL = "/Users/Cases/GetCoApplicantDetails?case_id="+caseid+"&address_id="+addressid;
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL+GET_COAPPLICANT_DETAIL_URL)
@@ -240,6 +255,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack {
     }
 
     private void update(CoApplicantDetailPojo pojo){
+        refreshLayout.setRefreshing(false);
         name_resident_edittext.setText(pojo.name);
         dob_edittext.setText(pojo.dOB);
         pan_edittext.setText(pojo.pAN.toString());
@@ -261,25 +277,39 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack {
         int positionassignedto = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
         assignedto_residential_spinner.setSelection(positionassignedto);
         assignedto_residential_spinner.setText(pojo.name);*/
+        String assignedto =  String.valueOf(pojo.assignedTo);
+        int positionassignedto = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
+        assignedto_residential_spinner.setSelection(positionassignedto);
 
         //sta.setText(pojo.name);
         investigationstatus_residential.setText(pojo.residenceStatus);
 
-        havecompany_address_radiobutton.setChecked(!pojo.companyAddressId.toString().equalsIgnoreCase("0"));
 
-        companyname_office_edittext.setText(pojo.companyName.toString());
+        boolean haveCompany = !pojo.companyAddressId.toString().equalsIgnoreCase("0") ;
 
-        address_office_edittext.setText(pojo.companyAddress.toString());
-        city_office_edittext.setText(pojo.companyCity.toString());
-        state_office_edittext.setText(pojo.companyState.toString());
-        mobile_office_edittext.setText(pojo.companyMobile.toString());
-        phone_office_edittext.setText(pojo.companyPhone.toString());
+        havecompany_address_radiobutton.setChecked(haveCompany);
+        if(haveCompany){
+            coapplicant_office_frame.setVisibility(View.VISIBLE);
+            companyname_office_edittext.setText(pojo.companyName.toString());
 
-        needverification_office_radiobutton.setChecked(pojo.companyNeedsVerification.toString().equalsIgnoreCase("true"));
+            address_office_edittext.setText(pojo.companyAddress.toString());
+            city_office_edittext.setText(pojo.companyCity.toString());
+            state_office_edittext.setText(pojo.companyState.toString());
+            mobile_office_edittext.setText(pojo.companyMobile.toString());
+            phone_office_edittext.setText(pojo.companyPhone.toString());
 
-        //assignedto_office_spinner.setText(pojo.name);
+            needverification_office_radiobutton.setChecked(pojo.companyNeedsVerification.toString().equalsIgnoreCase("true"));
 
-        status_office_textview.setText(pojo.officeStatus);
+            //assignedto_office_spinner.setText(pojo.name);
+            String assignedtoOffice =  String.valueOf(pojo.companyAssignedTo);
+            int positionassignedtoOffice = ((ArrayAdapter)assignedto_office_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtoOffice));
+            assignedto_office_spinner.setSelection(positionassignedtoOffice);
+            Log.e(LOG_TAG,assignedtoOffice+"->"+positionassignedtoOffice);
+
+            status_office_textview.setText(pojo.officeStatus);
+        }
+
+
     }
 
     public void save(View view){}
@@ -290,6 +320,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack {
 
     @Override
     public void onPositiveResponse(String htmldoc) {
+        Log.e(LOG_TAG,"Got response");
         final CoApplicantDetailPojo pojo = parseData(htmldoc);
         runOnUiThread(new Runnable() {
             @Override
@@ -297,5 +328,12 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack {
                 update(clearNull(pojo));
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        Log.e(LOG_TAG,"called onRefresh");
+        loadData(caseid,addressid);
+        refreshLayout.setRefreshing(false);
     }
 }
