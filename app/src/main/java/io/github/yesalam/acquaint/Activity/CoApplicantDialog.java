@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TableRow;
@@ -19,10 +18,6 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.lang.reflect.Field;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,8 +25,8 @@ import butterknife.ButterKnife;
 import io.github.yesalam.acquaint.Pojo.CoApplicantDetailPojo;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
-import io.github.yesalam.acquaint.Util.DateClick;
-import io.github.yesalam.acquaint.Util.HaveClickListener;
+import io.github.yesalam.acquaint.Util.Listener.DateClick;
+import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Request;
 

@@ -12,18 +12,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
-import io.github.yesalam.acquaint.Util.DateClick;
-import io.github.yesalam.acquaint.Util.HaveClickListener;
+import io.github.yesalam.acquaint.Util.Listener.DateClick;
+import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
 
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getAssignedToType;
 

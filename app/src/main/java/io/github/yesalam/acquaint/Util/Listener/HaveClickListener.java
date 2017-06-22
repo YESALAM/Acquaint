@@ -1,4 +1,4 @@
-package io.github.yesalam.acquaint.Util;
+package io.github.yesalam.acquaint.Util.Listener;
 
 import android.view.View;
 import android.widget.CheckBox;

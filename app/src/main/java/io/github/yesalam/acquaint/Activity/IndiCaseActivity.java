@@ -26,7 +26,7 @@ import io.github.yesalam.acquaint.Fragments.CaseCoApplicant;
 import io.github.yesalam.acquaint.Fragments.CaseGuarantor;
 import io.github.yesalam.acquaint.Pojo.Card.CoApplicantPojo;
 import io.github.yesalam.acquaint.R;
-import io.github.yesalam.acquaint.Util.CaseBasicId;
+import io.github.yesalam.acquaint.Util.Id.CaseBasicId;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.FormBody;
 import okhttp3.Request;

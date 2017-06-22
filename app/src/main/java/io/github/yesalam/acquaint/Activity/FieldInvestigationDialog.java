@@ -1,15 +1,18 @@
 package io.github.yesalam.acquaint.Activity;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,7 +22,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -32,6 +34,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +45,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
-import io.github.yesalam.acquaint.Util.DateClick;
-import io.github.yesalam.acquaint.Util.RVerificationId;
+import io.github.yesalam.acquaint.Util.Listener.DateClick;
+import io.github.yesalam.acquaint.Util.Id.RVerificationId;
+import io.github.yesalam.acquaint.Util.ScalingUtilities;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Request;
 
@@ -56,6 +61,7 @@ import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
 public class FieldInvestigationDialog extends Activity implements WebHelper.CallBack {
 
     private static final String LOG_TAG = "FieldInvestigation" ;
+    private static final int PERMISSION_REQUEST = 10101;
     //Address verification details
     @BindView(R.id.investigation_title)
     TextView investigaion_title_textview;
@@ -283,9 +289,10 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
     Button cancel_button;
     @BindView(R.id.save_dailog_indie_investigation_button)
     Button save_button;
+
     String investigationId;
     String client ;
-
+    List<String> image_list;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -295,7 +302,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         investigationId = intent.getStringExtra("investigationid");
         client = intent.getStringExtra("client");
         ButterKnife.bind(this);
-
+        image_list = new ArrayList<>();
 
         initForm();
         loadData();
@@ -433,13 +440,95 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 verifierremark_edittext.setText(autoRemark());
             }
         });
-        supervisorremark_edittext.setOnClickListener(new View.OnClickListener() {
+        autoremark_supervisor_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e(LOG_TAG,"supervisor remark called");
                 supervisorremark_edittext.setText(autoRemark());
             }
         });
 
+        uploadfile_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int permissinCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+                if(permissinCheck== PackageManager.PERMISSION_DENIED){
+                    requestPermission();
+                }else {
+                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    startActivityForResult(photoPickerIntent, 786);
+                }
+            }
+        });
+    }
+
+    private void requestPermission(){
+        Log.e(LOG_TAG,"requesting permission");
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_REQUEST);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    startActivityForResult(photoPickerIntent, 786);
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    private void setImage(Uri uri){
+        String path = ScalingUtilities.getPath(uri,this);
+        String tpath = ScalingUtilities.decodeFile(this,path,356,634,investigationId);
+        Log.e(LOG_TAG,tpath);
+        image_list.add(tpath);
+        File file = new File(tpath);
+
+        ImageView imageView = new ImageView(this);
+        imageView.setPadding(5, 5, 5, 5);
+        imageView.setAdjustViewBounds(true);
+        imageView.setMaxHeight(380);
+        imageView.setMaxWidth(250);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        Picasso.with(this).load(file).error(R.mipmap.logo).into(imageView);
+
+        image_holder.addView(imageView);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case 786:
+                if(resultCode == RESULT_OK){
+                    final Uri imageUri = data.getData();
+                    //final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                    // final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                    //imageView.setImageBitmap(selectedImage);
+                    setImage(imageUri);
+
+                }
+        }
     }
 
     @Override
