@@ -42,7 +42,7 @@ import static io.github.yesalam.acquaint.Util.SpinnerLists.getAssignedToType;
  * Created by yesalam on 09-06-2017.
  */
 
-public class CaseGuarantor extends Fragment {
+public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.have_guarantor_residential_radiobutton)
     CheckBox have_guarantor_radiobutton;
@@ -114,6 +114,7 @@ public class CaseGuarantor extends Fragment {
     @BindView(R.id.save_guarantor)
     Button save_button;
 
+    SwipeRefreshLayout refreshLayout;
     IndiCaseActivity activity ;
 
     @Override
@@ -127,11 +128,19 @@ public class CaseGuarantor extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_case_guarantor,container,false);
         ButterKnife.bind(this,view);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         initForm();
         if(activity.guarMap!=null){
             update(activity.guarMap);
-        }
+        }else refreshLayout.setRefreshing(true);
+
+
 
         return view;
     }
@@ -176,7 +185,8 @@ public class CaseGuarantor extends Fragment {
     }
 
     public void update(Map<String, String> guarMap) {
-        logIt(guarMap);
+        //logIt(guarMap);
+        refreshLayout.setRefreshing(false);
         String haveGuar = guarMap.get(GuarantorId.haveGuarantor);
         if(haveGuar==null) return;
         if(haveGuar.equalsIgnoreCase("true")){
@@ -242,5 +252,10 @@ public class CaseGuarantor extends Fragment {
 
 
 
+    }
+
+    @Override
+    public void onRefresh() {
+        activity.loadGuarantor();
     }
 }

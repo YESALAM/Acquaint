@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +53,7 @@ import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
  * Created by yesalam on 08-06-2017.
  */
 
-public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
+public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnRefreshListener {
 
     //View Binding
     //basic detail
@@ -172,6 +173,7 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
     boolean spinnerupdated=false ;
     String branch;
     String contact;
+    SwipeRefreshLayout refreshLayout;
 
     IndiCaseActivity activity;
 
@@ -187,14 +189,22 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         View view = inflater.inflate(R.layout.fragment_case_basic_detail,container,false);
         ButterKnife.bind(this,view);
         prepareForm();
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         if(activity.formMap!=null){
             update(activity.formMap);
-        }
+        }else refreshLayout.setRefreshing(true);
+
         return view;
     }
 
 
-    private void loadData(){
+   /* private void loadData(){
         Log.e(LOG_TAG, "loading case page");
         final String CASE_EDIT_URL = "/Users/Cases/Edit/" + activity.caseid;
 
@@ -205,7 +215,7 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
 
         WebHelper helper = WebHelper.getInstance(getContext());
         helper.requestCall(request,this);
-    }
+    }*/
 
 
     private void prepareForm(){
@@ -342,6 +352,7 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
 
 
     public void update(Map<String,String> map){
+        refreshLayout.setRefreshing(false);
         spinnerupdated=true ;
         String client =  map.get(CaseBasicId.client);
         int positinclient = ((ArrayAdapter)client_spinner.getAdapter()).getPosition(new SpinnerItem(client));
@@ -422,7 +433,7 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
 
 
 
-    private Map<String,String> parseAData(String html){
+   /* private Map<String,String> parseAData(String html){
         Map<String,String> map = new HashMap<>();
 
         Document document = Jsoup.parse(html);
@@ -457,9 +468,9 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
         }
 
         return map;
-    }
+    }*/
 
-    @Override
+   /* @Override
     public void onPositiveResponse(final String htmldoc) {
         activity.runOnUiThread(new Runnable() {
             @Override
@@ -472,5 +483,10 @@ public class CaseBasicDetail extends Fragment implements WebHelper.CallBack {
 
             }
         });
+    }*/
+
+    @Override
+    public void onRefresh() {
+        activity.loadBasicDetailPage();
     }
 }

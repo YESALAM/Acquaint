@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -42,16 +43,18 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
  * Created by yesalam on 08-06-2017.
  */
 
-public class CaseCoApplicant extends Fragment  {
+public class CaseCoApplicant extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
 
 
     String LOG_TAG  = "CaseCoApplicant" ;
     IndiCaseActivity activity;
     CoapplicantRecyclerAdapter adapter ;
+    SwipeRefreshLayout refreshLayout;
 
     @BindView(R.id.nocoapplicant_textview)
     TextView no_co_tt;
+
 
     @Override
     public void onAttach(Context context) {
@@ -62,7 +65,15 @@ public class CaseCoApplicant extends Fragment  {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview,container,false);
+        View view = inflater.inflate(R.layout.fragment_case_coapplicant,container,false);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         CoApplicantPojo pojo = new CoApplicantPojo();
         pojo.caseid =  activity.caseid;
         ArrayList<CoApplicantPojo> list = new ArrayList<CoApplicantPojo>();
@@ -70,6 +81,7 @@ public class CaseCoApplicant extends Fragment  {
         adapter = new CoapplicantRecyclerAdapter(list);
         setupRecyclerView(recyclerView);
         if(activity.co_applicants!=null) update(activity.co_applicants);
+        else refreshLayout.setRefreshing(true);
         //loadTesst();
         return recyclerView;
     }
@@ -82,8 +94,14 @@ public class CaseCoApplicant extends Fragment  {
 
 
     public void update(List co_applicants) {
+        refreshLayout.setRefreshing(false);
         Log.e(LOG_TAG,"called update");
         adapter.setDataset(co_applicants);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRefresh() {
+        activity.loadCoApplicant();
     }
 }
