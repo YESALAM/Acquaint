@@ -155,7 +155,8 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
     EditText grade_edittext;
     @BindView(R.id.current_salary_edittext)
     EditText current_salary_edittext;
-    //include_address_confirmed_office_2
+
+  /*  //include_address_confirmed_office_2
     @BindView(R.id.address_confirmed_office2_frame)
     FrameLayout addressconfirmed_office2_frame;
     @BindView(R.id.applicant_age_office2_edittext)
@@ -181,7 +182,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
     @BindView(R.id.area_office2_edittext)
     EditText area_office2_edittext;
     @BindView(R.id.nearestlandmark_office2_edittext)
-    EditText nearestlandmark_office2_edittext;
+    EditText nearestlandmark_office2_edittext;*/
 
     //include_address_not_confirmed
     @BindView(R.id.address_not_confirmed_frame)
@@ -329,13 +330,13 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         employerType_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         employerType_adapter.addAll(getEmployerType());
         typeofemployer_spinner.setAdapter(employerType_adapter);
-        typeofcompany_spinner.setAdapter(employerType_adapter);
+        //typeofcompany_spinner.setAdapter(employerType_adapter);
 
         ArrayAdapter<SpinnerItem> businessNature_adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item);
         businessNature_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         businessNature_adapter.addAll(getBusinessType());
         natureof_business_spinner.setAdapter(businessNature_adapter);
-        natureofcompany_office2_spinner.setAdapter(businessNature_adapter);
+        //natureofcompany_office2_spinner.setAdapter(businessNature_adapter);
 
         ArrayAdapter<SpinnerItem> businessLevel_adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item);
         businessLevel_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -724,7 +725,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 grade_edittext.setText(map.get(OVerificationId.otherGrade));
                 current_salary_edittext.setText(map.get(OVerificationId.cuurentSalary));
 
-                applicantage_office2_edittext.setText(map.get(OVerificationId.applicantAge));
+              /*  applicantage_office2_edittext.setText(map.get(OVerificationId.applicantAge));
                 nameofcompany_office2_edittext.setText(map.get(OVerificationId.nameofCompany));
                 establishmentyear_office2_edittext.setText(map.get(OVerificationId.estiblishmentYear));
                 designation_office2_edittext.setText(map.get(OVerificationId.designation));
@@ -748,7 +749,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 noofemployees_office2_edittext.setText(map.get(OVerificationId.noofCompEmployee));
                 noofbranches_office2_edittext.setText(map.get(OVerificationId.noofCompBranches));
                 area_office2_edittext.setText(map.get(OVerificationId.compArea));
-                nearestlandmark_office2_edittext.setText(map.get(OVerificationId.compLandMark));
+                nearestlandmark_office2_edittext.setText(map.get(OVerificationId.compLandMark));*/
 
             } else {
                 String reason = map.get(OVerificationId.notConfirmedType);
@@ -795,7 +796,6 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();
         Elements elements = form.getElementsByTag("input");
-        String lastName = "" ;
         for(Element input:elements){
             String name = input.attr("name");
             String value =input.attr("value");
@@ -810,22 +810,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 map.put(name,value);
             }
 
-           /* if(name.equalsIgnoreCase(lastName)){
-                //we are repeating
-                String checked = input.attr("checked");
-                if(checked.equalsIgnoreCase("checked")){
-                    map.put(name,value);
-                }
-          *//*  }
 
-            if(name.equalsIgnoreCase("ResiStatus") || name.equalsIgnoreCase("OfficeStatus")){
-                String checked = input.attr("checked");
-                if(checked.equalsIgnoreCase("checked")){
-                    map.put(name,value);
-                }*//*
-            }else map.put(input.attr("name"),input.val());*/
-            //Log.e(LOG_TAG,input.id()+" -> "+input.val());
-            lastName = name ;
         }
 
         Elements selects = form.getElementsByTag("select");

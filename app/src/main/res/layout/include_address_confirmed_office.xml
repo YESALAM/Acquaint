@@ -426,6 +426,6 @@
             android:text="Fill if Applicant/Colleagues contacted" />
     </FrameLayout>
 
-    <include layout="@layout/include_address_confirmed_office_2" />
+    <!--<include layout="@layout/include_address_confirmed_office_2" />-->
 
 </LinearLayout>

@@ -185,7 +185,8 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
     EditText vehicledetail_edittext;
     @BindView(R.id.nearest_landmark_edittext)
     EditText nearestlandmark_edittext;
-    //include_address_confirmed_resident2
+
+   /* //include_address_confirmed_resident2
     @BindView(R.id.applicant_name_textview)
     TextView applicantname2_textview;
     @BindView(R.id.person_contacted_edittext)
@@ -201,7 +202,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
     @BindView(R.id.living_since_year_spinner)
     Spinner livingsince_year_spinner;
     @BindView(R.id.occupation_edittext)
-    EditText occupation_edittext;
+    EditText occupation_edittext;*/
 
     //include_address_not_confirmed
     @BindView(R.id.address_not_confirmed_frame)
@@ -366,7 +367,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         relation_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         relation_adapter.addAll(getRelationType());
         relation_spinner.setAdapter(relation_adapter);
-        relationwith_applicant_spinner.setAdapter(relation_adapter);
+        //relationwith_applicant_spinner.setAdapter(relation_adapter);
 
         ArrayAdapter<SpinnerItem> totalMember_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
         totalMember_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -378,13 +379,13 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         residing_Month.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         residing_Month.addAll(getMonthType());
         residencestatus_month_spinner.setAdapter(residing_Month);
-        livingsince_month_spinner.setAdapter(residing_Month);
+        //livingsince_month_spinner.setAdapter(residing_Month);
 
         ArrayAdapter<SpinnerItem> residing_Year = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
         residing_Year.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         residing_Year.addAll(getYearType());
         residencestatus_year_spinner.setAdapter(residing_Year);
-        livingsince_year_spinner.setAdapter(residing_Year);
+        //livingsince_year_spinner.setAdapter(residing_Year);
 
         ArrayAdapter<SpinnerItem> residence_status = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
         residence_status.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -757,7 +758,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 vehicledetail_edittext.setText(map.get(RVerificationId.vehicleDetail));
                 nearestlandmark_edittext.setText(map.get(RVerificationId.nearestLandMark));
 
-                applicantname2_textview.setText(map.get(RVerificationId.applicant_name));
+               /* applicantname2_textview.setText(map.get(RVerificationId.applicant_name));
                 personcontacted_edittext.setText(map.get(RVerificationId.personContacted));
                 applicantapproxage_edittext.setText(map.get(RVerificationId.applicantApproxAge));
                 noofresident_edittext.setText(map.get(RVerificationId.noofResidents));
@@ -780,7 +781,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 if (livingSinceYear != null) {
                     int positionLivingYear = ((ArrayAdapter) livingsince_year_spinner.getAdapter()).getPosition(new SpinnerItem(livingSinceYear));
                     livingsince_year_spinner.setSelection(positionLivingYear);
-                }
+                }*/
 
 
             } else {
@@ -831,7 +832,6 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();
         Elements elements = form.getElementsByTag("input");
-        String lastName = "" ;
         for(Element input:elements){
             String name = input.attr("name");
             String value =input.attr("value");
@@ -846,22 +846,6 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 map.put(name,value);
             }
 
-           /* if(name.equalsIgnoreCase(lastName)){
-                //we are repeating
-                String checked = input.attr("checked");
-                if(checked.equalsIgnoreCase("checked")){
-                    map.put(name,value);
-                }
-          *//*  }
-
-            if(name.equalsIgnoreCase("ResiStatus") || name.equalsIgnoreCase("OfficeStatus")){
-                String checked = input.attr("checked");
-                if(checked.equalsIgnoreCase("checked")){
-                    map.put(name,value);
-                }*//*
-            }else map.put(input.attr("name"),input.val());*/
-            //Log.e(LOG_TAG,input.id()+" -> "+input.val());
-            lastName = name ;
         }
 
         Elements selects = form.getElementsByTag("select");
