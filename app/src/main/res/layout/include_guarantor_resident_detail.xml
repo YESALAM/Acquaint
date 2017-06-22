@@ -197,6 +197,25 @@
             </TableRow>
 
             <TableRow
+                android:id="@+id/status_residential_row"
+                android:visibility="gone"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status" />
+
+                <TextView
+                    android:id="@+id/status_residential_guarantor_textview"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/needVerification_residential_row"
                 android:layout_marginTop="@dimen/spinner_marginTop">
 
                 <TextView

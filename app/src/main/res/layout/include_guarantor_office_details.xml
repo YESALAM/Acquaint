@@ -98,8 +98,26 @@
                 android:layout_height="wrap_content" />
         </TableRow>
 
+        <TableRow
+            android:id="@+id/status_office_row_guarantor"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status" />
+
+            <TextView
+                android:id="@+id/status_office_guarantor"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+
+        </TableRow>
 
         <TableRow
+            android:id="@+id/needVerification_office_row"
             android:layout_marginTop="@dimen/spinner_marginTop">
 
             <TextView
