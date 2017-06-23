@@ -78,8 +78,9 @@
                 <EditText
                     android:id="@+id/applicant_approx_age_edittext"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content" />
+                    android:inputType="numberSigned" />
             </TableRow>
 
             <TableRow>
@@ -92,8 +93,9 @@
                 <EditText
                     android:id="@+id/no_of_residents_edittext"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content" />
+                    android:inputType="numberSigned" />
             </TableRow>
             <TableRow
                 android:layout_marginTop="@dimen/spinner_marginTop"

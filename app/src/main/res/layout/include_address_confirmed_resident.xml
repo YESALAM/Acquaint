@@ -218,8 +218,9 @@
                    <EditText
                        android:id="@+id/approx_area_edittext"
                        android:layout_width="0dp"
+                       android:layout_height="wrap_content"
                        android:layout_weight="1"
-                       android:layout_height="wrap_content" />
+                       android:inputType="number" />
                </TableRow>
 
                <TableRow>
@@ -232,8 +233,9 @@
                    <EditText
                        android:id="@+id/approx_value_edittext"
                        android:layout_width="0dp"
+                       android:layout_height="wrap_content"
                        android:layout_weight="1"
-                       android:layout_height="wrap_content" />
+                       android:inputType="number" />
                </TableRow>
 
                <TableRow>
@@ -246,8 +248,9 @@
                    <EditText
                        android:id="@+id/rent_monthly_edittext"
                        android:layout_width="0dp"
+                       android:layout_height="wrap_content"
                        android:layout_weight="1"
-                       android:layout_height="wrap_content" />
+                       android:inputType="number" />
                </TableRow>
 
                <TableRow>

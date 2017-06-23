@@ -80,8 +80,9 @@
             <EditText
                 android:id="@+id/mobile_guarantor_office_details_edittext"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_height="wrap_content" />
+                android:inputType="numberSigned" />
         </TableRow>
 
         <TableRow>
@@ -94,8 +95,9 @@
             <EditText
                 android:id="@+id/phon_guarantor_office_details_edittext"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_height="wrap_content" />
+                android:inputType="numberSigned" />
         </TableRow>
 
         <TableRow

@@ -86,8 +86,9 @@
                 <EditText
                     android:id="@+id/phone_offic_edittext"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content" />
+                    android:inputType="numberSigned" />
             </TableRow>
 
             <TableRow>
@@ -100,8 +101,9 @@
                 <EditText
                     android:id="@+id/extension_edittext"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content" />
+                    android:inputType="numberSigned" />
             </TableRow>
 
             <TableRow>
@@ -128,8 +130,9 @@
                 <EditText
                     android:id="@+id/mobile_edittext"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content" />
+                    android:inputType="numberSigned" />
             </TableRow>
 
             <TableRow
@@ -220,8 +223,9 @@
                 <EditText
                     android:id="@+id/year_of_establishment_edittext"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content" />
+                    android:inputType="numberSigned" />
             </TableRow>
 
             <TableRow
@@ -250,6 +254,7 @@
                     android:id="@+id/no_of_employee_seen_edittext"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:inputType="numberSigned"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -264,6 +269,7 @@
                     android:id="@+id/no_of_branches_edittext"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:inputType="numberSigned"
                     android:layout_height="wrap_content" />
             </TableRow>
 
@@ -410,6 +416,7 @@
                     android:id="@+id/current_salary_edittext"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:inputType="numberSigned"
                     android:layout_height="wrap_content" />
             </TableRow>
 

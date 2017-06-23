@@ -223,8 +223,9 @@
         <EditText
             android:id="@+id/mobile_no_updations_edittext"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:inputType="numberSigned" />
     </TableRow>
     <TableRow>
         <TextView
@@ -235,8 +236,9 @@
         <EditText
             android:id="@+id/phone_no_updations_edittext"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:inputType="numberSigned" />
     </TableRow>
     <TableRow
         android:id="@+id/employement_detail_row"
