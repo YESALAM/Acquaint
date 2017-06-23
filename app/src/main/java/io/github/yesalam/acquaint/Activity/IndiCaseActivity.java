@@ -3,6 +3,7 @@ package io.github.yesalam.acquaint.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -29,23 +30,26 @@ import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Id.CaseBasicId;
 import io.github.yesalam.acquaint.Util.Id.GuarantorId;
 import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 public class IndiCaseActivity extends AppCompatActivity implements WebHelper.CallBack {
 
     public String caseid;
     String LOG_TAG = "IndiCaseActivity";
     public Map<String, String> formMap;
-    public Map<String,String> guarMap;
+    public Map<String, String> guarMap;
     public List co_applicants;
     public boolean caseUpdate;
     String CASE_EDIT_URL = "/Users/Cases/Edit/";
     WebHelper webHelper;
     CallType callType;
+    TabLayout tabLayout;
 
 
     @Override
@@ -72,13 +76,16 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         }
 
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         webHelper = WebHelper.getInstance(this);
-        loadBasicDetailPage();
+        //loadBasicDetailPage();
     }
 
+    public void updateData(){
+        loadBasicDetailPage();
+    }
 
     private void setupViewPager(ViewPager viewPager, final FloatingActionButton fab) {
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
@@ -213,6 +220,32 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
 
     }
 
+    @Override
+    public void onNegativeResponse(final int code) {
+
+        switch (callType) {
+            case BASIC_DETAIL:
+                final CaseBasicDetail fragment = (CaseBasicDetail) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 0);
+                        Log.e(LOG_TAG,"BASIC DETAIL NEGATIVE");
+                        if (fragment != null) fragment.negativeResponse(code);
+
+                break;
+            case CO_APPLICANT:
+                final CaseCoApplicant caseCoApplicant = (CaseCoApplicant) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1);
+                Log.e(LOG_TAG,"CO-APPLICANT NEGATIVE");
+                        if (caseCoApplicant != null) caseCoApplicant.negativeResponse(code);
+
+                break;
+           /* case GUARANTOR:
+                final CaseGuarantor caseGuarantor = (CaseGuarantor) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 2);
+                Log.e(LOG_TAG,"GUARANTOR NEGATIVE");
+                        if (caseGuarantor != null) caseGuarantor.negativeResponse(code);
+
+                break;*/
+        }
+
+    }
+
     public void loadCoApplicant() {
         callType = CallType.CO_APPLICANT;
         FormBody.Builder formBody = new FormBody.Builder();
@@ -310,7 +343,7 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
             if (name.equalsIgnoreCase(GuarantorId.haveGuarantor)) {
                 String type = input.attr("type");
                 if (type.equalsIgnoreCase("checkbox")) {
-                   map.put(name,value);
+                    map.put(name, value);
                 }
                 continue;
             }
@@ -331,8 +364,6 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
                 map.put(id, "0");
             }
         }
-
-
 
 
         return map;

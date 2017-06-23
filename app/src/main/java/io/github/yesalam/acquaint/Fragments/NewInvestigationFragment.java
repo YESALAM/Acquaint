@@ -3,6 +3,7 @@ package io.github.yesalam.acquaint.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
  * Created by yesalam on 08-06-2017.
@@ -50,6 +52,7 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
     ProgressBar progressBar;
     SwipeRefreshLayout refreshLayout;
     InvestigationActivity activity;
+    View parentView;
 
     @Override
     public void onAttach(Context context) {
@@ -60,16 +63,16 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_card, container, false);
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        parentView = inflater.inflate(R.layout.fragment_card, container, false);
+        refreshLayout = (SwipeRefreshLayout) parentView.findViewById(R.id.swipeContainer);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        RecyclerView recyclerView = (RecyclerView) parentView.findViewById(R.id.recyclerview);
+        progressBar = (ProgressBar) parentView.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.GONE);
         adapter = new InvestigationRecyclerAdapter(new ArrayList<InvestigationPojo>());
         setupRecyclerView(recyclerView);
@@ -90,7 +93,7 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
             loadData();
         }
 
-        return view;
+        return parentView;
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -214,5 +217,19 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
 
             }
         });
+    }
+
+    @Override
+    public void onNegativeResponse(int code) {
+        switch (code){
+            case NO_CONNECTION:
+                refreshLayout.setRefreshing(false);
+                Snackbar.make(parentView, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
+                        //.setAction(R.string.snackbar_action, myOnClickListener)
+                        .show(); // Don’t forget to show!
+                break;
+
+
+        }
     }
 }

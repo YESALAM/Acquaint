@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
@@ -30,10 +31,12 @@ import io.github.yesalam.acquaint.Util.Id.GuarantorId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
 import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.Call;
 import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getAssignedToType;
+import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
  * Created by yesalam on 09-06-2017.
@@ -328,6 +331,19 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
                 update(clearNull(pojo));
             }
         });
+    }
+
+    @Override
+    public void onNegativeResponse(int code) {
+        switch (code){
+            case NO_CONNECTION:
+                Snackbar.make(residential_detail_frame, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
+                        //.setAction(R.string.snackbar_action, myOnClickListener)
+                        .show(); // Don’t forget to show!
+                break;
+
+
+        }
     }
 
     @Override

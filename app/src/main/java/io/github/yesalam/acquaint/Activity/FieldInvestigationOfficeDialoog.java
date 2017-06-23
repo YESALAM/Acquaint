@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -50,10 +51,12 @@ import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Id.OVerificationId;
 import io.github.yesalam.acquaint.Util.ScalingUtilities;
 import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.Call;
 import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
+import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
  * Created by yesalam on 12-06-2017.
@@ -543,6 +546,20 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 update(map);
             }
         });
+    }
+
+    @Override
+    public void onNegativeResponse(int code) {
+        switch (code){
+            case NO_CONNECTION:
+                refreshLayout.setRefreshing(false);
+                Snackbar.make(investigaion_title_textview, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
+                        //.setAction(R.string.snackbar_action, myOnClickListener)
+                        .show(); // Don’t forget to show!
+                break;
+
+
+        }
     }
 
     private void logId(Map<String,String> map){

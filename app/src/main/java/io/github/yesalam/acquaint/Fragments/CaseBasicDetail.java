@@ -3,6 +3,7 @@ package io.github.yesalam.acquaint.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,12 +50,13 @@ import static io.github.yesalam.acquaint.Util.Maps.getBranchHash;
 import static io.github.yesalam.acquaint.Util.Maps.getClientHash;
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
+import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
  * Created by yesalam on 08-06-2017.
  */
 
-public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnRefreshListener {
+public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     //View Binding
     //basic detail
@@ -169,8 +172,8 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
     @BindView(R.id.investigationstatus_permanent_resident_textview)
     TextView investigatonstatus_permanent_textview;
 
-    String LOG_TAG = "CaseBasicDetail" ;
-    boolean spinnerupdated=false ;
+    String LOG_TAG = "CaseBasicDetail";
+    boolean spinnerupdated = false;
     String branch;
     String contact;
     SwipeRefreshLayout refreshLayout;
@@ -186,8 +189,8 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_case_basic_detail,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_case_basic_detail, container, false);
+        ButterKnife.bind(this, view);
         prepareForm();
         refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         refreshLayout.setOnRefreshListener(this);
@@ -196,9 +199,12 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        if(activity.formMap!=null){
+        if (activity.formMap != null) {
             update(activity.formMap);
-        }else refreshLayout.setRefreshing(true);
+        } else {
+            refreshLayout.setRefreshing(true);
+            activity.updateData();
+        }
 
         return view;
     }
@@ -218,20 +224,18 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
     }*/
 
 
-    private void prepareForm(){
+    private void prepareForm() {
 
 
-
-        final ArrayAdapter<SpinnerItem> contactadapter = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
+        final ArrayAdapter<SpinnerItem> contactadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         contactadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        contactadapter.add(new SpinnerItem("Select Contact Person","0"));
+        contactadapter.add(new SpinnerItem("Select Contact Person", "0"));
         contact_person_spinner.setAdapter(contactadapter);
 
 
-
-        final ArrayAdapter<SpinnerItem> branchadapter = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
+        final ArrayAdapter<SpinnerItem> branchadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         branchadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        branchadapter.add(new SpinnerItem("Select Branch","0"));
+        branchadapter.add(new SpinnerItem("Select Branch", "0"));
         branch_spinner.setAdapter(branchadapter);
         branch_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -240,7 +244,7 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
                 int val = Integer.parseInt(item.getValue());
                 if (val == 0) return;
                 String jsonString = getBranchHash().get(val);
-                spinnerUpdate(jsonString,contact,contact_person_spinner,contactadapter);
+                spinnerUpdate(jsonString, contact, contact_person_spinner, contactadapter);
             }
 
             @Override
@@ -250,10 +254,7 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
         });
 
 
-
-
-
-        ArrayAdapter<SpinnerItem> clientadapter = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
+        ArrayAdapter<SpinnerItem> clientadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         clientadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         clientadapter.addAll(getClientType());
         client_spinner.setAdapter(clientadapter);
@@ -264,7 +265,7 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
                 int val = Integer.parseInt(item.getValue());
                 if (val == 0) return;
                 String jsonString = getClientHash().get(val);
-                spinnerUpdate(jsonString,branch,branch_spinner,branchadapter);
+                spinnerUpdate(jsonString, branch, branch_spinner, branchadapter);
             }
 
             @Override
@@ -274,11 +275,7 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
         });
 
 
-
-
-
-
-        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
+        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
@@ -286,11 +283,10 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
         loan_type_spinner.setAdapter(adapter);
 
 
-
         pickup_date_edittext.setOnClickListener(new DateClick(getContext()));
 
 
-        ArrayAdapter<SpinnerItem> pickupbyadapter = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
+        ArrayAdapter<SpinnerItem> pickupbyadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         pickupbyadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         pickupbyadapter.addAll(getPickupByType());
         pickupby_spinner.setAdapter(pickupbyadapter);
@@ -298,7 +294,7 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
         dob_edittext.setOnClickListener(new DateClick(getContext()));
 
 
-        ArrayAdapter<SpinnerItem> assignedtoadapter = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
+        ArrayAdapter<SpinnerItem> assignedtoadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         assignedtoadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         assignedtoadapter.addAll(getAssignedToType());
         assignedto_residential_spinner.setAdapter(assignedtoadapter);
@@ -325,22 +321,22 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
     }
 
 
-    private void spinnerUpdate(String jsonString,String value,Spinner spinner,ArrayAdapter adapter){
+    private void spinnerUpdate(String jsonString, String value, Spinner spinner, ArrayAdapter adapter) {
         try {
             JSONArray array = new JSONArray(jsonString);
             ArrayList<SpinnerItem> list = new ArrayList<SpinnerItem>();
-            int positionBranch = 0 ;
+            int positionBranch = 0;
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
                 String id = object.getString("id").trim();
                 String name = object.getString("name");
-                if(id.equalsIgnoreCase(value.trim())) positionBranch = i ;
+                if (id.equalsIgnoreCase(value.trim())) positionBranch = i;
                 list.add(new SpinnerItem(name, id));
             }
             adapter.clear();
             adapter.addAll(list);
             adapter.notifyDataSetChanged();
-            if(value==null)return;
+            if (value == null) return;
             spinner.setSelection(positionBranch);
 
         } catch (JSONException e) {
@@ -349,13 +345,23 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
     }
 
 
+    public void negativeResponse(int code) {
+        Log.e(LOG_TAG,"Negative response ");
+        switch (code) {
+            case NO_CONNECTION:
+                Log.e(LOG_TAG,"Negative response NOConnection");
+                Toast.makeText(activity, "Connection not Available", Toast.LENGTH_SHORT).show();
+                refreshLayout.setRefreshing(false);
+                break;
 
+        }
+    }
 
-    public void update(Map<String,String> map){
+    public void update(Map<String, String> map) {
         refreshLayout.setRefreshing(false);
-        spinnerupdated=true ;
-        String client =  map.get(CaseBasicId.client);
-        int positinclient = ((ArrayAdapter)client_spinner.getAdapter()).getPosition(new SpinnerItem(client));
+        spinnerupdated = true;
+        String client = map.get(CaseBasicId.client);
+        int positinclient = ((ArrayAdapter) client_spinner.getAdapter()).getPosition(new SpinnerItem(client));
         client_spinner.setSelection(positinclient);
 
         branch = map.get(CaseBasicId.branch);
@@ -364,18 +370,18 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
         contact = map.get(CaseBasicId.contactPerson);
 
 
-        String loantype =  map.get(CaseBasicId.loantype);
-        int positinloantype = ((ArrayAdapter)loan_type_spinner.getAdapter()).getPosition(new SpinnerItem(loantype));
+        String loantype = map.get(CaseBasicId.loantype);
+        int positinloantype = ((ArrayAdapter) loan_type_spinner.getAdapter()).getPosition(new SpinnerItem(loantype));
         loan_type_spinner.setSelection(positinloantype);
 
         pickup_date_edittext.setText(map.get(CaseBasicId.pickupDate));
 
-        int radiobutton = CaseBasicId.isReVerification.equalsIgnoreCase("Yes")?R.id.radio_button_yes_reverification:R.id.radio_button_no_reverification;
+        int radiobutton = CaseBasicId.isReVerification.equalsIgnoreCase("Yes") ? R.id.radio_button_yes_reverification : R.id.radio_button_no_reverification;
         reverification_radiogroup.check(radiobutton);
 
-        String pickup =  map.get(CaseBasicId.pickupBy);
-        Log.e(LOG_TAG,map.get(CaseBasicId.pickupBy));
-        int positionpickup = ((ArrayAdapter)pickupby_spinner.getAdapter()).getPosition(new SpinnerItem(pickup));
+        String pickup = map.get(CaseBasicId.pickupBy);
+        Log.e(LOG_TAG, map.get(CaseBasicId.pickupBy));
+        int positionpickup = ((ArrayAdapter) pickupby_spinner.getAdapter()).getPosition(new SpinnerItem(pickup));
         pickupby_spinner.setSelection(positionpickup);
 
         loanamount_edittext.setText(map.get(CaseBasicId.loanAmount));
@@ -389,7 +395,7 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
         pan_edittext.setText(map.get(ResidentialId.pan));
 
 
-        int gender = map.get(ResidentialId.gender).equalsIgnoreCase("M")? R.id.radio_button_male_residential_detail:R.id.radio_button_female_residential_detail ;
+        int gender = map.get(ResidentialId.gender).equalsIgnoreCase("M") ? R.id.radio_button_male_residential_detail : R.id.radio_button_female_residential_detail;
         gender_radiogroup.check(gender);
 
         address_residential_edittext.setText(map.get(ResidentialId.address));
@@ -401,15 +407,15 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
         phone_residential_edittext.setText(map.get(ResidentialId.phone));
 
 
-        String assignedto =  map.get(ResidentialId.assignedTo);
-        int positionassignedto = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
+        String assignedto = map.get(ResidentialId.assignedTo);
+        int positionassignedto = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
         assignedto_residential_spinner.setSelection(positionassignedto);
 
         investigationstatus_residential.setText(map.get(ResidentialId.status));
 
         boolean haveCompany = !map.get(OfficeId.companyAddressId).equalsIgnoreCase("0");
         havecompany_radiobutton.setChecked(haveCompany);
-        if(haveCompany){
+        if (haveCompany) {
             applicant_office_frame.setVisibility(View.VISIBLE);
             needVerificatin_office_row.setVisibility(View.GONE);
             statusrow_office_tablerow.setVisibility(View.VISIBLE);
@@ -423,10 +429,9 @@ public class CaseBasicDetail extends Fragment implements  SwipeRefreshLayout.OnR
         phone_office_edittext.setText(map.get(OfficeId.phone));
         status_office_textview.setText(map.get(OfficeId.status));
 
-        String assignedtooffice =  map.get(ResidentialId.assignedTo);
-        int positionassignedtooffice = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtooffice));
+        String assignedtooffice = map.get(ResidentialId.assignedTo);
+        int positionassignedtooffice = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtooffice));
         assignedto_office_spinner.setSelection(positionassignedtooffice);
-
 
 
     }

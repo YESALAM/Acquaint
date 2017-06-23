@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,11 +27,13 @@ import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.Util.TeleId;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.Call;
 import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getRelationType;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getStatusType;
+import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
  * Created by yesalam on 10-06-2017.
@@ -247,6 +250,20 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
                 update(map);
             }
         });
+    }
+
+    @Override
+    public void onNegativeResponse(int code) {
+        switch (code){
+            case NO_CONNECTION:
+                refreshLayout.setRefreshing(false);
+                Snackbar.make(title_textview, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
+                        //.setAction(R.string.snackbar_action, myOnClickListener)
+                        .show(); // Don’t forget to show!
+                break;
+
+
+        }
     }
 
 

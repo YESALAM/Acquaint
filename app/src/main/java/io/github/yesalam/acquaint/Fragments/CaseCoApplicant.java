@@ -3,6 +3,7 @@ package io.github.yesalam.acquaint.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,6 +40,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
  * Created by yesalam on 08-06-2017.
@@ -103,5 +106,14 @@ public class CaseCoApplicant extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onRefresh() {
         activity.loadCoApplicant();
+    }
+
+    public void negativeResponse(int code) {
+        switch (code) {
+            case NO_CONNECTION:
+                Toast.makeText(activity, "Connection not Available", Toast.LENGTH_SHORT).show();
+                refreshLayout.setRefreshing(false);
+                break;
+        }
     }
 }

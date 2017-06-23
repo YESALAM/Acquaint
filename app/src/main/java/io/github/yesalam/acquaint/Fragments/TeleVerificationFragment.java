@@ -3,6 +3,7 @@ package io.github.yesalam.acquaint.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +38,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
  * Created by yesalam on 08-06-2017.
@@ -50,6 +52,7 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
     ProgressBar progressBar;
     SwipeRefreshLayout refreshLayout;
     InvestigationActivity activity;
+
 
 
 
@@ -207,6 +210,20 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
 
             }
         });
+    }
+
+    @Override
+    public void onNegativeResponse(int code) {
+        switch (code){
+            case NO_CONNECTION:
+                refreshLayout.setRefreshing(false);
+                Snackbar.make(refreshLayout, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
+                        //.setAction(R.string.snackbar_action, myOnClickListener)
+                        .show(); // Don’t forget to show!
+                break;
+
+
+        }
     }
 
     @Override

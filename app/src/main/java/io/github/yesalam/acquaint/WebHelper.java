@@ -2,6 +2,8 @@ package io.github.yesalam.acquaint;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -42,6 +44,7 @@ import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
 
 public class WebHelper implements Callback {
     String LOG_TAG = "WebHelper";
+    public static final int NO_CONNECTION = 786 ;
 
     public SharedPreferences app_preferences;
     public OkHttpClient okHttpClient;
@@ -79,8 +82,21 @@ public class WebHelper implements Callback {
 
     }
 
+    private boolean isConnected(){
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
    synchronized public void requestCall(Request request, CallBack callback) {
-        requests.add(request);
+        if(!isConnected()) {
+            callback.onNegativeResponse(NO_CONNECTION);
+            return;
+        }
+       requests.add(request);
         callbacks.add(callback);
         if(!(logged || loginrequest)) {
             login();
@@ -121,7 +137,14 @@ public class WebHelper implements Callback {
 
     @Override
     public void onFailure(Call call, IOException e) {
+
         e.printStackTrace();
+        if(!requests.isEmpty()){
+            CallBack temp = callbacks.remove();
+            requests.remove();
+            temp.onNegativeResponse(NO_CONNECTION);
+        }
+
     }
 
     @Override
@@ -249,5 +272,6 @@ public class WebHelper implements Callback {
 
     public interface CallBack {
         void onPositiveResponse(String html);
+        void onNegativeResponse(int code);
     }
 }
