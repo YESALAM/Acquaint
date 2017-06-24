@@ -33,4 +33,5 @@ public class GuarantorId {
     static public String guarCompanyStatus="GuarCompanyStatus";
     static public String guarOfficeAssignedTo="GuarOfficeAssignedTo";
     static public String guarCompanyAddressId = "GuarCompanyAddressId";
+    static public String guarCompanyNeedsVerification = "GuarCompanyNeedsVerification";
 }

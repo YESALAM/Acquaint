@@ -20,5 +20,5 @@ public class ResidentialId {
     static public String phone = "Phone";
     static public String status = "ResidenceStatus";
     static public String assignedTo = "AssignedTo";
-    static public boolean needVerification;
+    static public String haveGuarantor = "HaveGuarantor";
 }

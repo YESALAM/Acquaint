@@ -173,6 +173,7 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
                 map.put(id, value);
             } catch (NullPointerException npe) {
                 npe.printStackTrace();
+                map.put(id,"0");
             }
         }
 

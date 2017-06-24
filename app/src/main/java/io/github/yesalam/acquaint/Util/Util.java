@@ -29,6 +29,9 @@ public class Util {
     public static final String USER_KEY = "user";
     public static final String ACQUAINT_URL = "http://myacquaint.com";
 
+    public static final String PENDING_CASES = "pendingcases" ;
+
+
 
 
 

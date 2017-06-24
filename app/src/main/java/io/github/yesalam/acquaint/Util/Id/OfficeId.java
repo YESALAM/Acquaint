@@ -15,6 +15,7 @@ public class OfficeId {
    static public String status="Status";
    static public String assignedTo="OfficeAssignedTo";
    static public String companyAddressId = "CompanyAddressId";
+   static public String companyNeedsVerification = "CompanyNeedsVerification";
 
 
 }

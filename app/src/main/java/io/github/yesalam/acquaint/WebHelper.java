@@ -82,7 +82,7 @@ public class WebHelper implements Callback {
 
     }
 
-    private boolean isConnected(){
+    public boolean isConnected(){
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
