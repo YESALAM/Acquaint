@@ -59,7 +59,6 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
 
     SwipeRefreshLayout refreshLayout;
     CaseRecyclerAdapter adapter;
-    ProgressBar progressBar;
     CaseActivity activity;
     View parentView ;
 
@@ -82,8 +81,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
                 android.R.color.holo_red_light);
 
         RecyclerView recyclerView = (RecyclerView) parentView.findViewById(R.id.recyclerview);
-        progressBar = (ProgressBar) parentView.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.GONE);
+
 
         adapter = new CaseRecyclerAdapter(new ArrayList<CasePojo>());
         setupRecyclerView(recyclerView);

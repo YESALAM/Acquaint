@@ -49,7 +49,6 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
 
     String LOG_TAG = "CompleteCaseFragment" ;
     CaseRecyclerAdapter adapter;
-    ProgressBar progressBar;
     SwipeRefreshLayout refreshLayout;
     View parentView ;
 
@@ -77,8 +76,7 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
 
         RecyclerView recyclerView = (RecyclerView) parentView.findViewById(R.id.recyclerview);
 
-        progressBar = (ProgressBar) parentView.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.GONE);
+
 
         adapter = new CaseRecyclerAdapter(new ArrayList<CasePojo>());
         try {

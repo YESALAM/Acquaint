@@ -49,7 +49,6 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
     private String LOG_TAG = "NewInvestiFragment";
 
     InvestigationRecyclerAdapter adapter;
-    ProgressBar progressBar;
     SwipeRefreshLayout refreshLayout;
     InvestigationActivity activity;
     View parentView;
@@ -72,8 +71,6 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
                 android.R.color.holo_red_light);
 
         RecyclerView recyclerView = (RecyclerView) parentView.findViewById(R.id.recyclerview);
-        progressBar = (ProgressBar) parentView.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.GONE);
         adapter = new InvestigationRecyclerAdapter(new ArrayList<InvestigationPojo>());
         setupRecyclerView(recyclerView);
 
@@ -159,7 +156,6 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
             }
         } else {
             Log.e(LOG_TAG, "newField loaded");
-            progressBar.setVisibility(View.GONE);
             ArrayList<InvestigationPojo> dataset = parseData(html);
             passData(dataset);
         }
@@ -211,7 +207,6 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
             public void run() {
 
                 Log.e(LOG_TAG, "newField loaded");
-                progressBar.setVisibility(View.GONE);
                 ArrayList<InvestigationPojo> dataset = parseData(html);
                 passData(dataset);
 

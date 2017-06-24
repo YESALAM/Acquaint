@@ -49,7 +49,6 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
     private String LOG_TAG = "TeleVeriFragment";
 
     TeleVeriRecyclerAdapter adapter;
-    ProgressBar progressBar;
     SwipeRefreshLayout refreshLayout;
     InvestigationActivity activity;
 
@@ -74,8 +73,6 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
                 android.R.color.holo_red_light);
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.GONE);
 
         adapter = new TeleVeriRecyclerAdapter(new ArrayList<TelePojo>());
         setupRecyclerView(recyclerView);
@@ -153,7 +150,6 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
             if (useridnode_error == null) {
                 //noservice
                 Log.e(LOG_TAG, "problem with service.retrying");
-                progressBar.setVisibility(View.GONE);
                 Toast.makeText(activity, "Service Unavailable! Please try later", Toast.LENGTH_SHORT).show();
             } else {
                 //credentials mismatch
@@ -163,7 +159,6 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
             }
         } else {
             Log.e(LOG_TAG, "teleVerification loaded");
-            progressBar.setVisibility(View.GONE);
             ArrayList<TelePojo> dataset = parseData(html);
             passData(dataset);
         }

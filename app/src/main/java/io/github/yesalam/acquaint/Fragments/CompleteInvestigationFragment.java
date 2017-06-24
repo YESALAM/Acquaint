@@ -48,7 +48,6 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
     private String LOG_TAG = "CompletInvesFragment";
 
     InvestigationRecyclerAdapter adapter ;
-    ProgressBar progressBar;
     SwipeRefreshLayout refreshLayout;
     InvestigationActivity activity;
     View parentView;
@@ -75,8 +74,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
                 android.R.color.holo_red_light);
 
         RecyclerView recyclerView = (RecyclerView) parentView.findViewById(R.id.recyclerview);
-        progressBar = (ProgressBar) parentView.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.GONE);
+
         adapter = new InvestigationRecyclerAdapter(new ArrayList<InvestigationPojo>());
         setupRecyclerView(recyclerView);
 
@@ -152,7 +150,6 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
             if (useridnode_error == null) {
                 //noservice
                 Log.e(LOG_TAG, "problem with service.retrying");
-                progressBar.setVisibility(View.GONE);
                 Toast.makeText(activity, "Service Unavailable! Please try later", Toast.LENGTH_SHORT).show();
             } else {
                 //credentials mismatch
@@ -162,7 +159,6 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
             }
         } else {
             Log.e(LOG_TAG, "completeField loaded");
-            progressBar.setVisibility(View.GONE);
             ArrayList<InvestigationPojo> dataset = parseData(html);
             passData(dataset);
         }
@@ -214,7 +210,6 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
             public void run() {
 
                 Log.e(LOG_TAG, "completeField loaded");
-                progressBar.setVisibility(View.GONE);
                 ArrayList<InvestigationPojo> dataset = parseData(html);
                 passData(dataset);
 
