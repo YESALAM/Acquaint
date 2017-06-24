@@ -13,6 +13,11 @@
             android:icon="@drawable/ic_forum"
             />
 
+        <item android:id="@+id/offline_menu_drawer"
+            android:title="@string/offline"
+            android:icon="@drawable/ic_dns_black_36dp"/>
+
+
     </group>
     <item android:title="Other">
         <menu>

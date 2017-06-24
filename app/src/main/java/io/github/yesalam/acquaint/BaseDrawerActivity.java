@@ -41,6 +41,7 @@ import io.github.yesalam.acquaint.Activity.CaseActivity;
 import io.github.yesalam.acquaint.Activity.CreateCaseDialog;
 import io.github.yesalam.acquaint.Activity.InvestigationActivity;
 import io.github.yesalam.acquaint.Activity.LoginActivity;
+import io.github.yesalam.acquaint.Activity.Offline;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -117,9 +118,13 @@ public abstract class BaseDrawerActivity extends AppCompatActivity  {
                     view.getContext().startActivity(intent);
                 }
             });
-        } else {
+        } else if(this instanceof InvestigationActivity) {
             actionBar.setTitle("Field Investigations");
             navigationView.getMenu().getItem(1).setChecked(true);
+            fab.setVisibility(View.GONE);
+        } else if(this instanceof Offline){
+            actionBar.setTitle("Offline Data");
+            navigationView.getMenu().getItem(2).setChecked(true);
             fab.setVisibility(View.GONE);
         }
 
@@ -142,6 +147,11 @@ public abstract class BaseDrawerActivity extends AppCompatActivity  {
                         break;
                     case R.id.investigation_menu_drawer:
                         intent = new Intent(getApplicationContext(), InvestigationActivity.class);
+                        startActivity(intent);
+                        finish();
+                        break;
+                    case R.id.offline_menu_drawer:
+                        intent = new Intent(getApplicationContext(),Offline.class);
                         startActivity(intent);
                         finish();
                         break;

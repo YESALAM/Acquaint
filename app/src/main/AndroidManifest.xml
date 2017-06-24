@@ -33,9 +33,8 @@
             android:theme="@style/LoginTheme">
         </activity>
         <activity android:name=".Activity.CaseActivity"></activity>
-        <activity android:name=".Activity.InvestigationActivity">
-
-        </activity>
+        <activity android:name=".Activity.InvestigationActivity"></activity>
+        <activity android:name=".Activity.Offline"></activity>
         <activity
             android:name=".Activity.IndiCaseActivity"
             android:parentActivityName=".Activity.CaseActivity"
@@ -69,6 +68,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.yesalam.acquaint.Activity.InvestigationActivity" />
         </activity>
+
         <activity android:name=".Activity.TeleVerificationDialog"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"

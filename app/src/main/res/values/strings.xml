@@ -20,4 +20,5 @@
     <string name="website_url">myacquaint.com</string>
     <string name="title_activity_indi_case">IndiCaseActivity</string>
     <string name="snackbar_no_connection">Data connection Unavailable</string>
+    <string name="offline">Offline</string>
 </resources>
