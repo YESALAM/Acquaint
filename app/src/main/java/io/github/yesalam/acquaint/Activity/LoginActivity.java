@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -211,6 +212,7 @@ public class LoginActivity extends AppCompatActivity implements Callback{
     public void onFailure(Call call, IOException e) {
         e.printStackTrace();
         progressDialog.cancel();
+        Snackbar.make(mEmailView,"Internet Unavailable!",Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
