@@ -6,6 +6,7 @@ package io.github.yesalam.acquaint.Util.Id;
 
 public class ResidentialId {
 
+    static public String caseId = "CaseId" ;
     static public String name = "Name";
     static public String dateOfBirth = "DOB";
     static public String pan = "PAN";
