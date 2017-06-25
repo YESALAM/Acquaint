@@ -297,7 +297,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
     String investigationId;
     String client ;
-    List<String> image_list;
+    String image_file;
     SwipeRefreshLayout refreshLayout;
 
     @Override
@@ -308,7 +308,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         investigationId = intent.getStringExtra("investigationid");
         client = intent.getStringExtra("client");
         ButterKnife.bind(this);
-        image_list = new ArrayList<>();
+
 
         initForm();
 
@@ -516,7 +516,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         String path = ScalingUtilities.getPath(uri,this);
         String tpath = ScalingUtilities.decodeFile(this,path,356,634,investigationId);
         Log.e(LOG_TAG,tpath);
-        image_list.add(tpath);
+        image_file = tpath;
         File file = new File(tpath);
 
         ImageView imageView = new ImageView(this);
@@ -527,7 +527,12 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         Picasso.with(this).load(file).error(R.mipmap.logo).into(imageView);
 
+        int count = image_holder.getChildCount();
+        if(count>0){
+            image_holder.removeViewAt(count-1);
+        }
         image_holder.addView(imageView);
+
     }
 
     @Override
