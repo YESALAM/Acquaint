@@ -15,8 +15,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -149,12 +155,56 @@ public class OfflineCases extends Fragment implements SwipeRefreshLayout.OnRefre
         return pendingCase;
     }
 
+    public Map<String, String> parseCreateCase(String html) {
+        Map<String, String> map = new HashMap<>();
+
+        Document document = Jsoup.parse(html);
+
+        Element body = document.getElementById("body");
+        Element form = body.getElementsByTag("form").first();
+        Elements elements = form.getElementsByTag("input");
+        for (Element input : elements) {
+            String name = input.attr("name");
+            String value = input.attr("value");
+
+            /*if (name.equalsIgnoreCase(GuarantorId.haveGuarantor) || name.equalsIgnoreCase(ResidentialId.haveCompany) || name.equalsIgnoreCase(GuarantorId.guarHaveOfficeAddress)) {
+                String type = input.attr("type");
+                if (type.equalsIgnoreCase("checkbox")) {
+                    map.put(name, value);
+                }
+                continue;
+            }*/
+            map.put(name, value);
+
+        }
+
+        Elements selects = form.getElementsByTag("select");
+        for (Element select : selects) {
+            String id = select.id();
+            //Log.e(LOG_TAG,investigationId);
+            try {
+                String value = select.getElementsByAttributeValue("selected", "selected").first().attr("value");
+                //Log.e(LOG_TAG,value);
+                map.put(id, value);
+            } catch (NullPointerException npe) {
+                npe.printStackTrace();
+                map.put(id, "");
+            }
+        }
+
+
+        return map;
+
+    }
+
     @Override
     public void onPositiveResponse(final String html) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Map<String,String> createMap= parseCreateCase(html);
                 Map<String,String> map = getMap(caseno);
+                createMap.putAll(map);
                 submitMultiPart(map);
             }
         });

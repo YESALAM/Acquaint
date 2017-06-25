@@ -2,6 +2,8 @@ package io.github.yesalam.acquaint.Activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -13,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -38,24 +42,39 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.github.yesalam.acquaint.Pojo.Card.CasePojo;
+import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.Id.CaseBasicId;
+import io.github.yesalam.acquaint.Util.Id.OfficeId;
+import io.github.yesalam.acquaint.Util.Id.RVerificationId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Id.OVerificationId;
 import io.github.yesalam.acquaint.Util.ScalingUtilities;
+import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.Request;
+import okhttp3.RequestBody;
+
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
+import static io.github.yesalam.acquaint.Util.Util.PENDING_CASES;
+import static io.github.yesalam.acquaint.Util.Util.PENDING_INVESTIGATION;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
@@ -280,6 +299,8 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
     String client ;
     String image_file ;
     SwipeRefreshLayout refreshLayout;
+    Map<String,String> map;
+    ProgressDialog progressDialog;
 
 
     @Override
@@ -290,6 +311,10 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         investigationId = intent.getStringExtra("investigationid");
         client =intent.getStringExtra("client");
         ButterKnife.bind(this);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Submitting Data");
 
         initForm();
 
@@ -527,7 +552,149 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         finish();
     }
 
-    public void save(View view){}
+    public void save(View view){
+        areYouSure();
+    }
+
+    public void areYouSure() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+
+                        WebHelper webHelper = WebHelper.getInstance(getApplicationContext());
+                        if (webHelper.isConnected()) {
+                            progressDialog.show();
+                            oktoSubmit();
+                        } else {
+                            cacheData();
+                            finish();
+                        }
+                        //finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+
+    }
+
+    private void oktoSubmit(){
+        map.remove("img_src");
+        Map<String,String> valuesMap = getValues();
+        map.putAll(valuesMap);
+        submitMultiPart(map);
+
+    }
+
+    public void submitMultiPart(Map<String, String> map) {
+        MultipartBody.Builder requestBodyBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        for (String key : map.keySet()) {
+            requestBodyBuilder.addFormDataPart(key, map.get(key));
+        }
+
+        if(image_file!=null){
+            File sourceFile = new File(image_file);
+            Log.d(LOG_TAG, "File...::::" + sourceFile + " : " + sourceFile.exists());
+            final MediaType MEDIA_TYPE = image_file.endsWith("png") ?
+                    MediaType.parse("image/png") : MediaType.parse("image/jpeg");
+            String filename = image_file.substring(image_file.lastIndexOf("/")+1);
+
+            requestBodyBuilder
+                    .addFormDataPart(OVerificationId.file_name, filename, RequestBody.create(MEDIA_TYPE, sourceFile));
+
+        }
+
+
+
+        MultipartBody requestBody = requestBodyBuilder.build();
+
+        String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/OfficeVerification/"+investigationId;
+
+        Request request = new Request.Builder()
+                .url(ACQUAINT_URL + TELE_VERIFICATION_DETAIL)
+                .post(requestBody)
+                .build();
+        Log.e(LOG_TAG, ACQUAINT_URL + TELE_VERIFICATION_DETAIL + " submitting data");
+
+        WebHelper.getInstance(this).requestCall(request, new WebHelper.CallBack() {
+            @Override
+            public void onPositiveResponse(String html) {
+                Toast.makeText(FieldInvestigationOfficeDialoog.this, "Data Submited", Toast.LENGTH_LONG).show();
+                progressDialog.dismiss();
+                finish();
+            }
+
+            @Override
+            public void onNegativeResponse(int code) {
+                cacheData();
+                Toast.makeText(FieldInvestigationOfficeDialoog.this, "Error Occured!", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                finish();
+            }
+        });
+
+    }
+
+    private void cacheData() {
+        Map<String,String> map = getValues();
+        InvestigationPojo pojo = new InvestigationPojo();
+        pojo.id = investigationId;
+        pojo.name = map.get(OVerificationId.name);
+        pojo.type= "Office";
+        pojo.address=map.get(OVerificationId.address);
+        pojo.casedetail = map.get(OVerificationId.caseid);
+        pojo.client = client;
+        pojo.file_name = image_file;
+
+        try {
+            Util.writeObject(getApplicationContext(), investigationId, map);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "map writing error");
+        }
+
+
+        try {
+            List<InvestigationPojo> pendingInvestigation = (List<InvestigationPojo>) Util.readObject(getApplicationContext(), Util.PENDING_INVESTIGATION);
+            if (pendingInvestigation.size() > 0) {
+                //progressBar.setVisibility(View.GONE);
+                //passData(cachedEntries_newcase);
+                pendingInvestigation.add(pojo);
+            } else {
+                //refreshLayout.setRefreshing(true);
+                pendingInvestigation.add(pojo);
+            }
+            Util.writeObject(getApplicationContext(), PENDING_INVESTIGATION, pendingInvestigation);
+        } catch (FileNotFoundException e) {
+            List<InvestigationPojo> pendingInvestigation = new ArrayList<>();
+            pendingInvestigation.add(pojo);
+            try {
+                Util.writeObject(getApplicationContext(), PENDING_INVESTIGATION, pendingInvestigation);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                Log.e(LOG_TAG, "new pendingInvestiagaion writing error");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "pendingInvestigation writing error");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(this, "Connection Unavailable! Data will be Saved", Toast.LENGTH_SHORT).show();
+    }
 
 
     private void loadData(){
@@ -541,7 +708,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
 
     @Override
     public void onPositiveResponse(String htmldoc) {
-        final Map map = parse(htmldoc);
+        map = parse(htmldoc);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -555,6 +722,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         switch (code){
             case NO_CONNECTION:
                 refreshLayout.setRefreshing(false);
+
                 Snackbar.make(investigaion_title_textview, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
                         //.setAction(R.string.snackbar_action, myOnClickListener)
                         .show(); // Don’t forget to show!
@@ -812,6 +980,157 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
     }
 
 
+    private Map<String,String> getValues(){
+        Map<String,String> map = new HashMap<>();
+
+        map.put(OVerificationId.caseid,String.valueOf(caseid_textview.getText()));
+
+        int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
+        if(confirmed>0) {
+            String aConfirmed = confirmed == R.id.yes_address_confirmed_radiobutton ? "True" : "False";
+            map.put(OVerificationId.addressConfirmed,aConfirmed);
+
+            map.put(OVerificationId.nameofEmployer, String.valueOf(nameofemployer_edittext.getText()));
+            map.put(OVerificationId.personMet, String.valueOf(personmet_office_edittext.getText()));
+            map.put(OVerificationId.personMetDesignation, String.valueOf(personment_designation_edittext.getText()));
+            map.put(OVerificationId.addressofEmployer, String.valueOf(addressof_employer_edittext.getText()));
+            map.put(OVerificationId.phoneOffice, String.valueOf(phone_office_edittext.getText()));
+            map.put(OVerificationId.extension, String.valueOf(extension_edittext.getText()));
+            map.put(OVerificationId.residenceNo, String.valueOf(residence_edittext.getText()));
+            map.put(OVerificationId.mobileNo, String.valueOf(mobile_edittext.getText()));
+
+            map.put(OVerificationId.lineofBusiness, String.valueOf(lineof_business_edittext.getText()));
+            map.put(OVerificationId.yearsofEstablishment, String.valueOf(yearof_establishment_edittext.getText()));
+            map.put(OVerificationId.noofEmployees, String.valueOf(noofemployee_see_edittext.getText()));
+            map.put(OVerificationId.noofBranches, String.valueOf(noofbranch_edittext.getText()));
+            map.put(OVerificationId.area, String.valueOf(area_edittext.getText()));
+            map.put(OVerificationId.nearestLandMark, String.valueOf(nearest_landmark_edittext.getText()));
+            map.put(OVerificationId.yearsofCurrentEmployment, String.valueOf(yearsofcurrent_employement_edittext.getText()));
+            map.put(OVerificationId.cuurentSalary, String.valueOf(current_salary_edittext.getText()));
+
+            int board = company_boardseen_radiogroup.getCheckedRadioButtonId();
+            if(board>0){
+                String seen = board == R.id.yes_board_seen_radiobutton?"True":"False" ;
+                map.put(OVerificationId.companyBoardSeen,seen);
+            }
+
+
+            String typeEmployer =  ((SpinnerItem) typeofemployer_spinner.getSelectedItem()).getValue();
+            try{
+                int employerType = Integer.parseInt(typeEmployer);
+                if(employerType==0) map.put(OVerificationId.typeofEmployer,"");
+            }catch (NumberFormatException nfe){
+                map.put(OVerificationId.typeofEmployer,typeEmployer);
+            }
+
+            String natureBusiness =  ((SpinnerItem) natureof_business_spinner.getSelectedItem()).getValue();
+            try{
+                int businessNature = Integer.parseInt(natureBusiness);
+                if(businessNature==0) map.put(OVerificationId.natureofBusiness,"");
+            }catch (NumberFormatException nfe){
+                map.put(OVerificationId.natureofBusiness,natureBusiness);
+            }
+
+            String levelBusiness =  ((SpinnerItem) levelof_business_spinner.getSelectedItem()).getValue();
+            try{
+                int businessLevel = Integer.parseInt(levelBusiness);
+                if(businessLevel==0) map.put(OVerificationId.levelofBusinessActivity,"");
+            }catch (NumberFormatException nfe){
+                map.put(OVerificationId.levelofBusinessActivity,levelBusiness);
+            }
+
+            String officeAmbi =  ((SpinnerItem) office_abmience_spinner.getSelectedItem()).getValue();
+            try{
+                int abmienceOffice = Integer.parseInt(officeAmbi);
+                if(abmienceOffice==0) map.put(OVerificationId.officeAmbience,"");
+            }catch (NumberFormatException nfe){
+                map.put(OVerificationId.officeAmbience,officeAmbi);
+            }
+
+            String locality =  ((SpinnerItem) locality_office_spinner.getSelectedItem()).getValue();
+            try{
+                int lokality = Integer.parseInt(locality);
+                if(lokality==0) map.put(OVerificationId.typeofLocality,"");
+            }catch (NumberFormatException nfe){
+                map.put(OVerificationId.typeofLocality,locality);
+            }
+
+            String easeLocating =  ((SpinnerItem) easeof_locating_spinner.getSelectedItem()).getValue();
+            try{
+                int easeofLocating = Integer.parseInt(easeLocating);
+                if(easeofLocating==0) map.put(OVerificationId.easeofLocating,"");
+            }catch (NumberFormatException nfe){
+                map.put(OVerificationId.easeofLocating,easeLocating);
+            }
+
+            String termsEmployement =  ((SpinnerItem) termsof_employement_spinner.getSelectedItem()).getValue();
+            try{
+                int employementTerms = Integer.parseInt(termsEmployement);
+                if(employementTerms==0) map.put(OVerificationId.termsofEmployement,"");
+            }catch (NumberFormatException nfe){
+                map.put(OVerificationId.termsofEmployement,termsEmployement);
+            }
+
+            String grade =  ((SpinnerItem) grade_spinner.getSelectedItem()).getValue();
+            try{
+                int graDe = Integer.parseInt(grade);
+                if(graDe==0) map.put(OVerificationId.grade,"");
+            }catch (NumberFormatException nfe){
+                map.put(OVerificationId.grade,grade);
+            }
+
+            map.put(OVerificationId.otherGrade, String.valueOf(grade_edittext.getText()));
+
+        }
+
+
+        String confirmedBy =  ((SpinnerItem) confirmedby_spinner.getSelectedItem()).getValue();
+        try{
+            int confirmedby = Integer.parseInt(confirmedBy);
+            if(confirmedby==0) map.put(OVerificationId.addressConfirmedBy,"");
+        }catch (NumberFormatException nfe){
+            map.put(OVerificationId.addressConfirmedBy,confirmedBy);
+        }
+
+        map.put(OVerificationId.officeAddress, String.valueOf(officeaddress_edittext.getText()));
+
+        String typeProof = ((SpinnerItem)typeofproof_spinner.getSelectedItem()).getValue();
+        try{
+            int typeOProof = Integer.parseInt(typeProof);
+            if(typeOProof==0) map.put(OVerificationId.typeofProof,"");
+        }catch (NumberFormatException  nfe){
+            map.put(OVerificationId.typeofProof,typeProof);
+        }
+
+        map.put(OVerificationId.collegue1, String.valueOf(neighbour1_edittext.getText()));
+        map.put(OVerificationId.collegue2, String.valueOf(neighbour2_edittext.getText()));
+        map.put(OVerificationId.firstVisitDate, String.valueOf(visitdate_edittext.getText()));
+        map.put(OVerificationId.visitTime, String.valueOf(visittime_edittext.getText()));
+        map.put(OVerificationId.verifierRemark, String.valueOf(verifierremark_edittext.getText()));
+
+        int rcbCase = isrcb_radiogroup.getCheckedRadioButtonId();
+        if(rcbCase>0){
+            String rcb = rcbCase==R.id.yes_is_rcb_case_radiobutton?"True":"False";
+            map.put(OVerificationId.isRCB,rcb);
+        }
+
+        map.put(OVerificationId.updateAddress, String.valueOf(addressupdateion_edittext.getText()));
+        map.put(OVerificationId.updateMobileNo, String.valueOf(mobilenoupdation_edittext.getText()));
+        map.put(OVerificationId.updatePhoneNo, String.valueOf(phonenoupdation_edittext.getText()));
+        map.put(OVerificationId.updateEmploymentDetail, String.valueOf(employementupdation_edittext.getText()));
+
+        String recommendation = ((SpinnerItem)recommendation_spinner.getSelectedItem()).getValue();
+        try{
+            int recommend = Integer.parseInt(recommendation);
+            if(recommend==0) map.put(OVerificationId.status,"");
+        }catch (NumberFormatException  nfe){
+            map.put(OVerificationId.status,recommendation);
+        }
+
+        map.put(OVerificationId.superVisorRemark, String.valueOf(supervisorremark_edittext.getText()));
+
+        return  map;
+    }
 
 
     private Map<String,String> parse(String html){
@@ -854,7 +1173,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 map.put(id,value);
             }catch (NullPointerException npe){
                 npe.printStackTrace();
-                map.put(id,"0");
+                //map.put(id,"0");
             }
         }
 

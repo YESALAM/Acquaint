@@ -446,7 +446,7 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
                         } else {
                             cacheData();
                         }
-                        finish();
+                        //finish();
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:

@@ -14,5 +14,6 @@ public class InvestigationPojo implements Serializable {
     public String client;
     public String casedetail;
     public String status;
+    public String file_name;
 
 }
