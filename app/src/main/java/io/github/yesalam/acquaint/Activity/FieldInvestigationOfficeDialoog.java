@@ -553,7 +553,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
     }
 
     public void save(View view){
-        areYouSure();
+        if(validate()) areYouSure();
     }
 
     public void areYouSure() {
@@ -979,6 +979,26 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
 
     }
 
+    private boolean validate(){
+        int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
+        if(confirmed<0) {
+            Toast.makeText(this, "Please select Address Confirmed button", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String recommendation = ((SpinnerItem)recommendation_spinner.getSelectedItem()).getValue();
+        try{
+            int recommend = Integer.parseInt(recommendation);
+
+            Toast.makeText(this, "Please select recommendation", Toast.LENGTH_SHORT).show();
+            return false;
+
+        }catch (NumberFormatException  nfe){
+            map.put(OVerificationId.status,recommendation);
+        }
+
+        return true;
+    }
 
     private Map<String,String> getValues(){
         Map<String,String> map = new HashMap<>();
