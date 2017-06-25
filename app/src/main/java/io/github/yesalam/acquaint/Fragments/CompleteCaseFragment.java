@@ -224,10 +224,20 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
     public void onNegativeResponse(int code) {
         switch (code){
             case NO_CONNECTION:
-                refreshLayout.setRefreshing(false);
-                Snackbar.make(parentView, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
-                        //.setAction(R.string.snackbar_action, myOnClickListener)
-                        .show(); // Don’t forget to show!
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(refreshLayout.isRefreshing() && isVisible()){
+                            Snackbar.make(parentView, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
+                                    //.setAction(R.string.snackbar_action, myOnClickListener)
+                                    .show(); // Don’t forget to show!
+                        }else{
+                            Toast.makeText(activity,"Internet Unavailable",Toast.LENGTH_SHORT).show();
+                        }
+                        Log.e(LOG_TAG,"internet error");
+                        refreshLayout.setRefreshing(false);
+                    }
+                });
                 break;
 
 

@@ -51,7 +51,7 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
     TeleVeriRecyclerAdapter adapter;
     SwipeRefreshLayout refreshLayout;
     InvestigationActivity activity;
-
+    View parentView;
 
 
 
@@ -64,15 +64,15 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_card, container, false);
-        refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        parentView = inflater.inflate(R.layout.fragment_card, container, false);
+        refreshLayout = (SwipeRefreshLayout) parentView.findViewById(R.id.swipeContainer);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        RecyclerView recyclerView = (RecyclerView) parentView.findViewById(R.id.recyclerview);
 
         adapter = new TeleVeriRecyclerAdapter(new ArrayList<TelePojo>());
         setupRecyclerView(recyclerView);
@@ -95,7 +95,7 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
 
 
 
-        return view;
+        return parentView;
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -211,10 +211,20 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
     public void onNegativeResponse(int code) {
         switch (code){
             case NO_CONNECTION:
-                refreshLayout.setRefreshing(false);
-                Snackbar.make(refreshLayout, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
-                        //.setAction(R.string.snackbar_action, myOnClickListener)
-                        .show(); // Don’t forget to show!
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(refreshLayout.isRefreshing() && isVisible()){
+                            Snackbar.make(parentView, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
+                                    //.setAction(R.string.snackbar_action, myOnClickListener)
+                                    .show(); // Don’t forget to show!
+                        }
+                        Log.e(LOG_TAG,"internet error");
+                        refreshLayout.setRefreshing(false);
+                    }
+                });
+
+
                 break;
 
 
