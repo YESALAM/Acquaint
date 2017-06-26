@@ -353,12 +353,13 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
             String name = input.attr("name");
             String value = input.attr("value");
 
-            String type = input.attr("type");
+            map.put(name,value);
+           /* String type = input.attr("type");
             if (type.equalsIgnoreCase("hidden")) {
 
             } else {
                 map.put(name, value);
-            }
+            }*/
 
           /*  if (name.equalsIgnoreCase(GuarantorId.haveGuarantor)) {
                 String type = input.attr("type");
@@ -370,6 +371,26 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
             map.put(name, value);*/
 
         }
+
+
+        Element haveG = document.getElementById("HaveGuarantor");
+        String checked = haveG.attr("checked");
+        if(checked.equalsIgnoreCase("checked")) map.put("HaveGuarantor","true");
+        else map.put("HaveGuarantor","false");
+
+
+        Element needG = document.getElementById("GuarNeedsVerification");
+        String checkedNG = needG.attr("checked");
+        if(checkedNG.equalsIgnoreCase("checked")) map.put("GuarNeedsVerification","true");
+        else map.put("GuarNeedsVerification","false");
+
+        Element haveOfficeAddress = document.getElementById("GuarHaveOfficeAddress");
+        String checkedOG = haveOfficeAddress.attr("checked");
+        if(checkedOG.equalsIgnoreCase("checked")) map.put("GuarHaveOfficeAddress","true");
+        else map.put("GuarHaveOfficeAddress","false");
+
+
+
 
         Elements selects = form.getElementsByTag("select");
         for (Element select : selects) {

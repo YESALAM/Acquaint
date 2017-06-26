@@ -1,12 +1,15 @@
 package io.github.yesalam.acquaint.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,8 +42,12 @@ import io.github.yesalam.acquaint.Util.Id.OfficeId;
 import io.github.yesalam.acquaint.Util.Id.ResidentialId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
+import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getAssignedToType;
+import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
@@ -49,6 +56,7 @@ import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
+    private static final String LOG_TAG = "CaseGuarantor";
     @BindView(R.id.have_guarantor_residential_radiobutton)
     CheckBox have_guarantor_radiobutton;
     @BindView(R.id.guarantor_residential_detail_frame)
@@ -121,6 +129,7 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
 
     //SwipeRefreshLayout refreshLayout;
     IndiCaseActivity activity;
+    ProgressDialog progressDialog;
 
     @Override
     public void onAttach(Context context) {
@@ -145,6 +154,9 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
             update(activity.guarMap);
         }//else refreshLayout.setRefreshing(true);
 
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Submitting Data");
 
         return view;
     }
@@ -182,19 +194,118 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void save() {
+        if (validate()) areYouSure();
+    }
+
+    public void areYouSure() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+
+                        WebHelper webHelper = WebHelper.getInstance(getContext());
+                        if (webHelper.isConnected()) {
+                            progressDialog.show();
+                            oktoSubmit();
+                        } else {
+                            //cacheData();
+                            //finish();
+                        }
+                        //finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+
+    }
+
+    private void oktoSubmit() {
+        //map.remove("img_src");
+        if(activity.guarMap==null) {
+            Toast.makeText(activity, "Internet Unavailable", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Map map = activity.guarMap;
+        map.remove("action:ChangeTab1");
+        map.remove("action:ChangeTab2");
+        map.remove("action:Cancel");
+        map.remove("action:ChangeTab0");
+        map.remove("");
+        Map<String, String> valuesMap = getValues();
+        map.putAll(valuesMap);
+        //logId(map);
+        submitMultiPart(map);
+
     }
 
 
-    private void logIt(Map<String, String> map) {
+    public void submitMultiPart(Map<String, String> map) {
+        MultipartBody.Builder requestBodyBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
         for (String key : map.keySet()) {
-            Log.e("Guarantor", key + "->" + map.get(key));
+            requestBodyBuilder.addFormDataPart(key, map.get(key));
+        }
+
+        MultipartBody requestBody = requestBodyBuilder.build();
+
+        String CASE_EDIT = "/Users/Cases/Edit/" + activity.caseid;
+
+        Request request = new Request.Builder()
+                .url(ACQUAINT_URL + CASE_EDIT)
+                .post(requestBody)
+                .build();
+        Log.e(LOG_TAG, ACQUAINT_URL + CASE_EDIT + " submitting data");
+
+        WebHelper.getInstance(getContext()).requestCall(request, new WebHelper.CallBack() {
+            @Override
+            public void onPositiveResponse(String html) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), "Data Submited", Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+
+            @Override
+            public void onNegativeResponse(int code) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //cacheData();
+                        Toast.makeText(getContext(), "Error Occured!", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        //finish();
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void logId(Map<String, String> map) {
+        for (String key : map.keySet()) {
+            Log.e(LOG_TAG, key + " : " + map.get(key));
         }
     }
 
     public void update(Map<String, String> guarMap) {
         //logIt(guarMap);
         //refreshLayout.setRefreshing(false);
-        logIt(guarMap);
+        logId(guarMap);
         String haveGuar = guarMap.get(GuarantorId.haveGuarantor);
         if (haveGuar == null) return;
         if (haveGuar.equalsIgnoreCase("true")) {
@@ -317,5 +428,49 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
         return map;
     }
 
+    private boolean validate() {
+
+
+
+        String pickupdate = String.valueOf(name_residential_edittext.getText());
+        if (pickupdate.equalsIgnoreCase("")) {
+            Toast.makeText(getContext(), "Pickup Date is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+
+        if (have_guarantor_radiobutton.isChecked()) {
+            if (needverificaton_residential_radiobutton.isChecked()) {
+                try {
+                    int assignedTooffice = Integer.parseInt(((SpinnerItem) assignedto_residential_spinner.getSelectedItem()).getValue());
+                    if (assignedTooffice == 0) {
+                        Toast.makeText(getContext(), "AssignedTo is Missing", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                } catch (NumberFormatException nfe) {
+                }
+            }
+        }
+
+
+
+        if (haveguarantoroffice_radiobutton.isChecked()) {
+            if (needverification_guarantoroffice_radiobutton.isChecked()) {
+                try {
+                    int assignedTooffice = Integer.parseInt(((SpinnerItem) assignedto_guarantoroffice_spinner.getSelectedItem()).getValue());
+                    if (assignedTooffice == 0) {
+                        Toast.makeText(getContext(), "AssignedTo Office is Missing", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                } catch (NumberFormatException nfe) {
+                }
+            }
+        }
+
+
+
+
+        return true;
+    }
 
 }

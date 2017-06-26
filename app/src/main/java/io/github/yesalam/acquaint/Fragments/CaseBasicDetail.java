@@ -370,7 +370,7 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     public void update(Map<String, String> map) {
-        logId(map);
+        //logId(map);
         refreshLayout.setRefreshing(false);
         spinnerupdated = true;
         String client = map.get(CaseBasicId.client);
