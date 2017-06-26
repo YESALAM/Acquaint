@@ -73,6 +73,9 @@ import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_CANCEL;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_REMARK;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_SUP_REMARK;
 import static io.github.yesalam.acquaint.Util.Util.PENDING_CASES;
 import static io.github.yesalam.acquaint.Util.Util.PENDING_INVESTIGATION;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
@@ -308,8 +311,12 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_indie_field_office_investigation);
         Intent intent = getIntent() ;
-        investigationId = intent.getStringExtra("investigationid");
-        client =intent.getStringExtra("client");
+        //investigationId = intent.getStringExtra("investigationid");
+        //client =intent.getStringExtra("client");
+        investigationId = "5161275" ;
+        client = "State Bank of India \n" +
+                "GWALIOR MAIN BRANCH (00377)" ;
+
         ButterKnife.bind(this);
 
         progressDialog = new ProgressDialog(this);
@@ -1008,99 +1015,121 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
         if(confirmed>0) {
             String aConfirmed = confirmed == R.id.yes_address_confirmed_radiobutton ? "True" : "False";
-            map.put(OVerificationId.addressConfirmed,aConfirmed);
+            map.put(OVerificationId.addressConfirmed, aConfirmed);
+            if(aConfirmed.equalsIgnoreCase("True")) {
 
-            map.put(OVerificationId.nameofEmployer, String.valueOf(nameofemployer_edittext.getText()));
-            map.put(OVerificationId.personMet, String.valueOf(personmet_office_edittext.getText()));
-            map.put(OVerificationId.personMetDesignation, String.valueOf(personment_designation_edittext.getText()));
-            map.put(OVerificationId.addressofEmployer, String.valueOf(addressof_employer_edittext.getText()));
-            map.put(OVerificationId.phoneOffice, String.valueOf(phone_office_edittext.getText()));
-            map.put(OVerificationId.extension, String.valueOf(extension_edittext.getText()));
-            map.put(OVerificationId.residenceNo, String.valueOf(residence_edittext.getText()));
-            map.put(OVerificationId.mobileNo, String.valueOf(mobile_edittext.getText()));
 
-            map.put(OVerificationId.lineofBusiness, String.valueOf(lineof_business_edittext.getText()));
-            map.put(OVerificationId.yearsofEstablishment, String.valueOf(yearof_establishment_edittext.getText()));
-            map.put(OVerificationId.noofEmployees, String.valueOf(noofemployee_see_edittext.getText()));
-            map.put(OVerificationId.noofBranches, String.valueOf(noofbranch_edittext.getText()));
-            map.put(OVerificationId.area, String.valueOf(area_edittext.getText()));
-            map.put(OVerificationId.nearestLandMark, String.valueOf(nearest_landmark_edittext.getText()));
-            map.put(OVerificationId.yearsofCurrentEmployment, String.valueOf(yearsofcurrent_employement_edittext.getText()));
-            map.put(OVerificationId.cuurentSalary, String.valueOf(current_salary_edittext.getText()));
+                map.put(OVerificationId.nameofEmployer, String.valueOf(nameofemployer_edittext.getText()));
+                map.put(OVerificationId.personMet, String.valueOf(personmet_office_edittext.getText()));
+                map.put(OVerificationId.personMetDesignation, String.valueOf(personment_designation_edittext.getText()));
+                map.put(OVerificationId.addressofEmployer, String.valueOf(addressof_employer_edittext.getText()));
+                map.put(OVerificationId.phoneOffice, String.valueOf(phone_office_edittext.getText()));
+                map.put(OVerificationId.extension, String.valueOf(extension_edittext.getText()));
+                map.put(OVerificationId.residenceNo, String.valueOf(residence_edittext.getText()));
+                map.put(OVerificationId.mobileNo, String.valueOf(mobile_edittext.getText()));
 
-            int board = company_boardseen_radiogroup.getCheckedRadioButtonId();
-            if(board>0){
-                String seen = board == R.id.yes_board_seen_radiobutton?"True":"False" ;
-                map.put(OVerificationId.companyBoardSeen,seen);
+                map.put(OVerificationId.lineofBusiness, String.valueOf(lineof_business_edittext.getText()));
+                map.put(OVerificationId.yearsofEstablishment, String.valueOf(yearof_establishment_edittext.getText()));
+                map.put(OVerificationId.noofEmployees, String.valueOf(noofemployee_see_edittext.getText()));
+                map.put(OVerificationId.noofBranches, String.valueOf(noofbranch_edittext.getText()));
+                map.put(OVerificationId.area, String.valueOf(area_edittext.getText()));
+                map.put(OVerificationId.nearestLandMark, String.valueOf(nearest_landmark_edittext.getText()));
+                map.put(OVerificationId.yearsofCurrentEmployment, String.valueOf(yearsofcurrent_employement_edittext.getText()));
+                map.put(OVerificationId.cuurentSalary, String.valueOf(current_salary_edittext.getText()));
+
+                int board = company_boardseen_radiogroup.getCheckedRadioButtonId();
+                if (board > 0) {
+                    String seen = board == R.id.yes_board_seen_radiobutton ? "True" : "False";
+                    map.put(OVerificationId.companyBoardSeen, seen);
+                }
+
+
+                String typeEmployer = ((SpinnerItem) typeofemployer_spinner.getSelectedItem()).getValue();
+                try {
+                    int employerType = Integer.parseInt(typeEmployer);
+                    if (employerType == 0) map.put(OVerificationId.typeofEmployer, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.typeofEmployer, typeEmployer);
+                }
+
+                String natureBusiness = ((SpinnerItem) natureof_business_spinner.getSelectedItem()).getValue();
+                try {
+                    int businessNature = Integer.parseInt(natureBusiness);
+                    if (businessNature == 0) map.put(OVerificationId.natureofBusiness, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.natureofBusiness, natureBusiness);
+                }
+
+                String levelBusiness = ((SpinnerItem) levelof_business_spinner.getSelectedItem()).getValue();
+                try {
+                    int businessLevel = Integer.parseInt(levelBusiness);
+                    if (businessLevel == 0) map.put(OVerificationId.levelofBusinessActivity, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.levelofBusinessActivity, levelBusiness);
+                }
+
+                String officeAmbi = ((SpinnerItem) office_abmience_spinner.getSelectedItem()).getValue();
+                try {
+                    int abmienceOffice = Integer.parseInt(officeAmbi);
+                    if (abmienceOffice == 0) map.put(OVerificationId.officeAmbience, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.officeAmbience, officeAmbi);
+                }
+
+                String locality = ((SpinnerItem) locality_office_spinner.getSelectedItem()).getValue();
+                try {
+                    int lokality = Integer.parseInt(locality);
+                    if (lokality == 0) map.put(OVerificationId.typeofLocality, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.typeofLocality, locality);
+                }
+
+                String easeLocating = ((SpinnerItem) easeof_locating_spinner.getSelectedItem()).getValue();
+                try {
+                    int easeofLocating = Integer.parseInt(easeLocating);
+                    if (easeofLocating == 0) map.put(OVerificationId.easeofLocating, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.easeofLocating, easeLocating);
+                }
+
+                String termsEmployement = ((SpinnerItem) termsof_employement_spinner.getSelectedItem()).getValue();
+                try {
+                    int employementTerms = Integer.parseInt(termsEmployement);
+                    if (employementTerms == 0) map.put(OVerificationId.termsofEmployement, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.termsofEmployement, termsEmployement);
+                }
+
+                String grade = ((SpinnerItem) grade_spinner.getSelectedItem()).getValue();
+                try {
+                    int graDe = Integer.parseInt(grade);
+                    if (graDe == 0) map.put(OVerificationId.grade, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.grade, grade);
+                }
+
+                map.put(OVerificationId.otherGrade, String.valueOf(grade_edittext.getText()));
+            }else{
+                int reasonNot = reason_radiogruop.getCheckedRadioButtonId();
+                if (reasonNot > 0) {
+                    String reson = reasonNot == R.id.untraceable_reason_not_confirmed_radiobutton ? "U" : "M";
+                    map.put(OVerificationId.notConfirmedType, reson);
+                }
+
+                map.put(OVerificationId.toWhomAddressBelongs, String.valueOf(address_belongto_edittext.getText()));
+
+                map.put(OVerificationId.reasonNotConfirmed, String.valueOf(reason_edittext.getText()));
+
+                String localityNot = ((SpinnerItem) locality_spinner_not.getSelectedItem()).getValue();
+                try {
+                    int notLocality = Integer.parseInt(localityNot);
+                    if (notLocality == 0) map.put(OVerificationId.notConfirmedLocality, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(OVerificationId.notConfirmedLocality, localityNot);
+                }
+
+                map.put(OVerificationId.resultofCalling, String.valueOf(resultOfCalling_edittex.getText()));
             }
-
-
-            String typeEmployer =  ((SpinnerItem) typeofemployer_spinner.getSelectedItem()).getValue();
-            try{
-                int employerType = Integer.parseInt(typeEmployer);
-                if(employerType==0) map.put(OVerificationId.typeofEmployer,"");
-            }catch (NumberFormatException nfe){
-                map.put(OVerificationId.typeofEmployer,typeEmployer);
-            }
-
-            String natureBusiness =  ((SpinnerItem) natureof_business_spinner.getSelectedItem()).getValue();
-            try{
-                int businessNature = Integer.parseInt(natureBusiness);
-                if(businessNature==0) map.put(OVerificationId.natureofBusiness,"");
-            }catch (NumberFormatException nfe){
-                map.put(OVerificationId.natureofBusiness,natureBusiness);
-            }
-
-            String levelBusiness =  ((SpinnerItem) levelof_business_spinner.getSelectedItem()).getValue();
-            try{
-                int businessLevel = Integer.parseInt(levelBusiness);
-                if(businessLevel==0) map.put(OVerificationId.levelofBusinessActivity,"");
-            }catch (NumberFormatException nfe){
-                map.put(OVerificationId.levelofBusinessActivity,levelBusiness);
-            }
-
-            String officeAmbi =  ((SpinnerItem) office_abmience_spinner.getSelectedItem()).getValue();
-            try{
-                int abmienceOffice = Integer.parseInt(officeAmbi);
-                if(abmienceOffice==0) map.put(OVerificationId.officeAmbience,"");
-            }catch (NumberFormatException nfe){
-                map.put(OVerificationId.officeAmbience,officeAmbi);
-            }
-
-            String locality =  ((SpinnerItem) locality_office_spinner.getSelectedItem()).getValue();
-            try{
-                int lokality = Integer.parseInt(locality);
-                if(lokality==0) map.put(OVerificationId.typeofLocality,"");
-            }catch (NumberFormatException nfe){
-                map.put(OVerificationId.typeofLocality,locality);
-            }
-
-            String easeLocating =  ((SpinnerItem) easeof_locating_spinner.getSelectedItem()).getValue();
-            try{
-                int easeofLocating = Integer.parseInt(easeLocating);
-                if(easeofLocating==0) map.put(OVerificationId.easeofLocating,"");
-            }catch (NumberFormatException nfe){
-                map.put(OVerificationId.easeofLocating,easeLocating);
-            }
-
-            String termsEmployement =  ((SpinnerItem) termsof_employement_spinner.getSelectedItem()).getValue();
-            try{
-                int employementTerms = Integer.parseInt(termsEmployement);
-                if(employementTerms==0) map.put(OVerificationId.termsofEmployement,"");
-            }catch (NumberFormatException nfe){
-                map.put(OVerificationId.termsofEmployement,termsEmployement);
-            }
-
-            String grade =  ((SpinnerItem) grade_spinner.getSelectedItem()).getValue();
-            try{
-                int graDe = Integer.parseInt(grade);
-                if(graDe==0) map.put(OVerificationId.grade,"");
-            }catch (NumberFormatException nfe){
-                map.put(OVerificationId.grade,grade);
-            }
-
-            map.put(OVerificationId.otherGrade, String.valueOf(grade_edittext.getText()));
-
         }
 
 
@@ -1184,35 +1213,37 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         }
 
         Elements selects = form.getElementsByTag("select");
-        for(Element select:selects){
+        for (Element select : selects) {
             String id = select.id();
             //Log.e(LOG_TAG,id);
-            try{
-                String value = select.getElementsByAttributeValue("selected","selected").first().attr("value");
+            try {
+                String value = select.getElementsByAttributeValue("selected", "selected").first().attr("value");
                 //Log.e(LOG_TAG,value);
-                map.put(id,value);
-            }catch (NullPointerException npe){
+                map.put(id, value);
+            } catch (NullPointerException npe) {
                 npe.printStackTrace();
-                //map.put(id,"0");
+                map.put(id, "");
             }
         }
 
         Elements imgs = form.getElementsByTag("img");
-        if(imgs!=null){
-            for(int i=0;i<imgs.size();i++){
+        if (imgs != null) {
+            for (int i = 0; i < imgs.size(); i++) {
                 String src = imgs.get(i).attr("src");
-                map.put("img_src"+i,src);
-                Log.e(LOG_TAG,"img : "+src);
+                map.put("img_src" + i, src);
+                Log.e(LOG_TAG, "img : " + src);
             }
         }
 
         Elements textareas = form.getElementsByTag("textarea");
-        for(Element textarea:textareas){
-            map.put(textarea.id(),textarea.text());
+        for (Element textarea : textareas) {
+            map.put(textarea.id(), textarea.text());
         }
 
-
-
+        map.remove("");
+        map.remove(ACTION_CANCEL);
+        map.remove(ACTION_REMARK);
+        map.remove(ACTION_SUP_REMARK);
 
         return map;
     }

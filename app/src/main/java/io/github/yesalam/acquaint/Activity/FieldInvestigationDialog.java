@@ -70,6 +70,10 @@ import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_CANCEL;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_REMARK;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_SAVE;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_SUP_REMARK;
 import static io.github.yesalam.acquaint.Util.Util.PENDING_INVESTIGATION;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
@@ -79,7 +83,7 @@ import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 public class FieldInvestigationDialog extends Activity implements WebHelper.CallBack, SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String LOG_TAG = "FieldInvestigation" ;
+    private static final String LOG_TAG = "FieldInvestigation";
     private static final int PERMISSION_REQUEST = 10101;
     //Address verification details
     @BindView(R.id.investigation_title)
@@ -311,21 +315,24 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
     Button save_button;
 
     String investigationId;
-    String client ;
+    String client;
     String image_file;
     SwipeRefreshLayout refreshLayout;
-    Map<String,String> map;
+    Map<String, String> map;
 
-    ProgressDialog progressDialog ;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_indie_field_investigation);
         Intent intent = getIntent();
-        investigationId = intent.getStringExtra("investigationid");
-        client = intent.getStringExtra("client");
+        //investigationId = intent.getStringExtra("investigationid");
+        //client = intent.getStringExtra("client");
         ButterKnife.bind(this);
+        investigationId = "5161276";
+        client = "State Bank of India \n" +
+                "GWALIOR MAIN BRANCH (00377)";
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
@@ -345,8 +352,8 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
     }
 
-    public void save(View view){
-        if(validate()) areYouSure();
+    public void save(View view) {
+        if (validate()) areYouSure();
     }
 
     public void areYouSure() {
@@ -383,14 +390,14 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
     }
 
-    private void oktoSubmit(){
+    private void oktoSubmit() {
         map.remove("img_src");
-        Map<String,String> valuesMap = getValues();
+        Map<String, String> valuesMap = getValues();
         map.putAll(valuesMap);
+        //logId(map);
         submitMultiPart(map);
 
     }
-
 
 
     public void submitMultiPart(Map<String, String> map) {
@@ -400,12 +407,12 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
             requestBodyBuilder.addFormDataPart(key, map.get(key));
         }
 
-        if(image_file!=null){
+        if (image_file != null) {
             File sourceFile = new File(image_file);
             Log.d(LOG_TAG, "File...::::" + sourceFile + " : " + sourceFile.exists());
             final MediaType MEDIA_TYPE = image_file.endsWith("png") ?
                     MediaType.parse("image/png") : MediaType.parse("image/jpeg");
-            String filename = image_file.substring(image_file.lastIndexOf("/")+1);
+            String filename = image_file.substring(image_file.lastIndexOf("/") + 1);
 
             requestBodyBuilder
                     .addFormDataPart(OVerificationId.file_name, filename, RequestBody.create(MEDIA_TYPE, sourceFile));
@@ -413,10 +420,9 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         }
 
 
-
         MultipartBody requestBody = requestBodyBuilder.build();
 
-        String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/"+investigationId;
+        String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/" + investigationId;
 
         Request request = new Request.Builder()
                 .url(ACQUAINT_URL + TELE_VERIFICATION_DETAIL)
@@ -427,29 +433,39 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         WebHelper.getInstance(this).requestCall(request, new WebHelper.CallBack() {
             @Override
             public void onPositiveResponse(String html) {
-                Toast.makeText(FieldInvestigationDialog.this, "Data Submited", Toast.LENGTH_LONG).show();
-                progressDialog.dismiss();
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(FieldInvestigationDialog.this, "Data Submited", Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                        finish();
+                    }
+                });
             }
 
             @Override
             public void onNegativeResponse(int code) {
-                cacheData();
-                Toast.makeText(FieldInvestigationDialog.this, "Error Occured!", Toast.LENGTH_SHORT).show();
-                progressDialog.dismiss();
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        cacheData();
+                        Toast.makeText(FieldInvestigationDialog.this, "Error Occured!", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        finish();
+                    }
+                });
             }
         });
 
     }
 
     private void cacheData() {
-        Map<String,String> map = getValues();
+        Map<String, String> map = getValues();
         InvestigationPojo pojo = new InvestigationPojo();
         pojo.id = investigationId;
         pojo.name = map.get(ResidentialId.name);
-        pojo.type= "Residence";
-        pojo.address=map.get(ResidentialId.address);
+        pojo.type = "Residence";
+        pojo.address = map.get(ResidentialId.address);
         pojo.casedetail = map.get(OVerificationId.caseid);
         pojo.client = client;
         pojo.file_name = image_file;
@@ -491,19 +507,19 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         Toast.makeText(this, "Connection Unavailable! Data will be Saved", Toast.LENGTH_SHORT).show();
     }
 
-    public void cancel(View view){
+    public void cancel(View view) {
         finish();
     }
 
 
-    private void loadData(){
+    private void loadData() {
         refreshLayout.setRefreshing(true);
-        String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/"+investigationId;
+        String TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/" + investigationId;
         final Request request = new Request.Builder()
-                .url(ACQUAINT_URL+TELE_VERIFICATION_DETAIL)
+                .url(ACQUAINT_URL + TELE_VERIFICATION_DETAIL)
                 .build();
 
-        WebHelper.getInstance(this).requestCall(request,this);
+        WebHelper.getInstance(this).requestCall(request, this);
     }
 
 
@@ -624,7 +640,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         autoremark_supervisor_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(LOG_TAG,"supervisor remark called");
+                Log.e(LOG_TAG, "supervisor remark called");
                 supervisorremark_edittext.setText(autoRemark());
             }
         });
@@ -633,9 +649,9 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
             @Override
             public void onClick(View v) {
                 int permissinCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-                if(permissinCheck== PackageManager.PERMISSION_DENIED){
+                if (permissinCheck == PackageManager.PERMISSION_DENIED) {
                     requestPermission();
-                }else {
+                } else {
                     Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                     photoPickerIntent.setType("image/*");
                     startActivityForResult(photoPickerIntent, 786);
@@ -644,9 +660,9 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         });
     }
 
-    private void requestPermission(){
-        Log.e(LOG_TAG,"requesting permission");
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_REQUEST);
+    private void requestPermission() {
+        Log.e(LOG_TAG, "requesting permission");
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST);
     }
 
 
@@ -678,10 +694,10 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         }
     }
 
-    private void setImage(Uri uri){
-        String path = ScalingUtilities.getPath(uri,this);
-        String tpath = ScalingUtilities.decodeFile(this,path,356,634,investigationId);
-        Log.e(LOG_TAG,tpath);
+    private void setImage(Uri uri) {
+        String path = ScalingUtilities.getPath(uri, this);
+        String tpath = ScalingUtilities.decodeFile(this, path, 356, 634, investigationId);
+        Log.e(LOG_TAG, tpath);
         image_file = tpath;
         File file = new File(tpath);
 
@@ -694,8 +710,8 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         Picasso.with(this).load(file).error(R.mipmap.logo).into(imageView);
 
         int count = image_holder.getChildCount();
-        if(count>0){
-            image_holder.removeViewAt(count-1);
+        if (count > 0) {
+            image_holder.removeViewAt(count - 1);
         }
         image_holder.addView(imageView);
 
@@ -704,9 +720,9 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             case 786:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     final Uri imageUri = data.getData();
                     //final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                     // final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
@@ -719,43 +735,47 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
     @Override
     public void onPositiveResponse(String htmldoc) {
-            map = parse(htmldoc);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    update(map);
-                }
-            });
+        map = parse(htmldoc);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                update(map);
+            }
+        });
     }
 
     @Override
     public void onNegativeResponse(int code) {
-        switch (code){
+        switch (code) {
             case NO_CONNECTION:
                 refreshLayout.setRefreshing(false);
                 Snackbar.make(investigaion_title_textview, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
                         //.setAction(R.string.snackbar_action, myOnClickListener)
                         .show(); // Don’t forget to show!
                 break;
+            case 500:
+                progressDialog.dismiss();
+                Snackbar.make(investigaion_title_textview, "Internal Server Error", Snackbar.LENGTH_SHORT).show();
+                break;
 
 
         }
     }
 
-    private void logId(Map<String,String> map){
-        for(String key:map.keySet()){
-            Log.e(LOG_TAG,key+" : "+map.get(key));
+    private void logId(Map<String, String> map) {
+        for (String key : map.keySet()) {
+            Log.e(LOG_TAG, key + " : " + map.get(key));
         }
     }
 
-    private void update(Map<String,String> map){
+    private void update(Map<String, String> map) {
         //logId(map);
         refreshLayout.setRefreshing(false);
 
-        investigaion_title_textview.setText("Field Investigations "+investigationId);
-        if(client.contains("Indiabulls")){
+        investigaion_title_textview.setText("Field Investigations " + investigationId);
+        if (client.contains("Indiabulls")) {
             clienttitle_textview.setText("Indiabulls Residence Verification");
-        }else{
+        } else {
             clienttitle_textview.setText("SBI Residence Verification");
         }
 
@@ -769,14 +789,14 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         fielexecutive_name.setText(map.get(RVerificationId.feName));
 
         String proof_Attached = map.get(RVerificationId.proofAttached);
-        if(proof_Attached!=null){
+        if (proof_Attached != null) {
             boolean proofAttached = proof_Attached.equalsIgnoreCase("True");
-            proofattached_radiogroup.check(proofAttached?R.id.yes_proof_attached_radiobutton:R.id.no_proof_attached_radiobutton);
+            proofattached_radiogroup.check(proofAttached ? R.id.yes_proof_attached_radiobutton : R.id.no_proof_attached_radiobutton);
 
-            if(proofAttached){
+            if (proofAttached) {
                 String typeOfProof = map.get(RVerificationId.typeofProof);
-                if(typeOfProof!=null){
-                    int positionTOP = ((ArrayAdapter)typeofproof_spinner.getAdapter()).getPosition(new SpinnerItem(typeOfProof));
+                if (typeOfProof != null) {
+                    int positionTOP = ((ArrayAdapter) typeofproof_spinner.getAdapter()).getPosition(new SpinnerItem(typeOfProof));
                     typeofproof_spinner.setSelection(positionTOP);
                 }
             }
@@ -793,9 +813,9 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         phonenoupdation_edittext.setText(map.get(RVerificationId.updatePhoneNo));
 
 
-        for(int i=0;i<5;i++){
-            String img = map.get("img_src"+i);
-            if(img == null) break;
+        for (int i = 0; i < 5; i++) {
+            String img = map.get("img_src" + i);
+            if (img == null) break;
            /* LayoutInflater inflater = getLayoutInflater();
             RelativeLayout rl = (RelativeLayout) inflater.inflate(R.layout.image_closeable,null);
             View close = rl.findViewById(R.id.image_view_close);
@@ -816,7 +836,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
             imageView.setMaxHeight(250);
             imageView.setMaxWidth(380);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            Picasso.with(this).load(ACQUAINT_URL+img).error(R.mipmap.logo).into(imageView);
+            Picasso.with(this).load(ACQUAINT_URL + img).error(R.mipmap.logo).into(imageView);
 
             image_holder.addView(imageView);
 
@@ -826,137 +846,138 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         supervisorremark_edittext.setText(map.get(RVerificationId.superVisorRemark));
 
 
-
-
-
         String recommendation = map.get(RVerificationId.status);
-        if(recommendation!=null){
-            int positionrecommendation = ((ArrayAdapter)recommendation_spinner.getAdapter()).getPosition(new SpinnerItem(recommendation));
+        if (recommendation != null) {
+            int positionrecommendation = ((ArrayAdapter) recommendation_spinner.getAdapter()).getPosition(new SpinnerItem(recommendation));
             recommendation_spinner.setSelection(positionrecommendation);
         }
 
+        boolean addressConfirmed = false;
         String address_confirmed = map.get(RVerificationId.addressConfirmed);
-        if(address_confirmed == null){
-            return;
-        }else {
-            boolean addressConfirmed = map.get(RVerificationId.addressConfirmed).equalsIgnoreCase("True");
+        if (address_confirmed != null) {
+
+            addressConfirmed = map.get(RVerificationId.addressConfirmed).equalsIgnoreCase("True");
             addressconfirmed_radiogroup.check(addressConfirmed ? R.id.yes_address_confirmed_radiobutton : R.id.no_address_confirmed_radiobutton);
+        }
 
 
-            String confirmedBy = map.get(RVerificationId.addressConfirmedBy);
-            if (confirmedBy != null) {
-                int positonConfirmedBy = ((ArrayAdapter) confirmedby_spinner.getAdapter()).getPosition(new SpinnerItem(confirmedBy));
-                confirmedby_spinner.setSelection(positonConfirmedBy);
+        String confirmedBy = map.get(RVerificationId.addressConfirmedBy);
+        if (confirmedBy != null) {
+            int positonConfirmedBy = ((ArrayAdapter) confirmedby_spinner.getAdapter()).getPosition(new SpinnerItem(confirmedBy));
+            confirmedby_spinner.setSelection(positonConfirmedBy);
+        }
+
+
+        if (addressConfirmed) {
+            String namePlate = map.get(RVerificationId.namePlateSeen);
+            if (namePlate != null) {
+                boolean namePlateSeen = namePlate.equalsIgnoreCase("True");
+                nameplateseen_radiogroup.check(namePlateSeen ? R.id.yes_name_plate_seen_radiobutton : R.id.no_name_plate_seen_radiobutton);
+            }
+
+            applicantname_edittext.setText(map.get(RVerificationId.applicant_name));
+            dateofbirth_edittext.setText(map.get(RVerificationId.dateOfBirth));
+            personmet_edittext.setText(map.get(RVerificationId.personMet));
+
+            String relation = map.get(RVerificationId.relation);
+            if (relation != null) {
+                int positionrelation = ((ArrayAdapter) relation_spinner.getAdapter()).getPosition(new SpinnerItem(relation));
+                relation_spinner.setSelection(positionrelation);
+            }
+
+            String totalMember = map.get(RVerificationId.totalFamilyMembers);
+            if (totalMember != null) {
+                int positiontotal = ((ArrayAdapter) totalfamilymember_spinner.getAdapter()).getPosition(new SpinnerItem(totalMember));
+                totalfamilymember_spinner.setSelection(positiontotal);
+            }
+
+            String earningMemeber = map.get(RVerificationId.earningFamilyMembers);
+            if (earningMemeber != null) {
+                int positionEarning = ((ArrayAdapter) earningmember_spinner.getAdapter()).getPosition(new SpinnerItem(earningMemeber));
+                earningmember_spinner.setSelection(positionEarning);
+            }
+
+            String residenceStatus = map.get(RVerificationId.residenceStatus);
+            if (residenceStatus != null) {
+                int positionResidenceStatus = ((ArrayAdapter) residence_status_spinner.getAdapter()).getPosition(new SpinnerItem(residenceStatus));
+                residence_status_spinner.setSelection(positionResidenceStatus);
+            }
+
+            String residingMonth = map.get(RVerificationId.residingSinceMonth);
+            if (residingMonth != null) {
+                int positionResidingMonth = ((ArrayAdapter) residencestatus_month_spinner.getAdapter()).getPosition(new SpinnerItem(residingMonth));
+                residencestatus_month_spinner.setSelection(positionResidingMonth);
+            }
+
+            String residingYear = map.get(RVerificationId.residingSinceYear);
+            if (residingYear != null) {
+                int positionResidingYear = ((ArrayAdapter) residencestatus_year_spinner.getAdapter()).getPosition(new SpinnerItem(residingYear));
+                residencestatus_year_spinner.setSelection(positionResidingYear);
+            }
+
+            approxarea_edittext.setText(map.get(RVerificationId.approxArea));
+            approxvalue_edittext.setText(map.get(RVerificationId.approxValue));
+            rentmonthly_edittext.setText(map.get(RVerificationId.rent));
+            employer_edittext.setText(map.get(RVerificationId.nameofEmployer));
+            employeraddress_edittext.setText(map.get(RVerificationId.employerAddress));
+            designation_edittext.setText(map.get(RVerificationId.designation));
+
+
+            String easeOfLocation = map.get(RVerificationId.easeofLocation);
+            if (easeOfLocation != null) {
+                int positionEaseOfLocation = ((ArrayAdapter) easeoflocation_spinner.getAdapter()).getPosition(new SpinnerItem(easeOfLocation));
+                easeoflocation_spinner.setSelection(positionEaseOfLocation);
             }
 
 
-            if (addressConfirmed) {
-                boolean namePlateSeen = map.get(RVerificationId.namePlateSeen).equalsIgnoreCase("True");
-                nameplateseen_radiogroup.check(namePlateSeen ? R.id.yes_name_plate_seen_radiobutton : R.id.no_name_plate_seen_radiobutton);
+            String locality = map.get(RVerificationId.locality);
+            if (locality != null) {
+                int positonLocality = ((ArrayAdapter) locality_spinner.getAdapter()).getPosition(new SpinnerItem(locality));
+                locality_spinner.setSelection(positonLocality);
+            }
 
-                applicantname_edittext.setText(map.get(RVerificationId.applicant_name));
-                dateofbirth_edittext.setText(map.get(RVerificationId.dateOfBirth));
-                personmet_edittext.setText(map.get(RVerificationId.personMet));
+            String accomodationType = map.get(RVerificationId.accomodationType);
+            if (accomodationType != null) {
+                int positionAccomodationType = ((ArrayAdapter) accomadationtype_spinner.getAdapter()).getPosition(new SpinnerItem(accomodationType));
+                accomadationtype_spinner.setSelection(positionAccomodationType);
+            }
 
-                String relation = map.get(RVerificationId.relation);
-                if (relation != null) {
-                    int positionrelation = ((ArrayAdapter) relation_spinner.getAdapter()).getPosition(new SpinnerItem(relation));
-                    relation_spinner.setSelection(positionrelation);
-                }
+            String standardOfLiving = map.get(RVerificationId.standardofLiving);
+            if (standardOfLiving != null) {
+                int positionStandardOfLiving = ((ArrayAdapter) statndard_living_spinner.getAdapter()).getPosition(new SpinnerItem(standardOfLiving));
+                statndard_living_spinner.setSelection(positionStandardOfLiving);
+            }
 
-                String totalMember = map.get(RVerificationId.totalFamilyMembers);
-                if (totalMember != null) {
-                    int positiontotal = ((ArrayAdapter) totalfamilymember_spinner.getAdapter()).getPosition(new SpinnerItem(totalMember));
-                    totalfamilymember_spinner.setSelection(positiontotal);
-                }
+            String interior = map.get(RVerificationId.interiorCondition);
+            List<String> interiorConditions = Arrays.asList(interior.split(","));
+            painted_interior_checkbox.setChecked(interiorConditions.contains("P"));
+            furnished_interior_checkbox.setChecked(interiorConditions.contains("F"));
+            carpeted_interior_checkbox.setChecked(interiorConditions.contains("C"));
+            curtains_interior_checkbox.setChecked(interiorConditions.contains("U"));
 
-                String earningMemeber = map.get(RVerificationId.earningFamilyMembers);
-                if (earningMemeber != null) {
-                    int positionEarning = ((ArrayAdapter) earningmember_spinner.getAdapter()).getPosition(new SpinnerItem(earningMemeber));
-                    earningmember_spinner.setSelection(positionEarning);
-                }
+            String exterior = map.get(RVerificationId.exteriorCondition);
+            List<String> exteriorConditions = Arrays.asList(exterior.split(","));
+            plastered_exterior_checkbox.setChecked(exteriorConditions.contains("P"));
+            painted_exterior_checkbox.setChecked(exteriorConditions.contains("A"));
+            securityguard_exterior_checkbox.setChecked(exteriorConditions.contains("S"));
+            parking_exterior_checkbox.setChecked(exteriorConditions.contains("R"));
+            garden_exterior_checkbox.setChecked(exteriorConditions.contains("G"));
 
-                String residenceStatus = map.get(RVerificationId.residenceStatus);
-                if (residenceStatus != null) {
-                    int positionResidenceStatus = ((ArrayAdapter) residence_status_spinner.getAdapter()).getPosition(new SpinnerItem(residenceStatus));
-                    residence_status_spinner.setSelection(positionResidenceStatus);
-                }
+            String assetSeen = map.get(RVerificationId.assetsSeen);
+            List<String> assets = Arrays.asList(assetSeen.split(","));
+            television_asset_checkbox.setChecked(assets.contains("T"));
+            refrigerator_asset_checkbox.setChecked(assets.contains("R"));
+            ac_asset_checkbox.setChecked(assets.contains("A"));
+            musicsystem_asset_checkbox.setChecked(assets.contains("M"));
 
-                String residingMonth = map.get(RVerificationId.residingSinceMonth);
-                if (residingMonth != null) {
-                    int positionResidingMonth = ((ArrayAdapter) residencestatus_month_spinner.getAdapter()).getPosition(new SpinnerItem(residingMonth));
-                    residencestatus_month_spinner.setSelection(positionResidingMonth);
-                }
+            String vehicleType = map.get(RVerificationId.vehicleType);
+            List<String> vehicleTypes = Arrays.asList(vehicleType.split(","));
+            two_wheeler_checkbox.setChecked(vehicleTypes.contains("T"));
+            four_wheeler_checkbox.setChecked(vehicleTypes.contains("F"));
+            other_vehicle_checkbox.setChecked(vehicleTypes.contains("O"));
 
-                String residingYear = map.get(RVerificationId.residingSinceYear);
-                if (residingYear != null) {
-                    int positionResidingYear = ((ArrayAdapter) residencestatus_year_spinner.getAdapter()).getPosition(new SpinnerItem(residingYear));
-                    residencestatus_year_spinner.setSelection(positionResidingYear);
-                }
-
-                approxarea_edittext.setText(map.get(RVerificationId.approxArea));
-                approxvalue_edittext.setText(map.get(RVerificationId.approxValue));
-                rentmonthly_edittext.setText(map.get(RVerificationId.rent));
-                employer_edittext.setText(map.get(RVerificationId.nameofEmployer));
-                employeraddress_edittext.setText(map.get(RVerificationId.employerAddress));
-                designation_edittext.setText(map.get(RVerificationId.designation));
-
-
-                String easeOfLocation = map.get(RVerificationId.easeofLocation);
-                if (easeOfLocation != null) {
-                    int positionEaseOfLocation = ((ArrayAdapter) easeoflocation_spinner.getAdapter()).getPosition(new SpinnerItem(easeOfLocation));
-                    easeoflocation_spinner.setSelection(positionEaseOfLocation);
-                }
-
-
-                String locality = map.get(RVerificationId.locality);
-                if (locality != null) {
-                    int positonLocality = ((ArrayAdapter) locality_spinner.getAdapter()).getPosition(new SpinnerItem(locality));
-                    locality_spinner.setSelection(positonLocality);
-                }
-
-                String accomodationType = map.get(RVerificationId.accomodationType);
-                if (accomodationType != null) {
-                    int positionAccomodationType = ((ArrayAdapter) accomadationtype_spinner.getAdapter()).getPosition(new SpinnerItem(accomodationType));
-                    accomadationtype_spinner.setSelection(positionAccomodationType);
-                }
-
-                String standardOfLiving = map.get(RVerificationId.standardofLiving);
-                if (standardOfLiving != null) {
-                    int positionStandardOfLiving = ((ArrayAdapter) statndard_living_spinner.getAdapter()).getPosition(new SpinnerItem(standardOfLiving));
-                    statndard_living_spinner.setSelection(positionStandardOfLiving);
-                }
-
-                String interior = map.get(RVerificationId.interiorCondition);
-                List<String> interiorConditions = Arrays.asList(interior.split(","));
-                painted_interior_checkbox.setChecked(interiorConditions.contains("P"));
-                furnished_interior_checkbox.setChecked(interiorConditions.contains("F"));
-                carpeted_interior_checkbox.setChecked(interiorConditions.contains("C"));
-                curtains_interior_checkbox.setChecked(interiorConditions.contains("U"));
-
-                String exterior = map.get(RVerificationId.exteriorCondition);
-                List<String> exteriorConditions = Arrays.asList(exterior.split(","));
-                plastered_exterior_checkbox.setChecked(exteriorConditions.contains("P"));
-                painted_exterior_checkbox.setChecked(exteriorConditions.contains("A"));
-                securityguard_exterior_checkbox.setChecked(exteriorConditions.contains("S"));
-                parking_exterior_checkbox.setChecked(exteriorConditions.contains("R"));
-                garden_exterior_checkbox.setChecked(exteriorConditions.contains("G"));
-
-                String assetSeen = map.get(RVerificationId.assetsSeen);
-                List<String> assets = Arrays.asList(assetSeen.split(","));
-                television_asset_checkbox.setChecked(assets.contains("T"));
-                refrigerator_asset_checkbox.setChecked(assets.contains("R"));
-                ac_asset_checkbox.setChecked(assets.contains("A"));
-                musicsystem_asset_checkbox.setChecked(assets.contains("M"));
-
-                String vehicleType = map.get(RVerificationId.vehicleType);
-                List<String> vehicleTypes = Arrays.asList(vehicleType.split(","));
-                two_wheeler_checkbox.setChecked(vehicleTypes.contains("T"));
-                four_wheeler_checkbox.setChecked(vehicleTypes.contains("F"));
-                other_vehicle_checkbox.setChecked(vehicleTypes.contains("O"));
-
-                vehicledetail_edittext.setText(map.get(RVerificationId.vehicleDetail));
-                nearestlandmark_edittext.setText(map.get(RVerificationId.nearestLandMark));
+            vehicledetail_edittext.setText(map.get(RVerificationId.vehicleDetail));
+            nearestlandmark_edittext.setText(map.get(RVerificationId.nearestLandMark));
 
                /* applicantname2_textview.setText(map.get(RVerificationId.applicant_name));
                 personcontacted_edittext.setText(map.get(RVerificationId.personContacted));
@@ -984,227 +1005,254 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 }*/
 
 
-            } else {
-                String reason = map.get(RVerificationId.notConfirmedType);
-                if (reason != null) {
-                    boolean untraceable = reason.equalsIgnoreCase("U");
-                    reason_radiogruop.check(untraceable ? R.id.untraceable_reason_not_confirmed_radiobutton : R.id.mismatch_reason_not_confirmed_radiobutton);
-                }
-
-                String person_know = map.get(RVerificationId.personKnowApplicant);
-                if (person_know != null) {
-                    boolean personKnow = person_know.equalsIgnoreCase("True");
-                    person_know_chekbox.check(personKnow ? R.id.yes_person_know_applicant_radiobutton : R.id.no_person_know_applicant_radiobutton);
-                    address_belongto_edittext.setText(map.get(RVerificationId.addressBelongsTo));
-                }
-
-                reason_edittext.setText(map.get(RVerificationId.notConfirmedReason));
-                resultOfCalling_edittex.setText(map.get(RVerificationId.resultofCalling));
-
-                String notConfirmedLocality = map.get(RVerificationId.notConfirmedLocality);
-                if (notConfirmedLocality != null) {
-                    int positionNotConfirmedLocality = ((ArrayAdapter) locality_spinner_not.getAdapter()).getPosition(new SpinnerItem(notConfirmedLocality));
-                    locality_spinner_not.setSelection(positionNotConfirmedLocality);
-                }
-
+        } else {
+            String reason = map.get(RVerificationId.notConfirmedType);
+            if (reason != null) {
+                boolean untraceable = reason.equalsIgnoreCase("U");
+                reason_radiogruop.check(untraceable ? R.id.untraceable_reason_not_confirmed_radiobutton : R.id.mismatch_reason_not_confirmed_radiobutton);
             }
 
+            String person_know = map.get(RVerificationId.personKnowApplicant);
+            if (person_know != null) {
+                boolean personKnow = person_know.equalsIgnoreCase("True");
+                person_know_chekbox.check(personKnow ? R.id.yes_person_know_applicant_radiobutton : R.id.no_person_know_applicant_radiobutton);
+                address_belongto_edittext.setText(map.get(RVerificationId.addressBelongsTo));
+            }
+
+            reason_edittext.setText(map.get(RVerificationId.notConfirmedReason));
+            resultOfCalling_edittex.setText(map.get(RVerificationId.resultofCalling));
+
+            String notConfirmedLocality = map.get(RVerificationId.notConfirmedLocality);
+            if (notConfirmedLocality != null) {
+                int positionNotConfirmedLocality = ((ArrayAdapter) locality_spinner_not.getAdapter()).getPosition(new SpinnerItem(notConfirmedLocality));
+                locality_spinner_not.setSelection(positionNotConfirmedLocality);
+            }
 
         }
-
 
 
     }
 
-    private boolean validate(){
+    private boolean validate() {
         int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
-        if(confirmed<0) {
+        if (confirmed < 0) {
             Toast.makeText(this, "Please select Address Confirmed button", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        String recommendation = ((SpinnerItem)recommendation_spinner.getSelectedItem()).getValue();
-        try{
+        String recommendation = ((SpinnerItem) recommendation_spinner.getSelectedItem()).getValue();
+        try {
             int recommend = Integer.parseInt(recommendation);
 
             Toast.makeText(this, "Please select recommendation", Toast.LENGTH_SHORT).show();
             return false;
 
-        }catch (NumberFormatException  nfe){
+        } catch (NumberFormatException nfe) {
             //map.put(OVerificationId.status,recommendation);
         }
 
 
-        return  true;
+        return true;
     }
 
-    private Map<String,String> getValues(){
-        Map<String,String> map = new HashMap<>();
+    private Map<String, String> getValues() {
+        Map<String, String> map = new HashMap<>();
 
-        map.put(RVerificationId.caseid,String.valueOf(caseid_textview.getText()));
-
+        map.put(RVerificationId.caseid, String.valueOf(caseid_textview.getText()));
 
 
         int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
-        if(confirmed>0) {
+        if (confirmed > 0) {
+            //Log.e(LOG_TAG,confirmed+"");
             String aConfirmed = confirmed == R.id.yes_address_confirmed_radiobutton ? "True" : "False";
-            map.put(OVerificationId.addressConfirmed,aConfirmed);
+            if (aConfirmed.equalsIgnoreCase("True")) {
+                //Log.e(LOG_TAG,confirmed+" "+aConfirmed);
+                map.put(RVerificationId.addressConfirmed, aConfirmed);
 
-            int board = nameplateseen_radiogroup.getCheckedRadioButtonId();
-            if(board>0){
-                String seen = board == R.id.yes_name_plate_seen_radiobutton?"True":"False" ;
-                map.put(RVerificationId.namePlateSeen,seen);
+                int board = nameplateseen_radiogroup.getCheckedRadioButtonId();
+                if (board > 0) {
+                    String seen = board == R.id.yes_name_plate_seen_radiobutton ? "True" : "False";
+                    map.put(RVerificationId.namePlateSeen, seen);
+                }
+
+                map.put(RVerificationId.applicant_name, String.valueOf(applicantname_edittext.getText()));
+                map.put(RVerificationId.dateOfBirth, String.valueOf(dateofbirth_edittext.getText()));
+                map.put(RVerificationId.personMet, String.valueOf(personmet_edittext.getText()));
+
+                String relation = ((SpinnerItem) relation_spinner.getSelectedItem()).getValue();
+                try {
+                    int relationType = Integer.parseInt(relation);
+                    if (relationType == 0) map.put(RVerificationId.relation, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(RVerificationId.relation, relation);
+                }
+
+                String familyMember = ((SpinnerItem) totalfamilymember_spinner.getSelectedItem()).getValue();
+                try {
+                    int totalMember = Integer.parseInt(familyMember);
+                    if (totalMember == 0) map.put(RVerificationId.totalFamilyMembers, "");
+                    else map.put(RVerificationId.totalFamilyMembers, familyMember);
+                } catch (NumberFormatException nfe) {
+
+                }
+
+                String earningMember = ((SpinnerItem) earningmember_spinner.getSelectedItem()).getValue();
+                try {
+                    int totalEarning = Integer.parseInt(earningMember);
+                    if (totalEarning == 0) map.put(RVerificationId.earningFamilyMembers, "");
+                    else map.put(RVerificationId.earningFamilyMembers, earningMember);
+                } catch (NumberFormatException nfe) {
+                    nfe.printStackTrace();
+                }
+
+                String residenceStatus = ((SpinnerItem) residence_status_spinner.getSelectedItem()).getValue();
+                try {
+                    int resiSatatus = Integer.parseInt(residenceStatus);
+                    if (resiSatatus == 0) map.put(RVerificationId.residenceStatus, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(RVerificationId.residenceStatus, residenceStatus);
+                }
+
+                String sinceMonth = ((SpinnerItem) residencestatus_month_spinner.getSelectedItem()).getValue();
+                try {
+                    int month = Integer.parseInt(sinceMonth);
+                    if (month == 0) map.put(RVerificationId.residingSinceMonth, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(RVerificationId.residingSinceMonth, sinceMonth);
+                }
+
+                String sinceYear = ((SpinnerItem) residencestatus_year_spinner.getSelectedItem()).getValue();
+                try {
+                    int year = Integer.parseInt(sinceYear);
+                    if (year == 0) map.put(RVerificationId.residingSinceYear, "");
+                    else map.put(RVerificationId.residingSinceYear, sinceYear);
+                } catch (NumberFormatException nfe) {
+                    nfe.printStackTrace();
+                }
+
+                map.put(RVerificationId.approxArea, String.valueOf(approxarea_edittext.getText()));
+                map.put(RVerificationId.approxValue, String.valueOf(approxvalue_edittext.getText()));
+                map.put(RVerificationId.rent, String.valueOf(rentmonthly_edittext.getText()));
+                map.put(RVerificationId.nameofEmployer, String.valueOf(employer_edittext.getText()));
+                map.put(RVerificationId.designation, String.valueOf(designation_edittext.getText()));
+                map.put(RVerificationId.employerAddress, String.valueOf(employeraddress_edittext.getText()));
+
+                String easeLocation = ((SpinnerItem) easeoflocation_spinner.getSelectedItem()).getValue();
+                try {
+                    int locationEase = Integer.parseInt(easeLocation);
+                    if (locationEase == 0) map.put(RVerificationId.easeofLocation, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(RVerificationId.easeofLocation, easeLocation);
+                }
+
+                String locality = ((SpinnerItem) locality_spinner.getSelectedItem()).getValue();
+                try {
+                    int localty = Integer.parseInt(locality);
+                    if (localty == 0) map.put(RVerificationId.locality, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(RVerificationId.locality, locality);
+                }
+
+                String accomoTypoe = ((SpinnerItem) accomadationtype_spinner.getSelectedItem()).getValue();
+                try {
+                    int accType = Integer.parseInt(accomoTypoe);
+                    if (accType == 0) map.put(RVerificationId.accomodationType, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(RVerificationId.accomodationType, accomoTypoe);
+                }
+
+                String interior = "";
+                if (painted_interior_checkbox.isChecked()) interior += "P,";
+                if (furnished_interior_checkbox.isChecked()) interior += "F,";
+                if (carpeted_interior_checkbox.isChecked()) interior += "C,";
+                if (curtains_interior_checkbox.isChecked()) interior += "U,";
+                map.put(RVerificationId.interiorCondition, interior);
+
+                String exterior = "";
+                if (plastered_exterior_checkbox.isChecked()) exterior += "P,";
+                if (painted_exterior_checkbox.isChecked()) exterior += "A,";
+                if (securityguard_exterior_checkbox.isChecked()) exterior += "S,";
+                if (parking_exterior_checkbox.isChecked()) exterior += "R,";
+                if (garden_exterior_checkbox.isChecked()) exterior += "G,";
+                map.put(RVerificationId.exteriorCondition, exterior);
+
+                String assets = "";
+                if (television_asset_checkbox.isChecked()) assets += "T,";
+                if (refrigerator_asset_checkbox.isChecked()) assets += "R,";
+                if (ac_asset_checkbox.isChecked()) assets += "A,";
+                if (musicsystem_asset_checkbox.isChecked()) assets += "M,";
+                map.put(RVerificationId.assetsSeen, assets);
+
+                String standardLiving = ((SpinnerItem) statndard_living_spinner.getSelectedItem()).getValue();
+                try {
+                    int livingStandard = Integer.parseInt(standardLiving);
+                    if (livingStandard == 0) map.put(RVerificationId.standardofLiving, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(RVerificationId.standardofLiving, standardLiving);
+                }
+
+                String vehicleType = "";
+                if (two_wheeler_checkbox.isChecked()) vehicleType += "T,";
+                if (four_wheeler_checkbox.isChecked()) vehicleType += "F,";
+                if (other_vehicle_checkbox.isChecked()) vehicleType += "O,";
+                map.put(RVerificationId.vehicleType, vehicleType);
+
+                map.put(RVerificationId.vehicleDetail, String.valueOf(vehicledetail_edittext.getText()));
+                map.put(RVerificationId.nearestLandMark, String.valueOf(nearestlandmark_edittext.getText()));
+
+            } else {
+                int reasonNot = reason_radiogruop.getCheckedRadioButtonId();
+                if (reasonNot > 0) {
+                    String reson = reasonNot == R.id.untraceable_reason_not_confirmed_radiobutton ? "U" : "M";
+                    map.put(RVerificationId.notConfirmedType, reson);
+                }
+
+                int personKnow = person_know_chekbox.getCheckedRadioButtonId();
+                if (personKnow > 0) {
+                    String personKno = personKnow == R.id.yes_person_know_applicant_radiobutton ? "True" : "False";
+                    map.put(RVerificationId.personKnowApplicant, personKno);
+                    Log.e(LOG_TAG, personKno + " " + personKno);
+                }
+
+                map.put(RVerificationId.addressBelongsTo, String.valueOf(address_belongto_edittext.getText()));
+
+                map.put(RVerificationId.notConfirmedReason, String.valueOf(reason_edittext.getText()));
+
+                String localityNot = ((SpinnerItem) locality_spinner_not.getSelectedItem()).getValue();
+                try {
+                    int notLocality = Integer.parseInt(localityNot);
+                    if (notLocality == 0) map.put(RVerificationId.notConfirmedLocality, "");
+                } catch (NumberFormatException nfe) {
+                    map.put(RVerificationId.notConfirmedLocality, localityNot);
+                }
+
+                map.put(RVerificationId.resultofCalling, String.valueOf(resultOfCalling_edittex.getText()));
+
             }
-
-            map.put(RVerificationId.applicant_name, String.valueOf(applicantname_edittext.getText()));
-            map.put(RVerificationId.dateOfBirth, String.valueOf(dateofbirth_edittext.getText()));
-            map.put(RVerificationId.personMet, String.valueOf(personmet_edittext.getText()));
-
-            String relation =  ((SpinnerItem) relation_spinner.getSelectedItem()).getValue();
-            try{
-                int relationType = Integer.parseInt(relation);
-                if(relationType==0) map.put(RVerificationId.relation,"");
-            }catch (NumberFormatException nfe){
-                map.put(RVerificationId.relation,relation);
-            }
-
-            String familyMember =  ((SpinnerItem) totalfamilymember_spinner.getSelectedItem()).getValue();
-            try{
-                int totalMember = Integer.parseInt(familyMember);
-                if(totalMember==0) map.put(RVerificationId.totalFamilyMembers,"");
-                else map.put(RVerificationId.totalFamilyMembers,familyMember);
-            }catch (NumberFormatException nfe){
-
-            }
-
-            String earningMember =  ((SpinnerItem) earningmember_spinner.getSelectedItem()).getValue();
-            try{
-                int totalEarning = Integer.parseInt(earningMember);
-                if(totalEarning==0) map.put(RVerificationId.earningFamilyMembers,"");
-                else map.put(RVerificationId.earningFamilyMembers,earningMember);
-            }catch (NumberFormatException nfe){
-                nfe.printStackTrace();
-            }
-
-            String residenceStatus =  ((SpinnerItem) residence_status_spinner.getSelectedItem()).getValue();
-            try{
-                int resiSatatus = Integer.parseInt(residenceStatus);
-                if(resiSatatus==0) map.put(RVerificationId.residenceStatus,"");
-            }catch (NumberFormatException nfe){
-                map.put(RVerificationId.residenceStatus,residenceStatus);
-            }
-
-            String sinceMonth =  ((SpinnerItem) residencestatus_month_spinner.getSelectedItem()).getValue();
-            try{
-                int month = Integer.parseInt(sinceMonth);
-                if(month==0) map.put(RVerificationId.residingSinceMonth,"");
-            }catch (NumberFormatException nfe){
-                map.put(RVerificationId.residingSinceMonth,sinceMonth);
-            }
-
-            String sinceYear =  ((SpinnerItem) residencestatus_year_spinner.getSelectedItem()).getValue();
-            try{
-                int year = Integer.parseInt(sinceYear);
-                if(year==0) map.put(RVerificationId.residingSinceYear,"");
-                else map.put(RVerificationId.residingSinceYear,sinceYear);
-            }catch (NumberFormatException nfe){
-                nfe.printStackTrace();
-            }
-
-            map.put(RVerificationId.approxArea, String.valueOf(approxarea_edittext.getText()));
-            map.put(RVerificationId.approxValue, String.valueOf(approxvalue_edittext.getText()));
-            map.put(RVerificationId.rent, String.valueOf(rentmonthly_edittext.getText()));
-            map.put(RVerificationId.nameofEmployer, String.valueOf(employer_edittext.getText()));
-            map.put(RVerificationId.designation, String.valueOf(designation_edittext.getText()));
-            map.put(RVerificationId.employerAddress, String.valueOf(employeraddress_edittext.getText()));
-
-            String easeLocation =  ((SpinnerItem) easeoflocation_spinner.getSelectedItem()).getValue();
-            try{
-                int locationEase = Integer.parseInt(easeLocation);
-                if(locationEase==0) map.put(RVerificationId.easeofLocation,"");
-            }catch (NumberFormatException nfe){
-                map.put(RVerificationId.easeofLocation,easeLocation);
-            }
-
-            String locality =  ((SpinnerItem) locality_spinner.getSelectedItem()).getValue();
-            try{
-                int localty = Integer.parseInt(locality);
-                if(localty==0) map.put(RVerificationId.locality,"");
-            }catch (NumberFormatException nfe){
-                map.put(RVerificationId.locality,locality);
-            }
-
-            String accomoTypoe =  ((SpinnerItem) accomadationtype_spinner.getSelectedItem()).getValue();
-            try{
-                int accType = Integer.parseInt(accomoTypoe);
-                if(accType==0) map.put(RVerificationId.accomodationType,"");
-            }catch (NumberFormatException nfe){
-                map.put(RVerificationId.accomodationType,accomoTypoe);
-            }
-
-            String interior = "" ;
-            if(painted_interior_checkbox.isChecked()) interior+="P,";
-            if(furnished_interior_checkbox.isChecked()) interior+="F,";
-            if(carpeted_interior_checkbox.isChecked()) interior+="C,";
-            if(curtains_interior_checkbox.isChecked()) interior+="U,";
-            map.put(RVerificationId.interiorCondition,interior);
-
-            String exterior = "" ;
-            if(plastered_exterior_checkbox.isChecked()) exterior+="P,";
-            if(painted_exterior_checkbox.isChecked()) exterior+="A,";
-            if(securityguard_exterior_checkbox.isChecked()) exterior+="S,";
-            if(parking_exterior_checkbox.isChecked()) exterior+="R,";
-            if(garden_exterior_checkbox.isChecked()) exterior+="G,";
-            map.put(RVerificationId.exteriorCondition,exterior) ;
-
-            String assets = "" ;
-            if(television_asset_checkbox.isChecked()) assets+="T,";
-            if(refrigerator_asset_checkbox.isChecked()) assets+="R,";
-            if(ac_asset_checkbox.isChecked()) assets+="A,";
-            if(musicsystem_asset_checkbox.isChecked()) assets+="M,";
-            map.put(RVerificationId.assetsSeen,assets) ;
-
-            String standardLiving =  ((SpinnerItem) statndard_living_spinner.getSelectedItem()).getValue();
-            try{
-                int livingStandard = Integer.parseInt(standardLiving);
-                if(livingStandard==0) map.put(RVerificationId.standardofLiving,"");
-            }catch (NumberFormatException nfe){
-                map.put(RVerificationId.standardofLiving,standardLiving);
-            }
-
-            String vehicleType = "" ;
-            if(two_wheeler_checkbox.isChecked()) vehicleType+="T,";
-            if(four_wheeler_checkbox.isChecked()) vehicleType+="F,";
-            if(other_vehicle_checkbox.isChecked()) vehicleType+="O,";
-            map.put(RVerificationId.vehicleType,vehicleType) ;
-
-            map.put(RVerificationId.vehicleDetail, String.valueOf(vehicledetail_edittext.getText()));
-            map.put(RVerificationId.nearestLandMark, String.valueOf(nearestlandmark_edittext.getText()));
-
         }
 
 
-        String confirmedBy =  ((SpinnerItem) confirmedby_spinner.getSelectedItem()).getValue();
-        try{
+        String confirmedBy = ((SpinnerItem) confirmedby_spinner.getSelectedItem()).getValue();
+        try {
             int confirmedby = Integer.parseInt(confirmedBy);
-            if(confirmedby==0) map.put(RVerificationId.addressConfirmedBy,"");
-        }catch (NumberFormatException nfe){
-            map.put(RVerificationId.addressConfirmedBy,confirmedBy);
+            if (confirmedby == 0) map.put(RVerificationId.addressConfirmedBy, "");
+        } catch (NumberFormatException nfe) {
+            map.put(RVerificationId.addressConfirmedBy, confirmedBy);
         }
 
-       // map.put(RVerificationId.officeAddress, String.valueOf(officeaddress_edittext.getText()));
+        // map.put(RVerificationId.officeAddress, String.valueOf(officeaddress_edittext.getText()));
         int proffAta = proofattached_radiogroup.getCheckedRadioButtonId();
-        if(proffAta>0) {
-            String aConfirmed = proffAta == R.id.yes_address_confirmed_radiobutton ? "True" : "False";
-            map.put(RVerificationId.addressConfirmed, aConfirmed);
+        if (proffAta > 0) {
+            String aConfirmed = proffAta == R.id.yes_proof_attached_radiobutton ? "True" : "False";
+            map.put(RVerificationId.proofAttached, aConfirmed);
         }
 
-        String typeProof = ((SpinnerItem)typeofproof_spinner.getSelectedItem()).getValue();
-        try{
+        String typeProof = ((SpinnerItem) typeofproof_spinner.getSelectedItem()).getValue();
+        try {
             int typeOProof = Integer.parseInt(typeProof);
-            if(typeOProof==0) map.put(RVerificationId.typeofProof,"");
-        }catch (NumberFormatException  nfe){
-            map.put(RVerificationId.typeofProof,typeProof);
+            if (typeOProof == 0) map.put(RVerificationId.typeofProof, "");
+        } catch (NumberFormatException nfe) {
+            map.put(RVerificationId.typeofProof, typeProof);
         }
 
         map.put(RVerificationId.neighbour1, String.valueOf(neighbour1_edittext.getText()));
@@ -1218,99 +1266,101 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         map.put(RVerificationId.updateMobileNo, String.valueOf(mobilenoupdation_edittext.getText()));
         map.put(RVerificationId.updatePhoneNo, String.valueOf(phonenoupdation_edittext.getText()));
 
-        String recommendation = ((SpinnerItem)recommendation_spinner.getSelectedItem()).getValue();
-        try{
+        String recommendation = ((SpinnerItem) recommendation_spinner.getSelectedItem()).getValue();
+        try {
             int recommend = Integer.parseInt(recommendation);
-            if(recommend==0) map.put(RVerificationId.status,"");
-        }catch (NumberFormatException  nfe){
-            map.put(RVerificationId.status,recommendation);
+            if (recommend == 0) map.put(RVerificationId.status, "");
+        } catch (NumberFormatException nfe) {
+            map.put(RVerificationId.status, recommendation);
         }
 
         map.put(RVerificationId.superVisorRemark, String.valueOf(supervisorremark_edittext.getText()));
 
-        return  map;
+        //logId(map);
+        return map;
     }
 
-    private Map<String,String> parse(String html){
-        Map<String,String> map = new HashMap<>();
+    private Map<String, String> parse(String html) {
+        Map<String, String> map = new HashMap<>();
 
         Document document = Jsoup.parse(html);
 
         String applicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(2) > td.table-number.Impair").text();
         String coApplicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(4) > td.table-number").text();
-        map.put("applicantName",applicantName);
-        map.put("coApplicantName",coApplicantName);
+        map.put("applicantName", applicantName);
+        map.put("coApplicantName", coApplicantName);
 
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();
         Elements elements = form.getElementsByTag("input");
-        for(Element input:elements){
+        for (Element input : elements) {
             String name = input.attr("name");
-            String value =input.attr("value");
+            String value = input.attr("value");
 
             String type = input.attr("type");
-            if(type.equalsIgnoreCase("radio")){
+            if (type.equalsIgnoreCase("radio")) {
                 String checked = input.attr("checked");
-                if(checked.equalsIgnoreCase("checked")){
-                    map.put(name,value);
+                if (checked.equalsIgnoreCase("checked")) {
+                    map.put(name, value);
                 }
-            }else{
-                map.put(name,value);
+            } else {
+                map.put(name, value);
             }
 
         }
 
         Elements selects = form.getElementsByTag("select");
-        for(Element select:selects){
+        for (Element select : selects) {
             String id = select.id();
             //Log.e(LOG_TAG,id);
-            try{
-                String value = select.getElementsByAttributeValue("selected","selected").first().attr("value");
+            try {
+                String value = select.getElementsByAttributeValue("selected", "selected").first().attr("value");
                 //Log.e(LOG_TAG,value);
-                map.put(id,value);
-            }catch (NullPointerException npe){
+                map.put(id, value);
+            } catch (NullPointerException npe) {
                 npe.printStackTrace();
-                map.put(id,"0");
+                map.put(id, "");
             }
         }
 
         Elements imgs = form.getElementsByTag("img");
-        if(imgs!=null){
-            for(int i=0;i<imgs.size();i++){
+        if (imgs != null) {
+            for (int i = 0; i < imgs.size(); i++) {
                 String src = imgs.get(i).attr("src");
-                map.put("img_src"+i,src);
-                Log.e(LOG_TAG,"img : "+src);
+                map.put("img_src" + i, src);
+                Log.e(LOG_TAG, "img : " + src);
             }
         }
 
         Elements textareas = form.getElementsByTag("textarea");
-        for(Element textarea:textareas){
-            map.put(textarea.id(),textarea.text());
+        for (Element textarea : textareas) {
+            map.put(textarea.id(), textarea.text());
         }
 
-
-
-
+        map.remove("");
+        map.remove(ACTION_CANCEL);
+        map.remove(ACTION_REMARK);
+        map.remove(ACTION_SUP_REMARK);
 
         return map;
     }
 
-    private String autoRemark(){
+    private String autoRemark() {
         String format = "VISIT DONE ADDRESS CONFIRMED MET WITH %s (%s) AS PER RESPONDED APPLICANT IS RESIDING IN %s PREMISES SINCE LAST %s;TOTAL FAMILY MEMBERS ARE %s OUT OF %s ARE EARNING;%s LOCALITY;%s DOMINATED AREA;APPROXIMATE BUILT UP SIZE IS %s SQFT;BUILT UP TYPE %s;LIVING STANDARD IS %s;NEIGHBOUR CHECK DONE WITH MR. %s AND NO ADVERSE FEEDBACK FOUND;";
         String personMet = String.valueOf(personmet_edittext.getText());
-        String relation = ((SpinnerItem)relation_spinner.getSelectedItem()).getText();
-        String residenceStatus = ((SpinnerItem)residence_status_spinner.getSelectedItem()).getText();
-        String sinceLast = ((SpinnerItem)residencestatus_month_spinner.getSelectedItem()).getText()+((SpinnerItem)residencestatus_year_spinner.getSelectedItem()).getText();
-        String familyMember = ((SpinnerItem)totalfamilymember_spinner.getSelectedItem()).getText();
-        String earningMemeber = ((SpinnerItem)earningmember_spinner.getSelectedItem()).getText();
-        String easeOfLocation = ((SpinnerItem)easeoflocation_spinner.getSelectedItem()).getText();
-        String locality = ((SpinnerItem)locality_spinner.getSelectedItem()).getText();
+        String relation = ((SpinnerItem) relation_spinner.getSelectedItem()).getText();
+        String residenceStatus = ((SpinnerItem) residence_status_spinner.getSelectedItem()).getText();
+        String sinceLast = ((SpinnerItem) residencestatus_month_spinner.getSelectedItem()).getText() + ((SpinnerItem) residencestatus_year_spinner.getSelectedItem()).getText();
+        String familyMember = ((SpinnerItem) totalfamilymember_spinner.getSelectedItem()).getText();
+        String earningMemeber = ((SpinnerItem) earningmember_spinner.getSelectedItem()).getText();
+        String easeOfLocation = ((SpinnerItem) easeoflocation_spinner.getSelectedItem()).getText();
+        String locality = ((SpinnerItem) locality_spinner.getSelectedItem()).getText();
         String area = String.valueOf(approxarea_edittext.getText());
-        String buildType = ((SpinnerItem)accomadationtype_spinner.getSelectedItem()).getText();
-        String livingStandard = ((SpinnerItem)statndard_living_spinner.getSelectedItem()).getText();
+        String buildType = ((SpinnerItem) accomadationtype_spinner.getSelectedItem()).getText();
+        String livingStandard = ((SpinnerItem) statndard_living_spinner.getSelectedItem()).getText();
         String neighbour = String.valueOf(neighbour1_edittext.getText());
 
-        String output = String.format(format,personMet.toUpperCase(),relation.toUpperCase(),residenceStatus.toUpperCase(),sinceLast.toUpperCase(),familyMember.toUpperCase(),earningMemeber.toUpperCase(),easeOfLocation.toUpperCase(),locality.toUpperCase(),area,buildType.toUpperCase(),livingStandard.toUpperCase(),neighbour.toUpperCase());
+        String output = String.format(format, personMet.toUpperCase(), relation.toUpperCase(), residenceStatus.toUpperCase(), sinceLast.toUpperCase(), familyMember.toUpperCase(), earningMemeber.toUpperCase(), easeOfLocation.toUpperCase(), locality.toUpperCase(), area, buildType.toUpperCase(), livingStandard.toUpperCase(), neighbour.toUpperCase());
         return output;
     }
 

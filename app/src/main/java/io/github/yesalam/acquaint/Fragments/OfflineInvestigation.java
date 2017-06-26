@@ -39,6 +39,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_CANCEL;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_REMARK;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_SUP_REMARK;
+import static io.github.yesalam.acquaint.Util.Util.PENDING_INVESTIGATION;
+import static io.github.yesalam.acquaint.Util.Util.writeObject;
 
 /**
  * Created by yesalam on 25-06-2017.
@@ -46,31 +51,31 @@ import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 
 public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout.OnRefreshListener, WebHelper.CallBack {
 
-    String LOG_TAG = "OfflineCases" ;
+    String LOG_TAG = "OfflineCases";
     OfflineInvestigationAdapter adapter;
     SwipeRefreshLayout refreshLayout;
     ProgressDialog progressDialog;
-    View parentView ;
+    View parentView;
     String type;
-    String investigationId ;
-    String image_file ;
-    String index ;
+    String investigationId;
+    String image_file;
+    String index;
     InvestigationPojo pojo;
 
     Offline activity;
+    private int position;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity= (Offline) context;
+        activity = (Offline) context;
     }
-
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        parentView = inflater.inflate(R.layout.fragment_card,container,false);
+        parentView = inflater.inflate(R.layout.fragment_card, container, false);
         refreshLayout = (SwipeRefreshLayout) parentView.findViewById(R.id.swipeContainer);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -86,13 +91,12 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
         RecyclerView recyclerView = (RecyclerView) parentView.findViewById(R.id.recyclerview);
 
 
-
-        adapter = new OfflineInvestigationAdapter(this,new ArrayList<InvestigationPojo>());
+        adapter = new OfflineInvestigationAdapter(this, new ArrayList<InvestigationPojo>());
         try {
             List<InvestigationPojo> pendingCases = (List<InvestigationPojo>) Util.readObject(getContext(), Util.PENDING_INVESTIGATION);
-            if(pendingCases.size()>0){
+            if (pendingCases.size() > 0) {
                 passData(pendingCases);
-            }else{
+            } else {
                 //loadData();
             }
         } catch (IOException e) {
@@ -113,7 +117,6 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
     }
 
 
-
     public void passData(List<? extends Object> data) {
         adapter.setDataset((ArrayList<InvestigationPojo>) data);
         adapter.notifyDataSetChanged();
@@ -125,31 +128,31 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
         refreshLayout.setRefreshing(false);
     }
 
-    public void submitData(InvestigationPojo pojo) {
+    public void submitData(InvestigationPojo pojo,int position) {
         progressDialog.show();
-        this.type = pojo.type ;
-        this.image_file = pojo.file_name ;
-        this.investigationId = pojo.id ;
-        this.pojo = pojo ;
-
+        this.type = pojo.type;
+        this.image_file = pojo.file_name;
+        this.investigationId = pojo.id;
+        this.pojo = pojo;
+        this.position = position;
         loadData(investigationId);
     }
 
-    private void loadData(String investigationId){
+    private void loadData(String investigationId) {
         String TELE_VERIFICATION_DETAIL = "";
-        if(type.equalsIgnoreCase("office")){
-            TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/OfficeVerification/"+investigationId;
-        }else{
-            TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/"+investigationId;
+        if (type.equalsIgnoreCase("office")) {
+            TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/OfficeVerification/" + investigationId;
+        } else {
+            TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/" + investigationId;
         }
         final Request request = new Request.Builder()
-                .url(ACQUAINT_URL+TELE_VERIFICATION_DETAIL)
+                .url(ACQUAINT_URL + TELE_VERIFICATION_DETAIL)
                 .build();
-        WebHelper.getInstance(getContext()).requestCall(request,this);
+        WebHelper.getInstance(getContext()).requestCall(request, this);
     }
 
-    private Map<String,String> getValues(){
-        Map<String,String> pendingCase = null ;
+    private Map<String, String> getValues() {
+        Map<String, String> pendingCase = null;
         try {
             pendingCase = (Map<String, String>) Util.readObject(getContext(), investigationId);
 
@@ -169,12 +172,14 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Map<String,String> fieldMap = parse(html);
+                Map<String, String> fieldMap = parse(html);
                 fieldMap.remove("img_src");
-                Map<String,String> valuesMap = getValues();
-                if(valuesMap==null){
-                    Log.e(LOG_TAG,"Reading "+investigationId+" file : Error!!!");
+                Map<String, String> valuesMap = getValues();
+                if (valuesMap == null) {
+                    Log.e(LOG_TAG, "Reading " + investigationId + " file : Error!!!");
+                    progressDialog.dismiss();
                     Toast.makeText(getContext(), "Unexpected Error!", Toast.LENGTH_SHORT).show();
+                    removeOffline();
                     return;
                 }
                 fieldMap.putAll(valuesMap);
@@ -198,12 +203,12 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
             requestBodyBuilder.addFormDataPart(key, map.get(key));
         }
 
-        if(image_file!=null){
+        if (image_file != null) {
             File sourceFile = new File(image_file);
             Log.d(LOG_TAG, "File...::::" + sourceFile + " : " + sourceFile.exists());
             final MediaType MEDIA_TYPE = image_file.endsWith("png") ?
                     MediaType.parse("image/png") : MediaType.parse("image/jpeg");
-            String filename = image_file.substring(image_file.lastIndexOf("/")+1);
+            String filename = image_file.substring(image_file.lastIndexOf("/") + 1);
 
             requestBodyBuilder
                     .addFormDataPart(OVerificationId.file_name, filename, RequestBody.create(MEDIA_TYPE, sourceFile));
@@ -211,14 +216,13 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
         }
 
 
-
         MultipartBody requestBody = requestBodyBuilder.build();
 
         String TELE_VERIFICATION_DETAIL = "";
-        if(type.equalsIgnoreCase("office")){
-            TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/OfficeVerification/"+investigationId;
-        }else{
-            TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/"+investigationId;
+        if (type.equalsIgnoreCase("Office")) {
+            TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/OfficeVerification/" + investigationId;
+        } else {
+            TELE_VERIFICATION_DETAIL = "/Users/FieldInvestigation/ResidenceVerification/" + investigationId;
         }
 
         Request request = new Request.Builder()
@@ -247,18 +251,19 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
         });
 
 
-
     }
 
-    private void removeOffline(){
+    private void removeOffline() {
         try {
             List<InvestigationPojo> pendingCases = (List<InvestigationPojo>) Util.readObject(getContext(), Util.PENDING_INVESTIGATION);
-            if(pendingCases.size()>0){
-                pendingCases.remove(pojo);
+            if (pendingCases.size() > 0) {
+                pendingCases.remove(position);
                 //progressBar.setVisibility(View.GONE);
-            }else{
+            } else {
                 //loadData();
             }
+            passData(pendingCases);
+            writeObject(getContext(),PENDING_INVESTIGATION,pendingCases);
         } catch (IOException e) {
             e.printStackTrace();
             //loadData();
@@ -270,69 +275,78 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
         boolean deleted = getContext().deleteFile(investigationId);
     }
 
-    private Map<String,String> parse(String html){
-        Map<String,String> map = new HashMap<>();
+    private Map<String, String> parse(String html) {
+        Map<String, String> map = new HashMap<>();
 
         Document document = Jsoup.parse(html);
-
-        String applicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(2) > td.table-number.Impair").text();
-        String coApplicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(4) > td.table-number").text();
-        map.put("applicantName",applicantName);
-        map.put("coApplicantName",coApplicantName);
+        if (type.equalsIgnoreCase("Office")) {
+            String applicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(2) > td.table-number.Impair").text();
+            String coApplicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(4) > td.table-number").text();
+            map.put("applicantName",applicantName);
+            map.put("coApplicantName",coApplicantName);
+        }else{
+            String applicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(2) > td.table-number.Impair").text();
+            String coApplicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(4) > td.table-number").text();
+            map.put("applicantName", applicantName);
+            map.put("coApplicantName", coApplicantName);
+        }
 
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();
         Elements elements = form.getElementsByTag("input");
-        for(Element input:elements){
+        for (Element input : elements) {
             String name = input.attr("name");
-            String value =input.attr("value");
+            String value = input.attr("value");
 
             String type = input.attr("type");
-            if(type.equalsIgnoreCase("radio")){
+            if (type.equalsIgnoreCase("radio")) {
                 String checked = input.attr("checked");
-                if(checked.equalsIgnoreCase("checked")){
-                    map.put(name,value);
+                if (checked.equalsIgnoreCase("checked")) {
+                    map.put(name, value);
                 }
-            }else{
-                map.put(name,value);
+            } else {
+                map.put(name, value);
             }
-
 
         }
 
         Elements selects = form.getElementsByTag("select");
-        for(Element select:selects){
+        for (Element select : selects) {
             String id = select.id();
-            //Log.e(LOG_TAG,investigationId);
-            try{
-                String value = select.getElementsByAttributeValue("selected","selected").first().attr("value");
+            //Log.e(LOG_TAG,id);
+            try {
+                String value = select.getElementsByAttributeValue("selected", "selected").first().attr("value");
                 //Log.e(LOG_TAG,value);
-                map.put(id,value);
-            }catch (NullPointerException npe){
+                map.put(id, value);
+            } catch (NullPointerException npe) {
                 npe.printStackTrace();
-                //map.put(investigationId,"0");
+                map.put(id, "");
             }
         }
 
         Elements imgs = form.getElementsByTag("img");
-        if(imgs!=null){
-            for(int i=0;i<imgs.size();i++){
+        if (imgs != null) {
+            for (int i = 0; i < imgs.size(); i++) {
                 String src = imgs.get(i).attr("src");
-                map.put("img_src"+i,src);
-                Log.e(LOG_TAG,"img : "+src);
+                map.put("img_src" + i, src);
+                Log.e(LOG_TAG, "img : " + src);
             }
         }
 
         Elements textareas = form.getElementsByTag("textarea");
-        for(Element textarea:textareas){
-            map.put(textarea.id(),textarea.text());
+        for (Element textarea : textareas) {
+            map.put(textarea.id(), textarea.text());
         }
 
-
-
+        map.remove("");
+        map.remove(ACTION_CANCEL);
+        map.remove(ACTION_REMARK);
+        map.remove(ACTION_SUP_REMARK);
 
         return map;
     }
+
+
 
 
 }

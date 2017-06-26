@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.franmontiel.persistentcookiejar.ClearableCookieJar;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
@@ -44,7 +45,7 @@ import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
 
 public class WebHelper implements Callback {
     String LOG_TAG = "WebHelper";
-    public static final int NO_CONNECTION = 786 ;
+    public static final int NO_CONNECTION = 786;
 
     public SharedPreferences app_preferences;
     public OkHttpClient okHttpClient;
@@ -75,6 +76,7 @@ public class WebHelper implements Callback {
         okHttpClient = new OkHttpClient.Builder()
                 .cookieJar(cookieJar)
                 .dispatcher(dispatcher)
+                .addNetworkInterceptor(new StethoInterceptor())
                 .build();
         app_preferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -82,26 +84,27 @@ public class WebHelper implements Callback {
 
     }
 
-    public boolean isConnected(){
+    public boolean isConnected() {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
-                                activeNetwork.isConnectedOrConnecting();
+                activeNetwork.isConnectedOrConnecting();
         return isConnected;
     }
 
-   synchronized public void requestCall(Request request, CallBack callback) {
-        if(!isConnected()) {
+    synchronized public void requestCall(Request request, CallBack callback) {
+        if (!isConnected()) {
             callback.onNegativeResponse(NO_CONNECTION);
             return;
         }
-       requests.add(request);
+        requests.add(request);
         callbacks.add(callback);
-        if(!(logged || loginrequest)) {
+        if (!(logged || loginrequest)) {
             login();
             return;
-        };
+        }
+        ;
         if (!(loginrequest || ongoingrequest)) callNext();
     }
 
@@ -139,22 +142,42 @@ public class WebHelper implements Callback {
     public void onFailure(Call call, IOException e) {
 
         e.printStackTrace();
-        if(!requests.isEmpty()){
-            CallBack temp = callbacks.remove();
+        if (!requests.isEmpty()) {
+            final CallBack temp = callbacks.remove();
             requests.remove();
-            temp.onNegativeResponse(NO_CONNECTION);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+
+                    temp.onNegativeResponse(NO_CONNECTION);
+                }
+            });
         }
 
     }
 
     @Override
     public void onResponse(Call call, final Response response) throws IOException {
-        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-        ResponseBody body = response.body() ;
+        if (!response.isSuccessful()) {
+            //throw new IOException("Unexpected code " + response);
+            if (!requests.isEmpty()) {
+                ResponseBody body = response.body();
+                Log.e(LOG_TAG,body.toString());
+                final CallBack temp = callbacks.remove();
+                requests.remove();
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        temp.onNegativeResponse(response.code());
+                    }
+                });
+            }
+        }
+        ResponseBody body = response.body();
         MediaType type = body.contentType();
-        if(type.type().equalsIgnoreCase("application")){
+        if (type.type().equalsIgnoreCase("application")) {
             jsonResponseReader(body.string());
-        }else{
+        } else {
             final String html = body.string();
             if (loginrequest) loginResponseReader(html);
             else htmlResponseReader(html, call, response);
@@ -201,9 +224,9 @@ public class WebHelper implements Callback {
         }
     }
 
-    private void htmlResponseReader(String html, Call call, Response response) {
+    private void htmlResponseReader(final String html, Call call, Response response) {
         Document document = Jsoup.parse(html);
-        Log.e(LOG_TAG, "Response :"+call.request().url()+" method:"+call.request().method());
+        Log.e(LOG_TAG, "Response :" + call.request().url() + " method:" + call.request().method());
         Element body = document.getElementById("body");
         if (body == null) {
             //noservice
@@ -227,10 +250,15 @@ public class WebHelper implements Callback {
                 count = 0;
                 logged = true;
                 Log.e(LOG_TAG, "response OK");
-                if(!requests.isEmpty()){
-                    CallBack temp = callbacks.remove();
+                if (!requests.isEmpty()) {
+                    final CallBack temp = callbacks.remove();
                     requests.remove();
-                    temp.onPositiveResponse(html);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            temp.onPositiveResponse(html);
+                        }
+                    });
                 }
 
                 callNext();
@@ -238,7 +266,7 @@ public class WebHelper implements Callback {
                 logged = false;
                 //credentials mismatch
                 //should not happen
-                Log.e(LOG_TAG,"not logged in");
+                Log.e(LOG_TAG, "not logged in");
                 count = 0;
                 login();
             }
@@ -247,19 +275,24 @@ public class WebHelper implements Callback {
 
     }
 
-    private void jsonResponseReader(String json){
+    private void jsonResponseReader(final String json) {
         Log.e(LOG_TAG, "json Response OK");
-        if(!requests.isEmpty()){
-            CallBack temp = callbacks.remove();
+        if (!requests.isEmpty()) {
+            final CallBack temp = callbacks.remove();
             requests.remove();
-            temp.onPositiveResponse(json);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    temp.onPositiveResponse(json);
+                }
+            });
         }
     }
 
     private void callNext() {
         if (!requests.isEmpty()) {
             Request request = requests.peek();
-            Log.e(LOG_TAG,request.url().toString()+"  "+request.method()+" ");
+            Log.e(LOG_TAG, request.url().toString() + "  " + request.method() + " ");
             okHttpClient.newCall(requests.peek()).enqueue(this);
             loginrequest = false;
             ongoingrequest = true;
@@ -272,6 +305,7 @@ public class WebHelper implements Callback {
 
     public interface CallBack {
         void onPositiveResponse(String html);
+
         void onNegativeResponse(int code);
     }
 }

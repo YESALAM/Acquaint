@@ -49,7 +49,7 @@ public class OfflineInvestigationAdapter extends RecyclerView.Adapter<OfflineInv
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragment.submitData(dataset.get(position));
+                fragment.submitData(dataset.get(position),position);
             }
         });
 

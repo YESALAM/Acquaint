@@ -351,8 +351,8 @@ public class SpinnerLists {
         ArrayList<SpinnerItem> list = new ArrayList<>();
         list.add(new SpinnerItem("Select Option","0"));
         list.add(new SpinnerItem("Full Time", "F"));
-        list.add(new SpinnerItem("Pard Time", "P"));
-        list.add(new SpinnerItem("Temporary", "I"));
+        list.add(new SpinnerItem("Part Time", "P"));
+        list.add(new SpinnerItem("Temporary", "T"));
         list.add(new SpinnerItem("Contract", "C"));
         return list;
     }

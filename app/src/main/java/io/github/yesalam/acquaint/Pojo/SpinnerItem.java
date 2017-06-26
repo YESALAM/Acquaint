@@ -18,6 +18,8 @@ public class SpinnerItem {
 
     @Override
     public boolean equals(Object obj) {
+        if(value.equalsIgnoreCase("0") && ((SpinnerItem)obj).value.equalsIgnoreCase("")) return true;
+        if(value.equalsIgnoreCase("") && ((SpinnerItem)obj).value.equalsIgnoreCase("0")) return true;
         return this.value.equalsIgnoreCase(((SpinnerItem)obj).value);
     }
 

@@ -189,7 +189,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
 
 
         try {
-            Util.writeObject(getContext(), "completefield", dataset);
+            Util.writeObject(activity, "completefield", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -32,7 +32,10 @@ public class Util {
     public static final String PENDING_CASES = "pendingcases" ;
     public static final String PENDING_INVESTIGATION = "pendinginvestigation";
 
-
+    public static final String ACTION_SAVE = "action:Save" ;
+    public static final String ACTION_CANCEL = "action:Cancel" ;
+    public static final String ACTION_SUP_REMARK = "action:GetRemarkSup" ;
+    public static final String ACTION_REMARK = "action:GetRemarkVeri" ;
 
 
     public enum AcquaintRequestType {
