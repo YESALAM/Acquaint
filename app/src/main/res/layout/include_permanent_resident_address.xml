@@ -58,6 +58,20 @@
 
 
 
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pin" />
+
+            <EditText
+                android:id="@+id/pin_permanent_resident_edittext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="numberSigned" />
+        </TableRow>
 
 
         <TableRow>
@@ -93,6 +107,7 @@
 
 
         <TableRow
+            android:id="@+id/need_verification_permanent_row"
             android:layout_marginTop="@dimen/spinner_marginTop">
 
             <TextView

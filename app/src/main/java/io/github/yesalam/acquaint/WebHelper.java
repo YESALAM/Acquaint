@@ -104,7 +104,7 @@ public class WebHelper implements Callback {
             login();
             return;
         }
-        ;
+
         if (!(loginrequest || ongoingrequest)) callNext();
     }
 

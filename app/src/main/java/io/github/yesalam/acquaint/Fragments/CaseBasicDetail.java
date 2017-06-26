@@ -160,10 +160,14 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
     EditText city_permanent_edittext;
     @BindView(R.id.state_permanent_resident_edittext)
     EditText state_permanent_edittext;
+    @BindView(R.id.pin_permanent_resident_edittext)
+    EditText pin_permanent_edittext;
     @BindView(R.id.mobile_permanent_resident_edittext)
     EditText mobile_permanent_editetxt;
     @BindView(R.id.phon_permanent_resident_edittext)
     EditText phone_permanent_edittext;
+    @BindView(R.id.need_verification_permanent_row)
+    TableRow needverification_permanent_row;
     @BindView(R.id.need_verification_permanent_resident_radiobutton)
     CheckBox needverificaiton_permanent_radiobutton;
     @BindView(R.id.assigned_to_permanent_resident_spinner)
@@ -430,11 +434,32 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
         state_office_edittext.setText(map.get(OfficeId.state));
         mobile_office_edittext.setText(map.get(OfficeId.mobile));
         phone_office_edittext.setText(map.get(OfficeId.phone));
-        status_office_textview.setText(map.get(OfficeId.status));
+        status_office_textview.setText(map.get(OfficeId.officeStatus));
 
         String assignedtooffice = map.get(ResidentialId.assignedTo);
         int positionassignedtooffice = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtooffice));
         assignedto_office_spinner.setSelection(positionassignedtooffice);
+
+        String havePermanent = map.get(PermanentId.havePerAddress);
+        if(havePermanent.equalsIgnoreCase("True")){
+            havepermanentaddress_radiobutton.setChecked(true);
+            permanent_address_frame.setVisibility(View.VISIBLE);
+            address_permanent_edittext.setText(map.get(PermanentId.perAddress));
+            city_permanent_edittext.setText(map.get(PermanentId.perCity));
+            state_permanent_edittext.setText(map.get(PermanentId.perState));
+            pin_permanent_edittext.setText(map.get(PermanentId.perPin));
+            mobile_permanent_editetxt.setText(map.get(PermanentId.perMobile));
+            phone_permanent_edittext.setText(map.get(PermanentId.perPhone));
+
+            needverification_permanent_row.setVisibility(View.GONE);
+            investigaionstatusrow_permanent_tablerow.setVisibility(View.VISIBLE);
+            investigatonstatus_permanent_textview.setText(map.get(PermanentId.perStatus));
+
+            String assignedtoPer = map.get(PermanentId.perAssignedTo);
+            int positionPermanent = ((ArrayAdapter) assigneto_permanent_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtoPer));
+            assigneto_permanent_spinner.setSelection(positionPermanent);
+
+        }
 
 
     }
@@ -492,6 +517,7 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
         }
 
         if(havepermanentaddress_radiobutton.isChecked()){
+            map.put(PermanentId.havePerAddress,"True");
             map.put(PermanentId.perAddress, String.valueOf(address_permanent_edittext.getText()));
             map.put(PermanentId.perCity , String.valueOf(city_permanent_edittext.getText()));
             map.put(PermanentId.perState, String.valueOf(state_permanent_edittext.getText()));

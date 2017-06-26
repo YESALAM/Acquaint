@@ -13,6 +13,7 @@ public class OfficeId {
    static public String mobile="CompanyMobile";
    static public String phone="CompanyPhone";
    static public String status="Status";
+   static public String officeStatus="OfficeStatus";
    static public String assignedTo="OfficeAssignedTo";
    static public String companyAddressId = "CompanyAddressId";
    static public String companyNeedsVerification = "CompanyNeedsVerification";

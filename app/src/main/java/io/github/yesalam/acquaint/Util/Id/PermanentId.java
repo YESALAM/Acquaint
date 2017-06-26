@@ -15,4 +15,5 @@ public class PermanentId {
     static public String perAssignedTo = "PerAssignedTo";
     static public String perNeedsVerification = "PerNeedsVerification";
     static public String perStatus = "PerStatus";
+    static public String havePerAddress = "HavePerAddress";
 }

@@ -29,6 +29,8 @@ import io.github.yesalam.acquaint.Pojo.Card.CoApplicantPojo;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Id.CaseBasicId;
 import io.github.yesalam.acquaint.Util.Id.GuarantorId;
+import io.github.yesalam.acquaint.Util.Id.OfficeId;
+import io.github.yesalam.acquaint.Util.Id.PermanentId;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -152,8 +154,8 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         String permanent = document.select("#trPerAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
         map.put("emailsentstatus", emailsent);
         map.put("ResidenceStatus", residence);
-        map.put("officestatus", office);
-        map.put("permanentstatus", permanent);
+        map.put(OfficeId.officeStatus, office);
+        map.put(PermanentId.perStatus, permanent);
 
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();
