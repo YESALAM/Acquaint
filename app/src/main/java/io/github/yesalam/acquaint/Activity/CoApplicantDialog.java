@@ -21,13 +21,20 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import io.github.yesalam.acquaint.Pojo.CoApplicantDetailPojo;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.Id.CaseBasicId;
 import io.github.yesalam.acquaint.Util.Id.GuarantorId;
+import io.github.yesalam.acquaint.Util.Id.OfficeId;
+import io.github.yesalam.acquaint.Util.Id.PermanentId;
+import io.github.yesalam.acquaint.Util.Id.ResidentialId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
 import io.github.yesalam.acquaint.WebHelper;
@@ -43,7 +50,6 @@ import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
  */
 
 public class CoApplicantDialog extends Activity implements WebHelper.CallBack, SwipeRefreshLayout.OnRefreshListener {
-
 
 
     //applicant_resident_detail
@@ -71,6 +77,8 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
     EditText mobile_residential_edittext;
     @BindView(R.id.phon_residential_detail_edittext)
     EditText phone_residential_edittext;
+    @BindView(R.id.need_verification_coapplicant_resident_radiobutton)
+    CheckBox needVerification_resident;
     @BindView(R.id.assigned_to_residential_detail_spinner)
     Spinner assignedto_residential_spinner;
     @BindView(R.id.investigationstatus_row_coapplicant_resident)
@@ -111,10 +119,10 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
     Button save_dailog_button;
 
     boolean editMode = false;
-    String LOG_TAG = "CoApplicantDialog" ;
+    String LOG_TAG = "CoApplicantDialog";
     SwipeRefreshLayout refreshLayout;
 
-    String caseid ;
+    String caseid;
     String addressid;
 
 
@@ -134,22 +142,21 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
         caseid = intent.getStringExtra("caseid");
         addressid = intent.getStringExtra("addressid");
 
-        Log.e(LOG_TAG,caseid+"  "+addressid);
-        if(addressid!=null) editMode = true;
+        Log.e(LOG_TAG, caseid + "  " + addressid);
+        if (addressid != null) editMode = true;
         initForm();
 
 
-        loadData(caseid,addressid);
+        loadData(caseid, addressid);
 
     }
 
 
-
-    private void initForm(){
+    private void initForm() {
 
         dob_edittext.setOnClickListener(new DateClick(this));
 
-        ArrayAdapter<SpinnerItem> assignedtoadapter = new ArrayAdapter<SpinnerItem>(this,android.R.layout.simple_spinner_item);
+        ArrayAdapter<SpinnerItem> assignedtoadapter = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         assignedtoadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         assignedtoadapter.addAll(getAssignedToType());
         assignedto_residential_spinner.setAdapter(assignedtoadapter);
@@ -160,28 +167,29 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
         HaveClickListener haveClickListener = new HaveClickListener(coapplicant_office_frame);
         havecompany_address_radiobutton.setOnClickListener(haveClickListener);
 
-        if(!editMode){
+        if (!editMode) {
             investiagationstatusrow_residential_tablerow.setVisibility(View.GONE);
             statusrow_office_tablerow.setVisibility(View.GONE);
         }
 
-        ArrayAdapter<SpinnerItem> office_adapter= new ArrayAdapter<SpinnerItem>(this,android.R.layout.simple_spinner_item);
+        ArrayAdapter<SpinnerItem> office_adapter = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         office_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         office_adapter.addAll(getAssignedToType());
         assignedto_office_spinner.setAdapter(office_adapter);
 
     }
 
-    private void loadData(String caseid,String addressid){
+    private void loadData(String caseid, String addressid) {
         refreshLayout.setRefreshing(true);
-        String GET_COAPPLICANT_DETAIL_URL = "/Users/Cases/GetCoApplicantDetails?case_id="+caseid+"&address_id="+addressid;
+        String GET_COAPPLICANT_DETAIL_URL = "/Users/Cases/GetCoApplicantDetails?case_id=" + caseid + "&address_id=" + addressid;
         final Request request = new Request.Builder()
-                .url(ACQUAINT_URL+GET_COAPPLICANT_DETAIL_URL)
+                .url(ACQUAINT_URL + GET_COAPPLICANT_DETAIL_URL)
                 .build();
-        WebHelper.getInstance(this).requestCall(request,this);
+        Log.e(LOG_TAG,GET_COAPPLICANT_DETAIL_URL);
+        WebHelper.getInstance(this).requestCall(request, this);
     }
 
-    private CoApplicantDetailPojo clearNull(CoApplicantDetailPojo pojo){
+    private CoApplicantDetailPojo clearNull(CoApplicantDetailPojo pojo) {
             /*Field[] fields = CoApplicantDetailPojo.class.getDeclaredFields();
 
             for(Field field:fields){
@@ -202,14 +210,10 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
         // TODO: 17-06-2017 clear null here for CoApplicantPojo fiels
 
 
-
-
-
-
-        return pojo ;
+        return pojo;
     }
 
-    public CoApplicantDetailPojo parseData(String json){
+    public CoApplicantDetailPojo parseData(String json) {
         CoApplicantDetailPojo pojo = new CoApplicantDetailPojo();
         try {
             JSONObject object = new JSONObject(json);
@@ -249,7 +253,6 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
             pojo.updatedLast = object.getString("UpdatedLast");
 
 
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -257,13 +260,13 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
         return pojo;
     }
 
-    private void update(CoApplicantDetailPojo pojo){
+    private void update(CoApplicantDetailPojo pojo) {
         refreshLayout.setRefreshing(false);
         name_resident_edittext.setText(pojo.name);
         dob_edittext.setText(pojo.dOB);
         pan_edittext.setText(pojo.pAN.toString());
 
-        int gender = pojo.gender.equalsIgnoreCase("M")?R.id.radio_button_male_residential_detail:R.id.radio_button_female_residential_detail;
+        int gender = pojo.gender.equalsIgnoreCase("M") ? R.id.radio_button_male_residential_detail : R.id.radio_button_female_residential_detail;
         gender_radiogroup.check(gender);
 
         address_residential_edittext.setText(pojo.address);
@@ -274,24 +277,24 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
         mobile_residential_edittext.setText(pojo.mobile.toString());
         phone_residential_edittext.setText(pojo.phone.toString());
 
-        needverification_office_radiobutton.setChecked(pojo.needsVerification.toString().equalsIgnoreCase("true"));
+        needVerification_resident.setChecked(pojo.needsVerification.toString().equalsIgnoreCase("true"));
 
         /*String assignedto =  map.get(ResidentialId.assignedTo);
         int positionassignedto = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
         assignedto_residential_spinner.setSelection(positionassignedto);
         assignedto_residential_spinner.setText(pojo.name);*/
-        String assignedto =  String.valueOf(pojo.assignedTo);
-        int positionassignedto = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
+        String assignedto = String.valueOf(pojo.assignedTo);
+        int positionassignedto = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
         assignedto_residential_spinner.setSelection(positionassignedto);
 
         //sta.setText(pojo.name);
         investigationstatus_residential.setText(pojo.residenceStatus);
 
 
-        boolean haveCompany = !pojo.companyAddressId.toString().equalsIgnoreCase("0") ;
+        boolean haveCompany = !pojo.companyAddressId.toString().equalsIgnoreCase("0");
 
         havecompany_address_radiobutton.setChecked(haveCompany);
-        if(haveCompany){
+        if (haveCompany) {
             coapplicant_office_frame.setVisibility(View.VISIBLE);
             companyname_office_edittext.setText(pojo.companyName.toString());
 
@@ -304,10 +307,10 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
             needverification_office_radiobutton.setChecked(pojo.companyNeedsVerification.toString().equalsIgnoreCase("true"));
 
             //assignedto_office_spinner.setText(pojo.name);
-            String assignedtoOffice =  String.valueOf(pojo.companyAssignedTo);
-            int positionassignedtoOffice = ((ArrayAdapter)assignedto_office_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtoOffice));
+            String assignedtoOffice = String.valueOf(pojo.companyAssignedTo);
+            int positionassignedtoOffice = ((ArrayAdapter) assignedto_office_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtoOffice));
             assignedto_office_spinner.setSelection(positionassignedtoOffice);
-            Log.e(LOG_TAG,assignedtoOffice+"->"+positionassignedtoOffice);
+            Log.e(LOG_TAG, assignedtoOffice + "->" + positionassignedtoOffice);
 
             status_office_textview.setText(pojo.officeStatus);
         }
@@ -315,15 +318,16 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
 
     }
 
-    public void save(View view){}
+    public void save(View view) {
+    }
 
-    public void cancel(View view){
+    public void cancel(View view) {
         finish();
     }
 
     @Override
     public void onPositiveResponse(String htmldoc) {
-        Log.e(LOG_TAG,"Got response");
+        Log.e(LOG_TAG, "Got response");
         final CoApplicantDetailPojo pojo = parseData(htmldoc);
         runOnUiThread(new Runnable() {
             @Override
@@ -335,7 +339,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
 
     @Override
     public void onNegativeResponse(int code) {
-        switch (code){
+        switch (code) {
             case NO_CONNECTION:
                 Snackbar.make(residential_detail_frame, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
                         //.setAction(R.string.snackbar_action, myOnClickListener)
@@ -346,10 +350,53 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
         }
     }
 
+    private Map<String, String> getValues() {
+        Map<String, String> map = new HashMap<>();
+
+        map.put(ResidentialId.name, String.valueOf(name_resident_edittext.getText()));
+        map.put(ResidentialId.dateOfBirth, String.valueOf(dob_edittext.getText()));
+        map.put(ResidentialId.pan, String.valueOf(pan_edittext.getText()));
+
+        String gender = gender_radiogroup.getCheckedRadioButtonId() == R.id.radio_button_female_residential_detail ? "F" : "M";
+        map.put(ResidentialId.gender, gender);
+
+        map.put(ResidentialId.address, String.valueOf(address_residential_edittext.getText()));
+        map.put(ResidentialId.city, String.valueOf(city_residential_edittext.getText()));
+        map.put(ResidentialId.state, String.valueOf(state_residential_edittxt.getText()));
+        map.put(ResidentialId.pin, String.valueOf(pin_residential_edittext.getText()));
+        map.put(ResidentialId.email, String.valueOf(email_residential_edittext.getText()));
+        map.put(ResidentialId.mobile, String.valueOf(mobile_residential_edittext.getText()));
+        map.put(ResidentialId.phone, String.valueOf(phone_residential_edittext.getText()));
+
+        if (needVerification_resident.isChecked()) {
+            map.put(ResidentialId.needsVerification, "true");
+            map.put(ResidentialId.assignedTo, ((SpinnerItem) assignedto_residential_spinner.getSelectedItem()).getValue());
+        }
+
+        if (havecompany_address_radiobutton.isChecked()) {
+            map.put(ResidentialId.haveCompany, "true");
+            map.put(OfficeId.companyName, String.valueOf(companyname_office_edittext.getText()));
+            map.put(OfficeId.address, String.valueOf(address_office_edittext.getText()));
+            map.put(OfficeId.city, String.valueOf(city_office_edittext.getText()));
+            map.put(OfficeId.state, String.valueOf(state_office_edittext.getText()));
+            map.put(OfficeId.mobile, String.valueOf(mobile_office_edittext.getText()));
+            map.put(OfficeId.phone, String.valueOf(phone_office_edittext.getText()));
+
+            if (needverification_office_radiobutton.isChecked()) {
+                map.put(OfficeId.companyNeedsVerification, "true");
+                map.put(OfficeId.assignedTo, ((SpinnerItem) assignedto_office_spinner.getSelectedItem()).getValue());
+            }
+
+        }
+
+        return map;
+    }
+
+
     @Override
     public void onRefresh() {
-        Log.e(LOG_TAG,"called onRefresh");
-        loadData(caseid,addressid);
+        Log.e(LOG_TAG, "called onRefresh");
+        loadData(caseid, addressid);
         refreshLayout.setRefreshing(false);
     }
 }

@@ -58,8 +58,8 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         setContentView(R.layout.activity_indi_case);
 
         Intent intent = getIntent();
-        caseid = intent.getStringExtra("caseno");
-        //caseid = "4785010" ;
+        //caseid = intent.getStringExtra("caseno");
+        caseid = "4845097" ;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -330,9 +330,9 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         Document document = Jsoup.parse(html);
 
         String statusResidence = document.select("#trGuarResident > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(8) > td:nth-child(2)").text();
-        //String coApplicantName = document.select("#formzipcode > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(4) > td.table-number").text();
-        map.put("GuarStatus", statusResidence);
-        // map.put("coApplicantName",coApplicantName);
+        String officeStatus = document.select("#trGuarOfficeDetail > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
+        map.put(GuarantorId.guarStatus, statusResidence);
+        map.put(GuarantorId.guarOfficeStatus,officeStatus);
 
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();
@@ -341,14 +341,21 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
             String name = input.attr("name");
             String value = input.attr("value");
 
-            if (name.equalsIgnoreCase(GuarantorId.haveGuarantor)) {
+            String type = input.attr("type");
+            if (type.equalsIgnoreCase("hidden")) {
+
+            } else {
+                map.put(name, value);
+            }
+
+          /*  if (name.equalsIgnoreCase(GuarantorId.haveGuarantor)) {
                 String type = input.attr("type");
                 if (type.equalsIgnoreCase("checkbox")) {
                     map.put(name, value);
                 }
                 continue;
             }
-            map.put(name, value);
+            map.put(name, value);*/
 
         }
 
@@ -362,7 +369,7 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
                 map.put(id, value);
             } catch (NullPointerException npe) {
                 npe.printStackTrace();
-                map.put(id, "0");
+                map.put(id, "");
             }
         }
 

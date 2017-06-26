@@ -39,6 +39,7 @@ import io.github.yesalam.acquaint.Activity.IndiCaseActivity;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Id.CaseBasicId;
+import io.github.yesalam.acquaint.Util.Id.PermanentId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
 import io.github.yesalam.acquaint.Util.Id.OfficeId;
@@ -354,6 +355,8 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
                 refreshLayout.setRefreshing(false);
                 break;
 
+
+
         }
     }
 
@@ -437,58 +440,74 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
 
-
-   /* private Map<String,String> parseAData(String html){
+    private Map<String,String> getValues(){
         Map<String,String> map = new HashMap<>();
 
-        Document document = Jsoup.parse(html);
-        String emailsent = document.select("#body > section > form > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > aside > table > tbody > tr:nth-child(6) > td.table-number > table > tbody > tr > td:nth-child(3)").text();
-        String residence = document.select("#body > section > form > aside > aside.col-md-8.pull-right.section-right-main.Impair > aside > aside > table > tbody > tr:nth-child(7) > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(8) > td:nth-child(4)").text();
-        String office = document.select("#trOfficeAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
-        String permanent = document.select("#trPerAddress > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
-        map.put("emailsentstatus",emailsent);
-        map.put("ResidenceStatus",residence);
-        map.put("officestatus",office);
-        map.put("permanentstatus",permanent);
+        map.put(CaseBasicId.client, ((SpinnerItem) client_spinner.getSelectedItem()).getValue());
+        map.put(CaseBasicId.branch, ((SpinnerItem) branch_spinner.getSelectedItem()).getValue());
+        map.put(CaseBasicId.contactPerson, ((SpinnerItem) contact_person_spinner.getSelectedItem()).getValue());
+        map.put(CaseBasicId.loantype, ((SpinnerItem) loan_type_spinner.getSelectedItem()).getValue());
+        map.put(CaseBasicId.pickupDate, String.valueOf(pickup_date_edittext.getText()));
 
-        Element body = document.getElementById("body");
-        Element form = body.getElementsByTag("form").first();
-        Elements elements = form.getElementsByTag("input");
-        for(Element input:elements){
-            map.put(input.attr("name"),input.val());
-            //Log.e(LOG_TAG,input.attr("name")+" -> "+input.val());
-        }
+        String is_reVerification = reverification_radiogroup.getCheckedRadioButtonId() == R.id.radio_button_yes_reverification ? "true" : "false";
+        map.put(CaseBasicId.isReVerification, is_reVerification);
 
-        Elements selects = form.getElementsByTag("select");
-        for(Element select:selects){
-            String id = select.id();
-            //Log.e(LOG_TAG,id);
-            try{
-                String value = select.getElementsByAttributeValue("selected","selected").first().text();
-                //Log.e(LOG_TAG,value);
-                map.put(id,value);
-            }catch (NullPointerException npe){
-                npe.printStackTrace();
+        map.put(CaseBasicId.loanAmount, String.valueOf(loanamount_edittext.getText()));
+        map.put(CaseBasicId.loanTenure, String.valueOf(loantenure_edittext.getText()));
+        map.put(CaseBasicId.applicationRefNo, String.valueOf(applicationrefno_edittext.getText()));
+
+        map.put(CaseBasicId.pickupBy, ((SpinnerItem) pickupby_spinner.getSelectedItem()).getValue());
+
+        map.put(ResidentialId.name, String.valueOf(name_resident_edittext.getText()));
+        map.put(ResidentialId.dateOfBirth, String.valueOf(dob_edittext.getText()));
+        map.put(ResidentialId.pan, String.valueOf(pan_edittext.getText()));
+
+        String gender = gender_radiogroup.getCheckedRadioButtonId() == R.id.radio_button_female_residential_detail ? "F" : "M";
+        map.put(ResidentialId.gender, gender);
+
+        map.put(ResidentialId.address, String.valueOf(address_residential_edittext.getText()));
+        map.put(ResidentialId.city, String.valueOf(city_residential_edittext.getText()));
+        map.put(ResidentialId.state, String.valueOf(state_residential_edittxt.getText()));
+        map.put(ResidentialId.pin, String.valueOf(pin_residential_edittext.getText()));
+        map.put(ResidentialId.email, String.valueOf(email_residential_edittext.getText()));
+        map.put(ResidentialId.mobile, String.valueOf(mobile_residential_edittext.getText()));
+        map.put(ResidentialId.phone, String.valueOf(phone_residential_edittext.getText()));
+
+        map.put(ResidentialId.assignedTo, ((SpinnerItem) assignedto_residential_spinner.getSelectedItem()).getValue());
+
+        if (havecompany_radiobutton.isChecked()) {
+            map.put(ResidentialId.haveCompany, "true");
+            map.put(OfficeId.companyName, String.valueOf(companyname_office_edittext.getText()));
+            map.put(OfficeId.address, String.valueOf(address_office_edittext.getText()));
+            map.put(OfficeId.city, String.valueOf(city_office_edittext.getText()));
+            map.put(OfficeId.state, String.valueOf(state_office_edittext.getText()));
+            map.put(OfficeId.mobile, String.valueOf(mobile_office_edittext.getText()));
+            map.put(OfficeId.phone, String.valueOf(phone_office_edittext.getText()));
+
+            if (needverification_office_radiobutton.isChecked()) {
+                map.put(OfficeId.companyNeedsVerification, "true");
+                map.put(OfficeId.assignedTo, ((SpinnerItem) assignedto_office_spinner.getSelectedItem()).getValue());
             }
+
         }
+
+        if(havepermanentaddress_radiobutton.isChecked()){
+            map.put(PermanentId.perAddress, String.valueOf(address_permanent_edittext.getText()));
+            map.put(PermanentId.perCity , String.valueOf(city_permanent_edittext.getText()));
+            map.put(PermanentId.perState, String.valueOf(state_permanent_edittext.getText()));
+            map.put(PermanentId.perMobile, String.valueOf(mobile_permanent_editetxt.getText()));
+            map.put(PermanentId.perPhone, String.valueOf(phone_permanent_edittext.getText()));
+
+            if (needverificaiton_permanent_radiobutton.isChecked()) {
+                map.put(PermanentId.perNeedsVerification, "true");
+                map.put(PermanentId.perAssignedTo, ((SpinnerItem) assigneto_permanent_spinner.getSelectedItem()).getValue());
+            }
+
+        }
+
 
         return map;
-    }*/
-
-   /* @Override
-    public void onPositiveResponse(final String htmldoc) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                Log.e(LOG_TAG,"CaseEdit loaded");
-                //progressBar.setVisibility(View.GONE);
-                Map map = parseAData(htmldoc);
-                update(map);
-
-            }
-        });
-    }*/
+    }
 
     @Override
     public void onRefresh() {

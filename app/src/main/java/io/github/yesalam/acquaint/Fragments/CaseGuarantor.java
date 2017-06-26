@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import io.github.yesalam.acquaint.Activity.IndiCaseActivity;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Id.GuarantorId;
+import io.github.yesalam.acquaint.Util.Id.OfficeId;
 import io.github.yesalam.acquaint.Util.Id.ResidentialId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
@@ -118,7 +120,7 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
     Button save_button;
 
     //SwipeRefreshLayout refreshLayout;
-    IndiCaseActivity activity ;
+    IndiCaseActivity activity;
 
     @Override
     public void onAttach(Context context) {
@@ -129,8 +131,8 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_case_guarantor,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_case_guarantor, container, false);
+        ButterKnife.bind(this, view);
         /*refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -139,33 +141,34 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
                 android.R.color.holo_red_light);*/
 
         initForm();
-        if(activity.guarMap!=null){
+        if (activity.guarMap != null) {
             update(activity.guarMap);
         }//else refreshLayout.setRefreshing(true);
-
 
 
         return view;
     }
 
-    private void initForm(){
-        guarantor_residential_frame.setVisibility(View.GONE);
+    private void initForm() {
+        if (!have_guarantor_radiobutton.isChecked())
+            guarantor_residential_frame.setVisibility(View.GONE);
         HaveClickListener haveguarantorListener = new HaveClickListener(guarantor_residential_frame);
         have_guarantor_radiobutton.setOnClickListener(haveguarantorListener);
 
         dob_residential_edittext.setOnClickListener(new DateClick(getContext()));
 
-        ArrayAdapter<SpinnerItem> assignedto_gurantor = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
+        ArrayAdapter<SpinnerItem> assignedto_gurantor = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         assignedto_gurantor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         assignedto_gurantor.addAll(getAssignedToType());
         assignedto_residential_spinner.setAdapter(assignedto_gurantor);
 
-        guarantor_office_frame.setVisibility(View.GONE);
+        if (!haveguarantoroffice_radiobutton.isChecked())
+            guarantor_office_frame.setVisibility(View.GONE);
         HaveClickListener haveguarantoroffice = new HaveClickListener(guarantor_office_frame);
         haveguarantoroffice_radiobutton.setOnClickListener(haveguarantoroffice);
 
 
-        ArrayAdapter<SpinnerItem> assignedto_gurantoroffice = new ArrayAdapter<SpinnerItem>(getContext(),android.R.layout.simple_spinner_item);
+        ArrayAdapter<SpinnerItem> assignedto_gurantoroffice = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         assignedto_gurantoroffice.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         assignedto_gurantoroffice.addAll(getAssignedToType());
         assignedto_guarantoroffice_spinner.setAdapter(assignedto_gurantoroffice);
@@ -178,24 +181,26 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
         });
     }
 
-    private void save(){}
+    private void save() {
+    }
 
 
-    private void logIt(Map<String,String> map){
-        for(String key:map.keySet()){
-            Log.e("Guarantor",key+"->"+map.get(key));
+    private void logIt(Map<String, String> map) {
+        for (String key : map.keySet()) {
+            Log.e("Guarantor", key + "->" + map.get(key));
         }
     }
 
     public void update(Map<String, String> guarMap) {
         //logIt(guarMap);
         //refreshLayout.setRefreshing(false);
+        logIt(guarMap);
         String haveGuar = guarMap.get(GuarantorId.haveGuarantor);
-        if(haveGuar==null) return;
-        if(haveGuar.equalsIgnoreCase("true")){
-          updateResidential(guarMap);
+        if (haveGuar == null) return;
+        if (haveGuar.equalsIgnoreCase("true")) {
+            updateResidential(guarMap);
             String haveOffice = guarMap.get(GuarantorId.guarHaveOfficeAddress);
-            if(haveOffice.equalsIgnoreCase("true")) updateOffice(guarMap);
+            if (haveOffice.equalsIgnoreCase("true")) updateOffice(guarMap);
 
         }
 
@@ -203,6 +208,7 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     private void updateOffice(Map<String, String> guarMap) {
+        guarantor_office_frame.setVisibility(View.VISIBLE);
         haveguarantoroffice_radiobutton.setChecked(true);
         companyname_guarantoroffice_edittext.setText(guarMap.get(GuarantorId.guarCompanyName));
         address_guarantoroffice_edittext.setText(guarMap.get(GuarantorId.guarCompanyAddress));
@@ -213,19 +219,17 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
 
         needVerification_office_row.setVisibility(View.GONE);
 
-        status_office_textview.setText(guarMap.get(GuarantorId.guarCompanyStatus));
+        status_office_textview.setText(guarMap.get(GuarantorId.guarOfficeStatus));
         status_office_row.setVisibility(View.VISIBLE);
 
-        String assignedto =  guarMap.get(GuarantorId.guarOfficeAssignedTo);
-        int positionassignedto = ((ArrayAdapter)assignedto_guarantoroffice_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
+        String assignedto = guarMap.get(GuarantorId.guarOfficeAssignedTo);
+        int positionassignedto = ((ArrayAdapter) assignedto_guarantoroffice_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
         assignedto_guarantoroffice_spinner.setSelection(positionassignedto);
-
-
 
 
     }
 
-    private void updateResidential(Map<String,String> guarMap){
+    private void updateResidential(Map<String, String> guarMap) {
         have_guarantor_radiobutton.setChecked(true);
         guarantor_residential_frame.setVisibility(View.VISIBLE);
 
@@ -239,20 +243,25 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
         email_residential_edittext.setText(guarMap.get(GuarantorId.guarEMail));
         mobile_residential_editext.setText(guarMap.get(GuarantorId.guarMobile));
         phone_residential_edittex.setText(guarMap.get(GuarantorId.guarPhone));
-        status_residential_textview.setText(guarMap.get(GuarantorId.guarStatus));
-        status_row_residential.setVisibility(View.VISIBLE);
 
-        needVerification_residential_row.setVisibility(View.GONE);
+        if (guarMap.get(GuarantorId.guarStatus).trim().equalsIgnoreCase("")) {
+            needverificaton_residential_radiobutton.setVisibility(View.VISIBLE);
+            String needVerifi = guarMap.get(GuarantorId.guarNeedsVerification);
+            if(needVerifi.equalsIgnoreCase("true")) needverificaton_residential_radiobutton.setChecked(true);
+        } else {
+            status_residential_textview.setText(guarMap.get(GuarantorId.guarStatus));
+            status_row_residential.setVisibility(View.VISIBLE);
+            needVerification_residential_row.setVisibility(View.GONE);
+        }
 
 
         String gender = guarMap.get(GuarantorId.guarGender);
-        int genderId = gender.equalsIgnoreCase("F")?R.id.radio_button_female_guarantor_residential_detail:R.id.radio_button_male_guarantor_residential_detail ;
+        int genderId = gender.equalsIgnoreCase("F") ? R.id.radio_button_female_guarantor_residential_detail : R.id.radio_button_male_guarantor_residential_detail;
         gender_residential_radiogroup.check(genderId);
 
-        String assignedto =  guarMap.get(GuarantorId.guarAssignedTo);
-        int positionassignedto = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
+        String assignedto = guarMap.get(GuarantorId.guarAssignedTo);
+        int positionassignedto = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
         assignedto_residential_spinner.setSelection(positionassignedto);
-
 
 
     }
@@ -262,12 +271,51 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
         activity.loadGuarantor();
     }
 
-    public void negativeResponse(int code) {
-        switch (code) {
-            case NO_CONNECTION:
-                Toast.makeText(activity, "Connection not Available", Toast.LENGTH_SHORT).show();
-                //refreshLayout.setRefreshing(false);
-                break;
+    private Map<String, String> getValues() {
+        Map<String, String> map = new HashMap<>();
+        if (have_guarantor_radiobutton.isChecked()) {
+            map.put(GuarantorId.haveGuarantor, "true");
+
+            map.put(GuarantorId.guarName, String.valueOf(name_residential_edittext.getText()));
+            map.put(GuarantorId.guarDOB, String.valueOf(dob_residential_edittext.getText()));
+            map.put(GuarantorId.guarPAN, String.valueOf(pan_residential_edittext.getText()));
+
+            String gender = gender_residential_radiogroup.getCheckedRadioButtonId() == R.id.radio_button_female_guarantor_residential_detail ? "F" : "M";
+            map.put(GuarantorId.guarGender, gender);
+
+            map.put(GuarantorId.guarAddress, String.valueOf(address_residential_editext.getText()));
+            map.put(GuarantorId.guarCity, String.valueOf(city_residential_edittext.getText()));
+            map.put(GuarantorId.guarState, String.valueOf(state_residential_edittext.getText()));
+            map.put(GuarantorId.guarPin, String.valueOf(pin_residential_edittext.getText()));
+            map.put(GuarantorId.guarEMail, String.valueOf(email_residential_edittext.getText()));
+            map.put(GuarantorId.guarMobile, String.valueOf(mobile_residential_editext.getText()));
+            map.put(GuarantorId.guarPhone, String.valueOf(phone_residential_edittex.getText()));
+
+            if (needverificaton_residential_radiobutton.isChecked()) {
+                map.put(GuarantorId.guarNeedsVerification, "true");
+                map.put(GuarantorId.guarAssignedTo, ((SpinnerItem) assignedto_residential_spinner.getSelectedItem()).getValue());
+            }
+            if (haveguarantoroffice_radiobutton.isChecked()) {
+                map.put(GuarantorId.guarHaveOfficeAddress, "true");
+                map.put(GuarantorId.guarCompanyName, String.valueOf(companyname_guarantoroffice_edittext.getText()));
+                map.put(GuarantorId.guarCompanyAddress, String.valueOf(address_guarantoroffice_edittext.getText()));
+                map.put(GuarantorId.guarCompanyCity, String.valueOf(city_guarantoroffice_edittext.getText()));
+                map.put(GuarantorId.guarCompanyState, String.valueOf(state_guarantoroffice_edittext.getText()));
+                map.put(GuarantorId.guarCompanyMobile, String.valueOf(mobile_guarantoroffice_edittext.getText()));
+                map.put(GuarantorId.guarCompanyPhone, String.valueOf(phone_guarantoroffice_edittext.getText()));
+
+                if (needverification_guarantoroffice_radiobutton.isChecked()) {
+                    map.put(GuarantorId.guarCompanyNeedsVerification, "true");
+                    map.put(GuarantorId.guarOfficeAssignedTo, ((SpinnerItem) assignedto_guarantoroffice_spinner.getSelectedItem()).getValue());
+                }
+
+            }
+
+
         }
+
+        return map;
     }
+
+
 }
