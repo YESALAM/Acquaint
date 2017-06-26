@@ -32,6 +32,7 @@ import io.github.yesalam.acquaint.Activity.Offline;
 import io.github.yesalam.acquaint.Adapters.CaseRecyclerAdapter;
 import io.github.yesalam.acquaint.Adapters.OfflineCaseAdapter;
 import io.github.yesalam.acquaint.Pojo.Card.CasePojo;
+import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WebHelper;
@@ -39,6 +40,12 @@ import okhttp3.MultipartBody;
 import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_CANCEL;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_REMARK;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_SUP_REMARK;
+import static io.github.yesalam.acquaint.Util.Util.PENDING_CASES;
+import static io.github.yesalam.acquaint.Util.Util.PENDING_INVESTIGATION;
+import static io.github.yesalam.acquaint.Util.Util.writeObject;
 
 /**
  * Created by yesalam on 25-06-2017.
@@ -53,6 +60,7 @@ public class OfflineCases extends Fragment implements SwipeRefreshLayout.OnRefre
     View parentView ;
 
     String caseno;
+    int position ;
 
     Offline activity;
 
@@ -124,9 +132,10 @@ public class OfflineCases extends Fragment implements SwipeRefreshLayout.OnRefre
         refreshLayout.setRefreshing(false);
     }
 
-    public void submit(String caseno){
+    public void submit(String caseno,int position){
         progressDialog.show();
         this.caseno = caseno;
+        this.position = position;
         fetchCreateCase();
     }
 
@@ -192,6 +201,10 @@ public class OfflineCases extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         }
 
+        map.remove("");
+        map.remove(ACTION_CANCEL);
+        map.remove(ACTION_REMARK);
+        map.remove(ACTION_SUP_REMARK);
 
         return map;
 
@@ -204,6 +217,11 @@ public class OfflineCases extends Fragment implements SwipeRefreshLayout.OnRefre
             public void run() {
                 Map<String,String> createMap= parseCreateCase(html);
                 Map<String,String> map = getMap(caseno);
+                if(map==null){
+                    Log.e(LOG_TAG,"Unexpected error");
+                    progressDialog.dismiss();
+                    return;
+                }
                 createMap.putAll(map);
                 submitMultiPart(map);
             }
@@ -242,7 +260,7 @@ public class OfflineCases extends Fragment implements SwipeRefreshLayout.OnRefre
         WebHelper.getInstance(getContext()).requestCall(request, new WebHelper.CallBack() {
             @Override
             public void onPositiveResponse(String html) {
-                boolean deleted = getContext().deleteFile(caseno);
+                removeOffline();
                 Toast.makeText(activity, "Data Submited", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
             }
@@ -255,5 +273,28 @@ public class OfflineCases extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         });
 
+    }
+
+
+    private void removeOffline() {
+        try {
+            List<CasePojo> pendingCases = (List<CasePojo>) Util.readObject(getContext(), Util.PENDING_CASES);
+            if (pendingCases.size() > 0) {
+                pendingCases.remove(position);
+                //progressBar.setVisibility(View.GONE);
+            } else {
+                //loadData();
+            }
+            passData(pendingCases);
+            writeObject(getContext(),PENDING_CASES,pendingCases);
+        } catch (IOException e) {
+            e.printStackTrace();
+            //loadData();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            //loadData();
+        }
+
+        boolean deleted = getContext().deleteFile(caseno);
     }
 }

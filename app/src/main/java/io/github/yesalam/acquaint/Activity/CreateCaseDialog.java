@@ -59,6 +59,9 @@ import okhttp3.RequestBody;
 import static io.github.yesalam.acquaint.Util.Maps.*;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_CANCEL;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_REMARK;
+import static io.github.yesalam.acquaint.Util.Util.ACTION_SUP_REMARK;
 import static io.github.yesalam.acquaint.Util.Util.PENDING_CASES;
 import static io.github.yesalam.acquaint.Util.Util.deleteCache;
 
@@ -691,6 +694,8 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
             }
         }
 
+        //Log.e(LOG_TAG,"getValues");
+        //logId(map);
         return map;
     }
 
@@ -731,7 +736,13 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
             }
         }
 
+        map.remove("");
+        map.remove(ACTION_CANCEL);
+        map.remove(ACTION_REMARK);
+        map.remove(ACTION_SUP_REMARK);
 
+        //Log.e(LOG_TAG,"parse");
+        //logId(map);
         return map;
 
     }
@@ -744,7 +755,9 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
                 Map<String, String> createMap = parseCreateCase(html);
                 Map<String, String> map = getValues();
                 createMap.putAll(map);
+                //logId(createMap);
                 submitMultiPart(createMap);
+                //progressDialog.dismiss();
             }
         });
     }
@@ -770,9 +783,10 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
         MultipartBody requestBody = requestBodyBuilder.build();
 
         String CASE_CREATE_URL = "/Users/Cases/Create";
-
+        //String temp_url = "http://127.0.0.1/tempData" ;
         Request request = new Request.Builder()
                 .url(ACQUAINT_URL + CASE_CREATE_URL)
+                //.url(temp_url)
                 .post(requestBody)
                 .build();
         Log.e(LOG_TAG, ACQUAINT_URL + CASE_CREATE_URL + " submitting data");
@@ -792,5 +806,11 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
             }
         });
 
+    }
+
+    private void logId(Map<String,String> map){
+        for(String key:map.keySet()){
+            Log.e(LOG_TAG,key+" : "+map.get(key));
+        }
     }
 }

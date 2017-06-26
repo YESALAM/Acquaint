@@ -47,7 +47,7 @@ public class OfflineCaseAdapter extends RecyclerView.Adapter<OfflineCaseAdapter.
             @Override
             public void onClick(View v) {
                 String caseno = dataset.get(position).caseid ;
-                fragment.submit(caseno);
+                fragment.submit(caseno,position);
 
             }
         });
