@@ -31,6 +31,7 @@ import io.github.yesalam.acquaint.Util.Id.CaseBasicId;
 import io.github.yesalam.acquaint.Util.Id.GuarantorId;
 import io.github.yesalam.acquaint.Util.Id.OfficeId;
 import io.github.yesalam.acquaint.Util.Id.PermanentId;
+import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -46,12 +47,14 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
     String LOG_TAG = "IndiCaseActivity";
     public Map<String, String> formMap;
     public Map<String, String> guarMap;
+    public Map<String,String> coMap;
     public List co_applicants;
     public boolean caseUpdate;
     String CASE_EDIT_URL = "/Users/Cases/Edit/";
     WebHelper webHelper;
     CallType callType;
     TabLayout tabLayout;
+
 
 
     @Override
@@ -210,6 +213,7 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
                 break;
             case CO_APPLICANT:
                 co_applicants = parseCoApplicant(htmldoc);
+                Util.coMap = parseCo(htmldoc);
                 loadGuarantor();
                 final CaseCoApplicant caseCoApplicant = (CaseCoApplicant) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1);
                 runOnUiThread(new Runnable() {
@@ -277,6 +281,43 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
                 .post(requestBody)
                 .build();
         webHelper.requestCall(request, this);
+    }
+
+    public Map<String, String> parseCo(String html) {
+        Map<String, String> map = new HashMap<>();
+
+        Document document = Jsoup.parse(html);
+        Element coForm = document.getElementById("addcoapplicant");
+
+
+        Element form = coForm.getElementsByTag("form").first();
+        Elements elements = form.getElementsByTag("input");
+        for (Element input : elements) {
+            String name = input.attr("name");
+            String value = input.attr("value");
+
+            map.put(name,value);
+           /* String type = input.attr("type");
+            if (type.equalsIgnoreCase("hidden")) {
+
+            } else {
+                map.put(name, value);
+            }*/
+
+          /*  if (name.equalsIgnoreCase(GuarantorId.haveGuarantor)) {
+                String type = input.attr("type");
+                if (type.equalsIgnoreCase("checkbox")) {
+                    map.put(name, value);
+                }
+                continue;
+            }
+            map.put(name, value);*/
+
+        }
+
+
+
+        return map;
     }
 
     private List parseCoApplicant(String html) {

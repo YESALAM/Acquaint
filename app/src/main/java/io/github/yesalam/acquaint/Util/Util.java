@@ -26,6 +26,8 @@ import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 
 public class Util {
 
+    public static Map<String,String> coMap = null ;
+
     public static final String USER_ID_KEY = "userid";
     public static final String PASSWORD_KEY = "password";
     public static final String IS_LOGGED_KEY = "logged";

@@ -1,11 +1,14 @@
 package io.github.yesalam.acquaint.Activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,9 +20,14 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +45,13 @@ import io.github.yesalam.acquaint.Util.Id.PermanentId;
 import io.github.yesalam.acquaint.Util.Id.ResidentialId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
+import io.github.yesalam.acquaint.Util.Util;
 import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.MultipartBody;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getAssignedToType;
@@ -121,9 +133,11 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
     boolean editMode = false;
     String LOG_TAG = "CoApplicantDialog";
     SwipeRefreshLayout refreshLayout;
+    ProgressDialog progressDialog;
 
     String caseid;
     String addressid;
+    CoApplicantDetailPojo pojo;
 
 
     @Override
@@ -138,17 +152,20 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMessage("Submitting Data");
+
         Intent intent = getIntent();
         caseid = intent.getStringExtra("caseid");
         addressid = intent.getStringExtra("addressid");
 
         Log.e(LOG_TAG, caseid + "  " + addressid);
-        if (addressid != null) editMode = true;
+        if (addressid != null) {
+            editMode = true;
+            loadData(caseid, addressid);
+        }
         initForm();
-
-
-        loadData(caseid, addressid);
-
     }
 
 
@@ -185,7 +202,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL + GET_COAPPLICANT_DETAIL_URL)
                 .build();
-        Log.e(LOG_TAG,GET_COAPPLICANT_DETAIL_URL);
+        Log.e(LOG_TAG, GET_COAPPLICANT_DETAIL_URL);
         WebHelper.getInstance(this).requestCall(request, this);
     }
 
@@ -319,6 +336,167 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
     }
 
     public void save(View view) {
+        if (validate()) areYouSure();
+    }
+
+    private boolean validate() {
+
+
+        String name = String.valueOf(name_resident_edittext.getText());
+        if (name.equalsIgnoreCase("")) {
+            Toast.makeText(this, "Name is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String address = String.valueOf(address_residential_edittext.getText());
+        if (address.equalsIgnoreCase("")) {
+            Toast.makeText(this, "Address is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String city = String.valueOf(city_residential_edittext.getText());
+        if (city.equalsIgnoreCase("")) {
+            Toast.makeText(this, "City is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+
+        String state = String.valueOf(state_residential_edittxt.getText());
+        if (state.equalsIgnoreCase("")) {
+            Toast.makeText(this, "State is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+
+        if (needVerification_resident.isChecked()) {
+            try {
+                int assignedTooffice = Integer.parseInt(((SpinnerItem) assignedto_residential_spinner.getSelectedItem()).getValue());
+                if (assignedTooffice == 0) {
+                    Toast.makeText(this, "AssignedTo is Missing", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            } catch (NumberFormatException nfe) {
+            }
+        }
+
+
+        if (havecompany_address_radiobutton.isChecked()) {
+            if (needverification_office_radiobutton.isChecked()) {
+                try {
+                    int assignedTooffice = Integer.parseInt(((SpinnerItem) assignedto_office_spinner.getSelectedItem()).getValue());
+                    if (assignedTooffice == 0) {
+                        Toast.makeText(this, "AssignedTo Office is Missing", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                } catch (NumberFormatException nfe) {
+                }
+            }
+        }
+
+
+        return true;
+    }
+
+
+    public void areYouSure() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+
+                        WebHelper webHelper = WebHelper.getInstance(getApplicationContext());
+                        if (webHelper.isConnected()) {
+                            progressDialog.show();
+                            oktoSubmit();
+                        } else {
+                            //cacheData();
+                            //finish();
+                        }
+                        //finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+
+    }
+
+    private void oktoSubmit() {
+        //map.remove("img_src");
+        Map<String,String> map = Util.coMap ;
+        if (map == null) {
+            Toast.makeText(this, "Internet Unavailable", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(pojo!=null && editMode){
+            map.put("AddressId", String.valueOf(pojo.addressId));
+            map.put("CompanyAddressId", String.valueOf(pojo.companyAddressId));
+            map.put("PersonId", String.valueOf(pojo.personId));
+        }
+        map.remove("action:Cancel");
+        map.remove("");
+        Map<String, String> valuesMap = getValues();
+        map.putAll(valuesMap);
+        //logId(map);
+        submitMultiPart(map);
+
+    }
+
+
+    public void submitMultiPart(Map<String, String> map) {
+        MultipartBody.Builder requestBodyBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        for (String key : map.keySet()) {
+            requestBodyBuilder.addFormDataPart(key, map.get(key));
+        }
+
+        MultipartBody requestBody = requestBodyBuilder.build();
+
+        String CASE_EDIT = "/Users/Cases/Edit/" + caseid;
+
+        Request request = new Request.Builder()
+                .url(ACQUAINT_URL + CASE_EDIT)
+                .post(requestBody)
+                .build();
+        Log.e(LOG_TAG, ACQUAINT_URL + CASE_EDIT + " submitting data");
+
+        WebHelper.getInstance(this).requestCall(request, new WebHelper.CallBack() {
+            @Override
+            public void onPositiveResponse(String html) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(CoApplicantDialog.this, "Data Submited", Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+
+            @Override
+            public void onNegativeResponse(int code) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //cacheData();
+                        Toast.makeText(CoApplicantDialog.this, "Error Occured!", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        //finish();
+                    }
+                });
+            }
+        });
+
     }
 
     public void cancel(View view) {
@@ -328,7 +506,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
     @Override
     public void onPositiveResponse(String htmldoc) {
         Log.e(LOG_TAG, "Got response");
-        final CoApplicantDetailPojo pojo = parseData(htmldoc);
+        pojo = parseData(htmldoc);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

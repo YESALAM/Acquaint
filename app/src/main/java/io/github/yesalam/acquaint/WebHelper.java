@@ -287,6 +287,7 @@ public class WebHelper implements Callback {
                 }
             });
         }
+        callNext();
     }
 
     private void callNext() {
