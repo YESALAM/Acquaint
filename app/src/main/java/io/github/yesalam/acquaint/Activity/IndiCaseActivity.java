@@ -61,7 +61,7 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
 
         Intent intent = getIntent();
         //caseid = intent.getStringExtra("caseno");
-        caseid = "4845097" ;
+        caseid = "4845097";
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,7 +85,7 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         //loadBasicDetailPage();
     }
 
-    public void updateData(){
+    public void updateData() {
         loadBasicDetailPage();
     }
 
@@ -161,21 +161,31 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         Element form = body.getElementsByTag("form").first();
         Elements elements = form.getElementsByTag("input");
         for (Element input : elements) {
-            map.put(input.attr("name"), input.val());
+            String name = input.attr("name");
+            String value = input.val();
+            if (name.equalsIgnoreCase("CompanyNeedsVerification")) {
+                String type = input.attr("type");
+                if (type.equalsIgnoreCase("checkbox")) {
+                    String checked = input.attr("checked");
+                    if (checked.equalsIgnoreCase("checked")) map.put(name, value);
+                    else map.put(name,"false");
+                }
+            } else
+                map.put(name, value);
             //Log.e(LOG_TAG,input.id()+" -> "+input.val());
         }
 
         Elements selects = form.getElementsByTag("select");
         for (Element select : selects) {
-            String id = select.id();
+            String name = select.attr("name");
             //Log.e(LOG_TAG,id);
             try {
                 String value = select.getElementsByAttributeValue("selected", "selected").first().attr("value");
                 //Log.e(LOG_TAG,value);
-                map.put(id, value);
+                map.put(name, value);
             } catch (NullPointerException npe) {
                 npe.printStackTrace();
-                map.put(id,"0");
+                map.put(name, "");
             }
         }
 
@@ -229,14 +239,14 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         switch (callType) {
             case BASIC_DETAIL:
                 final CaseBasicDetail fragment = (CaseBasicDetail) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 0);
-                        Log.e(LOG_TAG,"BASIC DETAIL NEGATIVE");
-                        if (fragment != null) fragment.negativeResponse(code);
+                Log.e(LOG_TAG, "BASIC DETAIL NEGATIVE");
+                if (fragment != null) fragment.negativeResponse(code);
 
                 break;
             case CO_APPLICANT:
                 final CaseCoApplicant caseCoApplicant = (CaseCoApplicant) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1);
-                Log.e(LOG_TAG,"CO-APPLICANT NEGATIVE");
-                        if (caseCoApplicant != null) caseCoApplicant.negativeResponse(code);
+                Log.e(LOG_TAG, "CO-APPLICANT NEGATIVE");
+                if (caseCoApplicant != null) caseCoApplicant.negativeResponse(code);
 
                 break;
            /* case GUARANTOR:
@@ -334,7 +344,7 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         String statusResidence = document.select("#trGuarResident > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(8) > td:nth-child(2)").text();
         String officeStatus = document.select("#trGuarOfficeDetail > td > table > tbody > tr > td > aside > aside > fieldset > table > tbody > tr:nth-child(5) > td:nth-child(2)").text();
         map.put(GuarantorId.guarStatus, statusResidence);
-        map.put(GuarantorId.guarOfficeStatus,officeStatus);
+        map.put(GuarantorId.guarOfficeStatus, officeStatus);
 
         Element body = document.getElementById("body");
         Element form = body.getElementsByTag("form").first();

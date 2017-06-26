@@ -1,17 +1,21 @@
 package io.github.yesalam.acquaint.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -29,23 +33,29 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.github.yesalam.acquaint.Activity.FieldInvestigationDialog;
 import io.github.yesalam.acquaint.Activity.IndiCaseActivity;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.Util.Id.CaseBasicId;
+import io.github.yesalam.acquaint.Util.Id.OVerificationId;
 import io.github.yesalam.acquaint.Util.Id.PermanentId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.HaveClickListener;
 import io.github.yesalam.acquaint.Util.Id.OfficeId;
 import io.github.yesalam.acquaint.Util.Id.ResidentialId;
 import io.github.yesalam.acquaint.WebHelper;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 
 import static io.github.yesalam.acquaint.Util.Maps.getBranchHash;
 import static io.github.yesalam.acquaint.Util.Maps.getClientHash;
@@ -57,7 +67,7 @@ import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
  * Created by yesalam on 08-06-2017.
  */
 
-public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
 
     //View Binding
     //basic detail
@@ -176,12 +186,15 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
     TableRow investigaionstatusrow_permanent_tablerow;
     @BindView(R.id.investigationstatus_permanent_resident_textview)
     TextView investigatonstatus_permanent_textview;
+    @BindView(R.id.save_case_basic)
+    Button save_button;
 
     String LOG_TAG = "CaseBasicDetail";
     boolean spinnerupdated = false;
     String branch;
     String contact;
     SwipeRefreshLayout refreshLayout;
+    ProgressDialog progressDialog;
 
     IndiCaseActivity activity;
 
@@ -211,22 +224,14 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
             activity.updateData();
         }
 
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Submitting Data");
+        save_button.setOnClickListener(this);
+
+
         return view;
     }
-
-
-   /* private void loadData(){
-        Log.e(LOG_TAG, "loading case page");
-        final String CASE_EDIT_URL = "/Users/Cases/Edit/" + activity.caseid;
-
-        Log.e(LOG_TAG, "loading url " + ACQUAINT_URL+CASE_EDIT_URL);
-        final Request request = new Request.Builder()
-                .url(ACQUAINT_URL+CASE_EDIT_URL)
-                .build();
-
-        WebHelper helper = WebHelper.getInstance(getContext());
-        helper.requestCall(request,this);
-    }*/
 
 
     private void prepareForm() {
@@ -365,6 +370,7 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     public void update(Map<String, String> map) {
+        logId(map);
         refreshLayout.setRefreshing(false);
         spinnerupdated = true;
         String client = map.get(CaseBasicId.client);
@@ -383,8 +389,10 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
 
         pickup_date_edittext.setText(map.get(CaseBasicId.pickupDate));
 
-        int radiobutton = CaseBasicId.isReVerification.equalsIgnoreCase("Yes") ? R.id.radio_button_yes_reverification : R.id.radio_button_no_reverification;
-        reverification_radiogroup.check(radiobutton);
+
+        int radiobutton = map.get(CaseBasicId.isReVerification).equalsIgnoreCase("true") ? R.id.radio_button_yes_reverification : R.id.radio_button_no_reverification;
+        Log.e(LOG_TAG,"RAdio button"+radiobutton);
+        reverification_radiogroup.check(R.id.radio_button_yes_reverification);
 
         String pickup = map.get(CaseBasicId.pickupBy);
         Log.e(LOG_TAG, map.get(CaseBasicId.pickupBy));
@@ -436,7 +444,11 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
         phone_office_edittext.setText(map.get(OfficeId.phone));
         status_office_textview.setText(map.get(OfficeId.officeStatus));
 
-        String assignedtooffice = map.get(ResidentialId.assignedTo);
+        needVerificatin_office_row.setVisibility(View.VISIBLE);
+        boolean needVerificationOffice =  map.get(OfficeId.companyNeedsVerification).equalsIgnoreCase("true")?true:false;
+        needverification_office_radiobutton.setChecked(needVerificationOffice);
+
+        String assignedtooffice = map.get(OfficeId.assignedTo);
         int positionassignedtooffice = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtooffice));
         assignedto_office_spinner.setSelection(positionassignedtooffice);
 
@@ -509,7 +521,7 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
             map.put(OfficeId.mobile, String.valueOf(mobile_office_edittext.getText()));
             map.put(OfficeId.phone, String.valueOf(phone_office_edittext.getText()));
 
-            if (needverification_office_radiobutton.isChecked()) {
+            if (needverification_office_radiobutton.isChecked()) {//TODO SOME ANAMOLIES IN THE VIEW
                 map.put(OfficeId.companyNeedsVerification, "true");
                 map.put(OfficeId.assignedTo, ((SpinnerItem) assignedto_office_spinner.getSelectedItem()).getValue());
             }
@@ -538,5 +550,223 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onRefresh() {
         activity.loadBasicDetailPage();
+    }
+
+    private boolean validate() {
+        try {
+            int client = Integer.parseInt(((SpinnerItem) client_spinner.getSelectedItem()).getValue());
+            if (client == 0) {
+                Toast.makeText(getContext(), "Client is Missing", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NumberFormatException nfe) {
+        }
+
+        try {
+            int branch = Integer.parseInt(((SpinnerItem) branch_spinner.getSelectedItem()).getValue());
+            if (branch == 0) {
+                Toast.makeText(getContext(), "Branch is Missing", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NumberFormatException nfe) {
+        }
+
+        try {
+            int contachPerson = Integer.parseInt(((SpinnerItem) contact_person_spinner.getSelectedItem()).getValue());
+            if (contachPerson == 0) {
+                Toast.makeText(getContext(), "Contact Person is Missing", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NumberFormatException nfe) {
+        }
+
+        try {
+            int loanType = Integer.parseInt(((SpinnerItem) loan_type_spinner.getSelectedItem()).getValue());
+            if (loanType == 0) {
+                Toast.makeText(getContext(), "Loan Type is Missing", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NumberFormatException nfe) {
+
+        }
+
+
+        try {
+            int pickup = Integer.parseInt(((SpinnerItem) pickupby_spinner.getSelectedItem()).getValue());
+            if (pickup == 0) {
+                Toast.makeText(getContext(), "Pickup By is Missing", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NumberFormatException nfe) {
+        }
+
+       /* try{
+            int assignedTo = Integer.parseInt(((SpinnerItem)assignedto_residential_spinner.getSelectedItem()).getValue());
+            if(assignedTo == 0){
+                Toast.makeText(this, "AssignedTo  is Missing", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }catch (NumberFormatException nfe){}*/
+
+
+        String pickupdate = String.valueOf(pickup_date_edittext.getText());
+        if (pickupdate.equalsIgnoreCase("")) {
+            Toast.makeText(getContext(), "Pickup Date is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String name = String.valueOf(name_resident_edittext.getText());
+        if(name.equalsIgnoreCase("")){
+            Toast.makeText(getContext(), "Name is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String address = String.valueOf(address_residential_edittext.getText());
+        if(address.equalsIgnoreCase("")){
+            Toast.makeText(getContext(), "Address is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String city = String.valueOf(city_residential_edittext.getText());
+        if(city.equalsIgnoreCase("")){
+            Toast.makeText(getContext(), "City is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+
+        String state = String.valueOf(state_residential_edittxt.getText());
+        if(state.equalsIgnoreCase("")){
+            Toast.makeText(getContext(), "State is empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+
+
+        if (havecompany_radiobutton.isChecked()) {
+            if (needverification_office_radiobutton.isChecked()) {
+                try {
+                    int assignedTooffice = Integer.parseInt(((SpinnerItem) assignedto_office_spinner.getSelectedItem()).getValue());
+                    if (assignedTooffice == 0) {
+                        Toast.makeText(getContext(), "AssignedTo Office is Missing", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                } catch (NumberFormatException nfe) {
+                }
+            }
+        }
+
+
+
+
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (validate()) areYouSure();
+    }
+
+    public void areYouSure() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+
+                        WebHelper webHelper = WebHelper.getInstance(getContext());
+                        if (webHelper.isConnected()) {
+                            progressDialog.show();
+                            oktoSubmit();
+                        } else {
+                            //cacheData();
+                            //finish();
+                        }
+                        //finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+
+    }
+
+    private void oktoSubmit() {
+        //map.remove("img_src");
+        if(activity.formMap==null) {
+            Toast.makeText(activity, "Internet Unavailable", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Map map = activity.formMap;
+        map.remove("action:ChangeTab1");
+        map.remove("action:ChangeTab2");
+        map.remove("action:Cancel");
+        map.remove("");
+        Map<String, String> valuesMap = getValues();
+        map.putAll(valuesMap);
+        //logId(map);
+        submitMultiPart(map);
+
+    }
+
+
+    public void submitMultiPart(Map<String, String> map) {
+        MultipartBody.Builder requestBodyBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        for (String key : map.keySet()) {
+            requestBodyBuilder.addFormDataPart(key, map.get(key));
+        }
+
+        MultipartBody requestBody = requestBodyBuilder.build();
+
+        String CASE_EDIT = "/Users/Cases/Edit/" + activity.caseid;
+
+        Request request = new Request.Builder()
+                .url(ACQUAINT_URL + CASE_EDIT)
+                .post(requestBody)
+                .build();
+        Log.e(LOG_TAG, ACQUAINT_URL + CASE_EDIT + " submitting data");
+
+        WebHelper.getInstance(getContext()).requestCall(request, new WebHelper.CallBack() {
+            @Override
+            public void onPositiveResponse(String html) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), "Data Submited", Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+
+            @Override
+            public void onNegativeResponse(int code) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //cacheData();
+                        Toast.makeText(getContext(), "Error Occured!", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        //finish();
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void logId(Map<String, String> map) {
+        for (String key : map.keySet()) {
+            Log.e(LOG_TAG, key + " : " + map.get(key));
+        }
     }
 }

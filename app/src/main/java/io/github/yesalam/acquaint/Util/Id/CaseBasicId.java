@@ -21,7 +21,7 @@ public class CaseBasicId {
     static public String loanAmount = "LoanAmount";
     static public String loanTenure = "LoanTenure";
     static public String applicationRefNo = "ApplicationRefNo";
-    static public String pickupBy = "PunchedBy";
+    static public String pickupBy = "PickupBy";
     static public String status = "Status";
     static public String emailSentOn = "emailsentstatus";
 
