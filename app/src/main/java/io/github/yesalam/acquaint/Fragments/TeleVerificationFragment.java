@@ -38,6 +38,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.Util.Util.getAge;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
@@ -82,6 +83,10 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
             if(cachedEntries_tele.size()>0){
 
                 passData(cachedEntries_tele);
+                long age = getAge(getContext(), "tele");
+                if (age == -1 || age > 30) {
+                    loadData();
+                }
             }else{
                 loadData();
             }

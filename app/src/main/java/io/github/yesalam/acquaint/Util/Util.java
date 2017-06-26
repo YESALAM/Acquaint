@@ -1,6 +1,7 @@
 package io.github.yesalam.acquaint.Util;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,8 +12,10 @@ import java.io.ObjectOutputStream;
 import java.net.PortUnreachableException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.github.yesalam.acquaint.Pojo.Card.InvestigationPojo;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
@@ -60,6 +63,19 @@ public class Util {
         oos.writeObject(object);
         oos.close();
         fos.close();
+    }
+
+    public static long getAge(Context context,String key){
+        String path = context.getFilesDir().getAbsolutePath()+"/"+key ;
+        //Log.e("Util",path);
+        File file = new File(path);
+        long agefile = file.lastModified();
+        if(agefile==0l){
+            return -1 ;
+        }
+        long current = new Date().getTime();
+        long age = current-agefile;
+        return TimeUnit.MILLISECONDS.toMinutes(age);
     }
 
     public static Object readObject(Context context, String key) throws IOException,

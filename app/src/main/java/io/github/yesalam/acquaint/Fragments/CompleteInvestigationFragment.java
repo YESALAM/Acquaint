@@ -37,6 +37,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.Util.Util.getAge;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
@@ -83,6 +84,10 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
             if(cachedEntries_complete.size()>0){
 
                 passData(cachedEntries_complete);
+                long age = getAge(getContext(), "completefield");
+                if (age == -1 || age > 30) {
+                    loadData();
+                }
             }else{
                 loadData();
             }

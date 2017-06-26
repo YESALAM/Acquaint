@@ -47,6 +47,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
+import static io.github.yesalam.acquaint.Util.Util.getAge;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
@@ -55,24 +56,24 @@ import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 public class NewCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener, WebHelper.CallBack {
 
-    private String LOG_TAG = "NewCaseFragment" ;
+    private String LOG_TAG = "NewCaseFragment";
 
     SwipeRefreshLayout refreshLayout;
     CaseRecyclerAdapter adapter;
     CaseActivity activity;
-    View parentView ;
+    View parentView;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity= (CaseActivity) context;
+        activity = (CaseActivity) context;
 
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       parentView = inflater.inflate(R.layout.fragment_card,container,false);
+        parentView = inflater.inflate(R.layout.fragment_card, container, false);
         refreshLayout = (SwipeRefreshLayout) parentView.findViewById(R.id.swipeContainer);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -87,20 +88,27 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
         setupRecyclerView(recyclerView);
 
         try {
+
             List<CasePojo> cachedEntries_newcase = (List<CasePojo>) Util.readObject(getContext(), "newcases");
-            if(cachedEntries_newcase.size()>0){
+            if (cachedEntries_newcase.size() > 0) {
                 //progressBar.setVisibility(View.GONE);
                 passData(cachedEntries_newcase);
-            }else{
+                long age = getAge(getContext(), "newcases");
+                if (age == -1 || age > 30) {
+                    Log.e(LOG_TAG,"age  "+age);
+                    loadData();
+                }
+            } else {
                 //refreshLayout.setRefreshing(true);
                 loadData();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             loadData();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-           loadData();
+            loadData();
         }
 
 
@@ -120,14 +128,14 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
         refreshLayout.setRefreshing(false);
     }
 
-    private void loadData(){
+    private void loadData() {
         refreshLayout.setRefreshing(true);
         String NEW_CASES_URL = "/Users/Cases/NewCases";
         final Request request = new Request.Builder()
-                .url(ACQUAINT_URL+NEW_CASES_URL)
+                .url(ACQUAINT_URL + NEW_CASES_URL)
                 .build();
-        Log.e(LOG_TAG,ACQUAINT_URL+NEW_CASES_URL);
-        WebHelper.getInstance(getContext()).requestCall(request,this);
+        Log.e(LOG_TAG, ACQUAINT_URL + NEW_CASES_URL);
+        WebHelper.getInstance(getContext()).requestCall(request, this);
     }
 
     @Override
@@ -143,18 +151,18 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
             @Override
             public void run() {
 
-                    newCasesResponesReader(html);
+                newCasesResponesReader(html);
 
             }
         });
     }
 
-    public void newCasesResponesReader(String html){
-        Log.e(LOG_TAG,"called newCases");
+    public void newCasesResponesReader(String html) {
+        Log.e(LOG_TAG, "called newCases");
         Document document = Jsoup.parse(html);
         Element element = document.getElementById("searchBranchOffice");
-        if(element == null){
-            Log.e(LOG_TAG,"newCases not loaded");
+        if (element == null) {
+            Log.e(LOG_TAG, "newCases not loaded");
             Element useridnode_error = document.getElementById("UserName");
             if (useridnode_error == null) {
                 //noservice
@@ -168,8 +176,8 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
                 //activity.login();
                 loadData();
             }
-        }else{
-            Log.e(LOG_TAG,"newCases loaded");
+        } else {
+            Log.e(LOG_TAG, "newCases loaded");
             //progressBar.setVisibility(View.GONE);
             ArrayList<CasePojo> dataset = parseData(html);
             passData(dataset);
@@ -188,7 +196,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
             Elements childs = rows.get(i).getElementsByTag("td");
             casePojo.caseid = childs.get(0).text();
             String candb = childs.get(1).html();
-            casePojo.client = candb.replaceAll("<br>","\n");
+            casePojo.client = candb.replaceAll("<br>", "\n");
             casePojo.contactperson = childs.get(2).text();
             casePojo.name = childs.get(3).text();
             casePojo.loantype = childs.get(4).text();
@@ -217,7 +225,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.e(LOG_TAG,"newCases loaded");
+                Log.e(LOG_TAG, "newCases loaded");
                 //progressBar.setVisibility(View.GONE);
                 ArrayList<CasePojo> dataset = parseData(html);
                 passData(dataset);
@@ -227,19 +235,19 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
 
     @Override
     public void onNegativeResponse(int code) {
-        switch (code){
+        switch (code) {
             case NO_CONNECTION:
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if(refreshLayout.isRefreshing() && isVisible()){
+                        if (refreshLayout.isRefreshing() && isVisible()) {
                             Snackbar.make(parentView, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
                                     //.setAction(R.string.snackbar_action, myOnClickListener)
                                     .show(); // Don’t forget to show!
-                        }else{
-                            Toast.makeText(activity,"Internet Unavailable",Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(activity, "Internet Unavailable", Toast.LENGTH_SHORT).show();
                         }
-                        Log.e(LOG_TAG,"internet error");
+                        Log.e(LOG_TAG, "internet error");
                         refreshLayout.setRefreshing(false);
                     }
                 });
