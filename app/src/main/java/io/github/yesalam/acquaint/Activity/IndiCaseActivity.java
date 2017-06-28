@@ -63,8 +63,8 @@ public class IndiCaseActivity extends AppCompatActivity implements WebHelper.Cal
         setContentView(R.layout.activity_indi_case);
 
         Intent intent = getIntent();
-        //caseid = intent.getStringExtra("caseno");
-        caseid = "4845097";
+        caseid = intent.getStringExtra("caseno");
+        //caseid = "4845097";
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -311,11 +311,11 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_indie_field_office_investigation);
         Intent intent = getIntent() ;
-        //investigationId = intent.getStringExtra("investigationid");
-        //client =intent.getStringExtra("client");
-        investigationId = "5161275" ;
-        client = "State Bank of India \n" +
-                "GWALIOR MAIN BRANCH (00377)" ;
+        investigationId = intent.getStringExtra("investigationid");
+        client =intent.getStringExtra("client");
+        //investigationId = "5161275" ;
+        //client = "State Bank of India \n" +
+               // "GWALIOR MAIN BRANCH (00377)" ;
 
         ButterKnife.bind(this);
 

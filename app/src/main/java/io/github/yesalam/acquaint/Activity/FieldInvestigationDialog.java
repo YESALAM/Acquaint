@@ -327,12 +327,12 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_indie_field_investigation);
         Intent intent = getIntent();
-        //investigationId = intent.getStringExtra("investigationid");
-        //client = intent.getStringExtra("client");
+        investigationId = intent.getStringExtra("investigationid");
+        client = intent.getStringExtra("client");
         ButterKnife.bind(this);
-        investigationId = "5161276";
-        client = "State Bank of India \n" +
-                "GWALIOR MAIN BRANCH (00377)";
+        //investigationId = "5161276";
+        //client = "State Bank of India \n" +
+                //"GWALIOR MAIN BRANCH (00377)";
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
