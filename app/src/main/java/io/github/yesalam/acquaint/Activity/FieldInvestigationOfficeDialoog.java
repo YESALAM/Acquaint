@@ -811,7 +811,10 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                         //.setAction(R.string.snackbar_action, myOnClickListener)
                         .show(); // Don’t forget to show!
                 break;
-
+            case 500:
+                refreshLayout.setRefreshing(false);
+                Snackbar.make(investigaion_title_textview,"Internal Server Error",Snackbar.LENGTH_LONG).show();
+                break;
 
         }
     }
@@ -913,12 +916,13 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         }
 
         String address_confirmed = map.get(OVerificationId.addressConfirmed);
-        if(address_confirmed == null){
+       /* if(address_confirmed == null){
             return;
-        }else {
-            boolean addressConfirmed = map.get(OVerificationId.addressConfirmed).equalsIgnoreCase("True");
-            addressconfirmed_radiogroup.check(addressConfirmed ? R.id.yes_address_confirmed_radiobutton : R.id.no_address_confirmed_radiobutton);
-
+        }else {*/
+            if(address_confirmed != null) {
+                boolean addressConfirmed = map.get(OVerificationId.addressConfirmed).equalsIgnoreCase("True");
+                addressconfirmed_radiogroup.check(addressConfirmed ? R.id.yes_address_confirmed_radiobutton : R.id.no_address_confirmed_radiobutton);
+            }
 
             String confirmedBy = map.get(OVerificationId.addressConfirmedBy);
             if (confirmedBy != null) {
@@ -927,7 +931,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
             }
 
 
-            if (addressConfirmed) {
+           /* if (addressConfirmed) {*/
 
                 nameofemployer_edittext.setText(map.get(OVerificationId.nameofEmployer));
                 personmet_office_edittext.setText(map.get(OVerificationId.personMet));
@@ -1034,7 +1038,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 area_office2_edittext.setText(map.get(OVerificationId.compArea));
                 nearestlandmark_office2_edittext.setText(map.get(OVerificationId.compLandMark));*/
 
-            } else {
+          /*  } else {*/
                 String reason = map.get(OVerificationId.notConfirmedType);
                 if (reason != null) {
                     boolean untraceable = reason.equalsIgnoreCase("U");
@@ -1054,10 +1058,10 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                     locality_spinner_not.setSelection(positionNotConfirmedLocality);
                 }
 
-            }
+           /* }*/
 
 
-        }
+      /*  }*/
 
 
 
@@ -1090,7 +1094,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         map.put(OVerificationId.caseid,String.valueOf(caseid_textview.getText()));
 
         int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
-        if(confirmed>0) {
+       /* if(confirmed>0) {*/
             String aConfirmed = confirmed == R.id.yes_address_confirmed_radiobutton ? "True" : "False";
             map.put(OVerificationId.addressConfirmed, aConfirmed);
             if(aConfirmed.equalsIgnoreCase("True")) {
@@ -1186,7 +1190,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 }
 
                 map.put(OVerificationId.otherGrade, String.valueOf(grade_edittext.getText()));
-            }else{
+           /* }else{*/
                 int reasonNot = reason_radiogruop.getCheckedRadioButtonId();
                 if (reasonNot > 0) {
                     String reson = reasonNot == R.id.untraceable_reason_not_confirmed_radiobutton ? "U" : "M";
@@ -1206,7 +1210,7 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 }
 
                 map.put(OVerificationId.resultofCalling, String.valueOf(resultOfCalling_edittex.getText()));
-            }
+          /*  }*/
         }
 
 

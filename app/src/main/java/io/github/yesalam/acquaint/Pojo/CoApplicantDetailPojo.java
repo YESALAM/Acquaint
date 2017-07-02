@@ -38,5 +38,6 @@ public class CoApplicantDetailPojo {
     public String residenceStatus;
     public String teleResiStatus;
     public String teleOfficeStatus;
-   
+
+
 }

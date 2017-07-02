@@ -279,58 +279,121 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
 
     private void update(CoApplicantDetailPojo pojo) {
         refreshLayout.setRefreshing(false);
-        name_resident_edittext.setText(pojo.name);
-        dob_edittext.setText(pojo.dOB);
-        pan_edittext.setText(pojo.pAN.toString());
 
-        int gender = pojo.gender.equalsIgnoreCase("M") ? R.id.radio_button_male_residential_detail : R.id.radio_button_female_residential_detail;
-        gender_radiogroup.check(gender);
+        String name = pojo.name ;
+        if(name.equalsIgnoreCase("null")) name = "";
+        name_resident_edittext.setText(name);
 
-        address_residential_edittext.setText(pojo.address);
-        city_residential_edittext.setText(pojo.city);
-        state_residential_edittxt.setText(pojo.state);
-        pin_residential_edittext.setText(pojo.pin.toString());
-        email_residential_edittext.setText(pojo.eMail.toString());
-        mobile_residential_edittext.setText(pojo.mobile.toString());
-        phone_residential_edittext.setText(pojo.phone.toString());
+        String dOB = pojo.dOB ;
+        if(dOB.equalsIgnoreCase("null")) dOB = "";
+        dob_edittext.setText(dOB);
 
-        needVerification_resident.setChecked(pojo.needsVerification.toString().equalsIgnoreCase("true"));
+        String pAN = pojo.pAN.toString() ;
+        if(pAN.equalsIgnoreCase("null")) pAN = "";
+        pan_edittext.setText(pAN);
+
+        String genders = pojo.gender ;
+        if(genders.equalsIgnoreCase("null")) genders = "";
+        else{
+            int gender = genders.equalsIgnoreCase("M") ? R.id.radio_button_male_residential_detail : R.id.radio_button_female_residential_detail;
+            gender_radiogroup.check(gender);
+        }
+
+        String address = pojo.address   ;
+        if(address.equalsIgnoreCase("null")) address = "";
+        address_residential_edittext.setText(address);
+
+        String city = pojo.city ;
+        if(city.equalsIgnoreCase("null")) city = "";
+        city_residential_edittext.setText(city);
+
+        String state = pojo.state ;
+        if(state.equalsIgnoreCase("null")) state = "";
+        state_residential_edittxt.setText(state);
+
+        String pin = pojo.pin.toString() ;
+        if(pin.equalsIgnoreCase("null")) pin = "";
+        pin_residential_edittext.setText(pin);
+
+        String eMail = pojo.eMail.toString() ;
+        if(eMail.equalsIgnoreCase("null")) eMail = "";
+        email_residential_edittext.setText(eMail);
+
+        String mobile = pojo.mobile.toString() ;
+        if(mobile.equalsIgnoreCase("null")) mobile = "";
+        mobile_residential_edittext.setText(mobile);
+
+        String phone = pojo.phone.toString() ;
+        if(phone.equalsIgnoreCase("null")) phone = "";
+        phone_residential_edittext.setText(phone);
+
+        String needsVerification = pojo.needsVerification.toString() ;
+        if(needsVerification.equalsIgnoreCase("null")) needsVerification = "";
+        else needVerification_resident.setChecked(needsVerification.equalsIgnoreCase("true"));
 
         /*String assignedto =  map.get(ResidentialId.assignedTo);
         int positionassignedto = ((ArrayAdapter)assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
         assignedto_residential_spinner.setSelection(positionassignedto);
         assignedto_residential_spinner.setText(pojo.name);*/
-        String assignedto = String.valueOf(pojo.assignedTo);
-        int positionassignedto = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedto));
+
+        String assignedTo = pojo.assignedTo.toString() ;
+        if(assignedTo.equalsIgnoreCase("null")) assignedTo = "";
+        int positionassignedto = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedTo));
         assignedto_residential_spinner.setSelection(positionassignedto);
 
         //sta.setText(pojo.name);
-        investigationstatus_residential.setText(pojo.residenceStatus);
+        String residenceStatus = pojo.residenceStatus ;
+        if(residenceStatus.equalsIgnoreCase("null")) residenceStatus = "";
+        investigationstatus_residential.setText(residenceStatus);
+
 
 
         boolean haveCompany = !pojo.companyAddressId.toString().equalsIgnoreCase("0");
 
+
         havecompany_address_radiobutton.setChecked(haveCompany);
         if (haveCompany) {
             coapplicant_office_frame.setVisibility(View.VISIBLE);
-            companyname_office_edittext.setText(pojo.companyName.toString());
-
-            address_office_edittext.setText(pojo.companyAddress.toString());
-            city_office_edittext.setText(pojo.companyCity.toString());
-            state_office_edittext.setText(pojo.companyState.toString());
-            mobile_office_edittext.setText(pojo.companyMobile.toString());
-            phone_office_edittext.setText(pojo.companyPhone.toString());
-
-            needverification_office_radiobutton.setChecked(pojo.companyNeedsVerification.toString().equalsIgnoreCase("true"));
-
-            //assignedto_office_spinner.setText(pojo.name);
-            String assignedtoOffice = String.valueOf(pojo.companyAssignedTo);
-            int positionassignedtoOffice = ((ArrayAdapter) assignedto_office_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtoOffice));
-            assignedto_office_spinner.setSelection(positionassignedtoOffice);
-            Log.e(LOG_TAG, assignedtoOffice + "->" + positionassignedtoOffice);
-
-            status_office_textview.setText(pojo.officeStatus);
         }
+
+        String companyName = pojo.companyName.toString() ;
+        if(companyName.equalsIgnoreCase("null")) companyName = "";
+        companyname_office_edittext.setText(companyName);
+
+        String companyAddress = pojo.companyAddress.toString() ;
+        if(companyAddress.equalsIgnoreCase("null")) companyAddress = "";
+        address_office_edittext.setText(pojo.companyAddress.toString());
+
+        String companyCity = pojo.companyCity.toString() ;
+        if(companyCity.equalsIgnoreCase("null")) companyCity = "";
+        city_office_edittext.setText(pojo.companyCity.toString());
+
+        String companyState = pojo.companyState.toString() ;
+        if(companyState.equalsIgnoreCase("null")) companyState = "";
+        state_office_edittext.setText(pojo.companyState.toString());
+
+        String companyMobile = pojo.companyMobile.toString() ;
+        if(companyMobile.equalsIgnoreCase("null")) companyMobile = "";
+        mobile_office_edittext.setText(pojo.companyMobile.toString());
+
+        String companyPhone = pojo.companyPhone.toString() ;
+        if(companyPhone.equalsIgnoreCase("null")) companyPhone = "";
+        phone_office_edittext.setText(pojo.companyPhone.toString());
+
+        String companyNeedsVerification = pojo.companyNeedsVerification.toString() ;
+        if(companyNeedsVerification.equalsIgnoreCase("null")) companyNeedsVerification = "";
+        else needverification_office_radiobutton.setChecked(companyNeedsVerification.equalsIgnoreCase("true"));
+
+        //assignedto_office_spinner.setText(pojo.name);
+        String companyAssignedTo = pojo.companyAssignedTo.toString() ;
+        if(companyAssignedTo.equalsIgnoreCase("null")) companyAssignedTo = "";
+        int positionassignedtoOffice = ((ArrayAdapter) assignedto_office_spinner.getAdapter()).getPosition(new SpinnerItem(companyAssignedTo));
+        assignedto_office_spinner.setSelection(positionassignedtoOffice);
+        Log.e(LOG_TAG, companyAssignedTo + "->" + positionassignedtoOffice);
+
+        String officeStatus = pojo.officeStatus ;
+        if(officeStatus.equalsIgnoreCase("null")) officeStatus = "";
+        status_office_textview.setText(officeStatus);
 
 
     }
@@ -523,7 +586,12 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
                         //.setAction(R.string.snackbar_action, myOnClickListener)
                         .show(); // Don’t forget to show!
                 break;
+            case 500:
+                Snackbar.make(residential_detail_frame, "Internal Server Error", Snackbar.LENGTH_LONG)
+                        //.setAction(R.string.snackbar_action, myOnClickListener)
+                        .show(); // Don’t forget to show!
 
+                break;
 
         }
     }
@@ -551,7 +619,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
             map.put(ResidentialId.assignedTo, ((SpinnerItem) assignedto_residential_spinner.getSelectedItem()).getValue());
         }
 
-        if (havecompany_address_radiobutton.isChecked()) {
+      /*  if (havecompany_address_radiobutton.isChecked()) {*/
             map.put(ResidentialId.haveCompany, "true");
             map.put(OfficeId.companyName, String.valueOf(companyname_office_edittext.getText()));
             map.put(OfficeId.address, String.valueOf(address_office_edittext.getText()));
@@ -565,7 +633,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
                 map.put(OfficeId.assignedTo, ((SpinnerItem) assignedto_office_spinner.getSelectedItem()).getValue());
             }
 
-        }
+       /* }*/
 
         return map;
     }

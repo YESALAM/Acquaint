@@ -831,7 +831,8 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 break;
             case 500:
                 progressDialog.dismiss();
-                Snackbar.make(investigaion_title_textview, "Internal Server Error", Snackbar.LENGTH_SHORT).show();
+                refreshLayout.setRefreshing(false);
+                Snackbar.make(investigaion_title_textview, "Internal Server Error", Snackbar.LENGTH_LONG).show();
                 break;
 
 
@@ -944,7 +945,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         }
 
 
-        if (addressConfirmed) {
+       /* if (addressConfirmed) {*/
             String namePlate = map.get(RVerificationId.namePlateSeen);
             if (namePlate != null) {
                 boolean namePlateSeen = namePlate.equalsIgnoreCase("True");
@@ -1081,7 +1082,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 }*/
 
 
-        } else {
+       /* } else {*/
             String reason = map.get(RVerificationId.notConfirmedType);
             if (reason != null) {
                 boolean untraceable = reason.equalsIgnoreCase("U");
@@ -1104,7 +1105,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 locality_spinner_not.setSelection(positionNotConfirmedLocality);
             }
 
-        }
+       /* }*/
 
 
     }
@@ -1138,7 +1139,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
 
         int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
-        if (confirmed > 0) {
+       /* if (confirmed > 0) {*/
             //Log.e(LOG_TAG,confirmed+"");
             String aConfirmed = confirmed == R.id.yes_address_confirmed_radiobutton ? "True" : "False";
             if (aConfirmed.equalsIgnoreCase("True")) {
@@ -1276,7 +1277,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
                 map.put(RVerificationId.vehicleDetail, String.valueOf(vehicledetail_edittext.getText()));
                 map.put(RVerificationId.nearestLandMark, String.valueOf(nearestlandmark_edittext.getText()));
 
-            } else {
+           /* } else {*/
                 int reasonNot = reason_radiogruop.getCheckedRadioButtonId();
                 if (reasonNot > 0) {
                     String reson = reasonNot == R.id.untraceable_reason_not_confirmed_radiobutton ? "U" : "M";
@@ -1304,7 +1305,7 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
 
                 map.put(RVerificationId.resultofCalling, String.valueOf(resultOfCalling_edittex.getText()));
 
-            }
+           /* }*/
         }
 
 
@@ -1319,8 +1320,8 @@ public class FieldInvestigationDialog extends Activity implements WebHelper.Call
         // map.put(RVerificationId.officeAddress, String.valueOf(officeaddress_edittext.getText()));
         int proffAta = proofattached_radiogroup.getCheckedRadioButtonId();
         if (proffAta > 0) {
-            String aConfirmed = proffAta == R.id.yes_proof_attached_radiobutton ? "True" : "False";
-            map.put(RVerificationId.proofAttached, aConfirmed);
+            String proofAttached = proffAta == R.id.yes_proof_attached_radiobutton ? "True" : "False";
+            map.put(RVerificationId.proofAttached, proofAttached);
         }
 
         String typeProof = ((SpinnerItem) typeofproof_spinner.getSelectedItem()).getValue();
