@@ -445,8 +445,11 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
         status_office_textview.setText(map.get(OfficeId.officeStatus));
 
         needVerificatin_office_row.setVisibility(View.VISIBLE);
-        boolean needVerificationOffice =  map.get(OfficeId.companyNeedsVerification).equalsIgnoreCase("true")?true:false;
-        needverification_office_radiobutton.setChecked(needVerificationOffice);
+        String needVeri =  map.get(OfficeId.companyNeedsVerification);
+        if(needVeri!=null){
+            boolean needVerificationOffice = needVeri.equalsIgnoreCase("true")?true:false;
+            needverification_office_radiobutton.setChecked(needVerificationOffice);
+        }
 
         String assignedtooffice = map.get(OfficeId.assignedTo);
         int positionassignedtooffice = ((ArrayAdapter) assignedto_residential_spinner.getAdapter()).getPosition(new SpinnerItem(assignedtooffice));

@@ -6,8 +6,10 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -471,21 +473,58 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         uploadfile_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int permissinCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-                if(permissinCheck== PackageManager.PERMISSION_DENIED){
-                   requestPermission();
-                }else {
-                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                    photoPickerIntent.setType("image/*");
-                    startActivityForResult(photoPickerIntent, 786);
+                int permissinCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (permissinCheck == PackageManager.PERMISSION_DENIED) {
+                    requestPermission(PERMISSION_REQUEST);
+                } else {
+                    /*Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image*//*");
+                    startActivityForResult(photoPickerIntent, 786);*/
+                    getImage();
                 }
             }
         });
     }
 
-    private void requestPermission(){
-        Log.e(LOG_TAG,"requesting permission");
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_REQUEST);
+    private void getImage(){
+        int permissioncheck = ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.CAMERA);
+        if(permissioncheck== PackageManager.PERMISSION_DENIED){
+            requestPermission(PERMISSION_REQUEST+1);
+            return;
+        }
+        final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (options[item].equals("Take Photo"))
+                {
+                    /*final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    File file = new File(Environment.getExternalStorageDirectory()+File.separator + "image.jpg");
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                    startActivityForResult(intent, 91);*/
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent,91);
+                }
+                else if (options[item].equals("Choose from Gallery"))
+                {
+
+                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    startActivityForResult(photoPickerIntent, 786);
+                }
+                else if (options[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void requestPermission(int requestCode) {
+        Log.e(LOG_TAG, "requesting permission");
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA}, requestCode);
     }
 
 
@@ -500,9 +539,10 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                    photoPickerIntent.setType("image/*");
-                    startActivityForResult(photoPickerIntent, 786);
+                   /* Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image*//*");
+                    startActivityForResult(photoPickerIntent, 786);*/
+                    getImage();
 
                 } else {
 
@@ -511,16 +551,20 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
                 }
                 return;
             }
+            case PERMISSION_REQUEST+1:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getImage();
+                }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
+                // other 'case' lines to check for other
+                // permissions this app might request
         }
     }
 
-    private void setImage(Uri uri){
-        String path = ScalingUtilities.getPath(uri,this);
-        String tpath = ScalingUtilities.decodeFile(this,path,356,634,investigationId);
-        Log.e(LOG_TAG,tpath);
+    private void setImage(String path){
+        String tpath = ScalingUtilities.decodeFile(this, path, 356, 634, investigationId);
+        Log.e(LOG_TAG, tpath);
         image_file = tpath;
         File file = new File(tpath);
 
@@ -533,23 +577,56 @@ public class FieldInvestigationOfficeDialoog extends AppCompatActivity implement
         Picasso.with(this).load(file).error(R.mipmap.logo).into(imageView);
 
         int count = image_holder.getChildCount();
-        if(count>0) image_holder.removeViewAt(count-1);
+        if (count > 0) {
+            image_holder.removeViewAt(count - 1);
+        }
         image_holder.addView(imageView);
+    }
+
+    private void setImage(Uri uri) {
+        String path = ScalingUtilities.getPath(uri, this);
+        setImage(path);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             case 786:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     final Uri imageUri = data.getData();
                     //final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                     // final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                     //imageView.setImageBitmap(selectedImage);
-
                     setImage(imageUri);
 
+                }
+                break;
+            case 91:
+                if(resultCode == RESULT_OK){
+                   /* try {
+                        File filea = new File(Environment.getExternalStorageDirectory()+File.separator + "image.jpg");
+                        String path = filea.getAbsolutePath();
+                        setImage(path);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }*/
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    String tpath = ScalingUtilities.saveFile(getBaseContext(), photo, 356, 634, investigationId);
+                    setImage(tpath);
+                    /*ImageView imageView = new ImageView(this);
+                    imageView.setPadding(5, 5, 5, 5);
+                    imageView.setAdjustViewBounds(true);
+                    imageView.setMaxHeight(380);
+                    imageView.setMaxWidth(250);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    imageView.setImageBitmap(photo);
+
+                    int count = image_holder.getChildCount();
+                    if (count > 0) {
+                        image_holder.removeViewAt(count - 1);
+                    }
+                    image_holder.addView(imageView);*/
                 }
         }
     }

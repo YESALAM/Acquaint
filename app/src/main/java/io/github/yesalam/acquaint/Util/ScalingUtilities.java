@@ -21,6 +21,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Random;
 
 /**
  * Class containing static utility methods for bitmap decoding and scaling
@@ -106,6 +107,59 @@ public class ScalingUtilities {
         }
         return strMyImagePath;
 
+    }
+
+
+    public static String saveFile(Context context,Bitmap unscaledBitmap,int DESIREDWIDTH, int DESIREDHEIGHT,String caseno){
+        String strMyImagePath = null;
+        Bitmap scaledBitmap = null;
+
+        try {
+            // Part 1: Decode image
+
+
+
+                // Part 2: Scale image
+                scaledBitmap = ScalingUtilities.createScaledBitmap(unscaledBitmap, DESIREDWIDTH, DESIREDHEIGHT, ScalingLogic.CROP);
+
+
+            // Store to tmp file
+
+            //String extr = Environment.getExternalStorageDirectory().toString();
+            //String extr = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+            //File mFolder = new File(extr + "/TMMFOLDER");
+            File mFolder = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            if (!mFolder.exists()) {
+                mFolder.mkdir();
+            }
+
+            String s = caseno+"_"+ new Random().nextInt(100)+".jpg";
+
+            File f = new File(mFolder.getAbsolutePath(), s);
+
+            strMyImagePath = f.getAbsolutePath();
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(f);
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 75, fos);
+                fos.flush();
+                fos.close();
+            } catch (FileNotFoundException e) {
+
+                e.printStackTrace();
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+
+            scaledBitmap.recycle();
+        } catch (Throwable e) {
+        }
+
+        /*if (strMyImagePath == null) {
+            return path;
+        }*/
+        return strMyImagePath;
     }
 
     /**
