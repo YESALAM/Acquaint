@@ -23,6 +23,7 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -46,6 +47,7 @@ import static io.github.yesalam.acquaint.Util.Util.USER_ID_KEY;
 public class WebHelper implements Callback {
     String LOG_TAG = "WebHelper";
     public static final int NO_CONNECTION = 786;
+    public static final int INTERNET_ERROR = 101;
 
     public SharedPreferences app_preferences;
     public OkHttpClient okHttpClient;
@@ -77,6 +79,7 @@ public class WebHelper implements Callback {
                 .cookieJar(cookieJar)
                 .dispatcher(dispatcher)
                 .addNetworkInterceptor(new StethoInterceptor())
+                .readTimeout(20000, TimeUnit.MILLISECONDS)
                 .build();
         app_preferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -149,7 +152,7 @@ public class WebHelper implements Callback {
                 @Override
                 public void run() {
 
-                    temp.onNegativeResponse(NO_CONNECTION);
+                    temp.onNegativeResponse(INTERNET_ERROR);
                 }
             });
         }
