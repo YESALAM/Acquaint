@@ -39,6 +39,12 @@ import static io.github.yesalam.acquaint.Util.SpinnerLists.getStatusType;
 
 public class CaseFilterDialog extends DialogFragment {
 
+    private boolean isNew ;
+
+    public void setNew(boolean isNew){
+        this.isNew = isNew;
+    }
+
     /* The activity that creates an instance of this dialog fragment must
     * implement this interface in order to receive event callbacks.
     * Each method passes the DialogFragment in case the host needs to query it. */
@@ -134,17 +140,19 @@ public class CaseFilterDialog extends DialogFragment {
             builder.append("&loantype="+loan);
         }
 
-        String status = ((SpinnerItem) status_spinner.getSelectedItem()).getValue() ;
-        try {
-            int statustype = Integer.parseInt(status);
-            if (statustype == 0) {
-                //Toast.makeText(this, "Branch is Missing", Toast.LENGTH_LONG).show();
-                //return false;
-                //builder.append("&branchid=0&contactid=0");
-            }
-        } catch (NumberFormatException nfe) {
-            builder.append("&status="+status);
-        }
+       if(!isNew){
+           String status = ((SpinnerItem) status_spinner.getSelectedItem()).getValue() ;
+           try {
+               int statustype = Integer.parseInt(status);
+               if (statustype == 0) {
+                   //Toast.makeText(this, "Branch is Missing", Toast.LENGTH_LONG).show();
+                   //return false;
+                   //builder.append("&branchid=0&contactid=0");
+               }
+           } catch (NumberFormatException nfe) {
+               builder.append("&status="+status);
+           }
+       }
 
 
 
@@ -260,9 +268,13 @@ public class CaseFilterDialog extends DialogFragment {
         loantype_spinner.setAdapter(adapter);
         //loan_type_spinner.getSelectedItem();
 
-        ArrayAdapter<SpinnerItem> residence_status = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item);
-        residence_status.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        residence_status.addAll(getStatusType());
-        status_spinner.setAdapter(residence_status);
+        if(isNew){
+            status_spinner.setVisibility(View.GONE);
+        }else{
+            ArrayAdapter<SpinnerItem> residence_status = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item);
+            residence_status.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            residence_status.addAll(getStatusType());
+            status_spinner.setAdapter(residence_status);
+        }
     }
 }
