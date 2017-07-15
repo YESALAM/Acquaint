@@ -5,8 +5,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,6 +26,8 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
+import io.github.yesalam.acquaint.Fragments.CaseFilterDialog.FilterEventListener;
+import io.github.yesalam.acquaint.WebHelper.CallBack;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,7 +61,8 @@ import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
  * Created by yesalam on 08-06-2017.
  */
 
-public class NewCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener, WebHelper.CallBack {
+public class NewCaseFragment extends Fragment implements WaitingForData, Callback, OnRefreshListener, CallBack,
+        FilterEventListener {
 
     private String LOG_TAG = "NewCaseFragment";
 
@@ -65,6 +70,8 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
     CaseRecyclerAdapter adapter;
     CaseActivity activity;
     View parentView;
+
+    boolean isFilter = false ;
 
     @Override
     public void onAttach(Context context) {
@@ -89,6 +96,10 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
         switch (item.getItemId()){
             case R.id.filter:
                 Log.e(LOG_TAG,"filter clicked");
+                CaseFilterDialog filterDialog = new CaseFilterDialog();
+                filterDialog.setNew(true);
+                filterDialog.setFilterEventListener(this);
+                filterDialog.show(getFragmentManager(),"filter");
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -154,11 +165,24 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
 
     private void loadData() {
         refreshLayout.setRefreshing(true);
+        isFilter = false ;
         //http://myacquaint.com/Users/Cases/NewCases?pno=1&psize=50
         String NEW_CASES_URL = "/Users/Cases/NewCases";
         String LOAD_50 = "?pno=1&psize=50" ;
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL + NEW_CASES_URL+LOAD_50)
+                .build();
+        Log.e(LOG_TAG, ACQUAINT_URL + NEW_CASES_URL);
+        WebHelper.getInstance(getContext()).requestCall(request, this);
+    }
+
+    private void loadData(String param){
+        refreshLayout.setRefreshing(true);
+        isFilter = true ;
+        //http://myacquaint.com/Users/Cases/NewCases?pno=1&psize=50
+        String NEW_CASES_URL = "/Users/Cases/NewCases";
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL + NEW_CASES_URL+param)
                 .build();
         Log.e(LOG_TAG, ACQUAINT_URL + NEW_CASES_URL);
         WebHelper.getInstance(getContext()).requestCall(request, this);
@@ -234,7 +258,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
 
 
         try {
-            Util.writeObject(getContext(), "newcases", dataset);
+            if(!isFilter) Util.writeObject(getContext(), "newcases", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -281,5 +305,16 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
 
 
         }
+    }
+
+    @Override
+    public void onFilter(CaseFilterDialog dialog) {
+        String filter_string = dialog.getResult();
+        loadData(filter_string);
+    }
+
+    @Override
+    public void onCancelFilter(CaseFilterDialog dialog) {
+
     }
 }
