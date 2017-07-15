@@ -76,11 +76,13 @@ public class SpinnerLists {
         return list;
     }
 
-    public static ArrayList<SpinnerItem> getBinaryType() {
+
+
+    public static ArrayList<SpinnerItem> getInvestigationType() {
         ArrayList<SpinnerItem> list = new ArrayList<>();
-        list.add(new SpinnerItem("Select Option","0"));
-        list.add(new SpinnerItem("NO", "false"));
-        list.add(new SpinnerItem("YES", "true"));
+        list.add(new SpinnerItem("Select Type","0"));
+        list.add(new SpinnerItem("Office", "O"));
+        list.add(new SpinnerItem("Residence", "R"));
         return list;
     }
 
