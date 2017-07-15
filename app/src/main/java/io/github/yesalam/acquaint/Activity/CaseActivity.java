@@ -6,6 +6,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 
 import com.franmontiel.persistentcookiejar.ClearableCookieJar;
@@ -50,10 +53,6 @@ public class CaseActivity extends BaseDrawerActivity {
         setContentView(R.layout.activity_main);
         //checkLogin();
         Log.e(LOG_TAG,"Main started");
-
-
-
-
     }
 
 
@@ -64,6 +63,13 @@ public class CaseActivity extends BaseDrawerActivity {
         adapter.addFragment(new CompleteCaseFragment(), "Complete");
         viewPager.setAdapter(adapter);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.filter_menu,menu);
+        return true;
     }
 
 

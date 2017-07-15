@@ -200,12 +200,15 @@ public abstract class BaseDrawerActivity extends AppCompatActivity  {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.e(LOG_TAG,"ON OPTION CALLED");
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            default:
+                break;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     public abstract void setupViewPager(ViewPager viewPager);
