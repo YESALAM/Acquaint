@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import io.github.yesalam.acquaint.Fragments.InvestigationFilterDialog.FilterEventListener;
+import io.github.yesalam.acquaint.WebHelper.CallBack;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -41,13 +44,15 @@ import okhttp3.Response;
 
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.Util.getAge;
+import static io.github.yesalam.acquaint.WebHelper.INTERNET_ERROR;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
 
 /**
  * Created by yesalam on 08-06-2017.
  */
 
-public class CompleteInvestigationFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener, WebHelper.CallBack {
+public class CompleteInvestigationFragment extends Fragment implements WaitingForData, Callback, OnRefreshListener, CallBack,
+        FilterEventListener {
 
     private String LOG_TAG = "CompletInvesFragment";
 
@@ -80,6 +85,10 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
         switch (item.getItemId()){
             case R.id.filter:
                 Log.e(LOG_TAG,"filter clicked");
+                InvestigationFilterDialog dialog = new InvestigationFilterDialog();
+                dialog.setNew(false);
+                dialog.setFilterEventListener(this);
+                dialog.show(getFragmentManager(),"filter");
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -145,6 +154,16 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
         String LOAD_50 = "?pno=1&psize=50" ;
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL + PAGE_URL+LOAD_50)
+                .build();
+
+        WebHelper.getInstance(getContext()).requestCall(request,this);
+    }
+
+    private void loadData(String param){
+        refreshLayout.setRefreshing(true);
+        String PAGE_URL = "/Users/FieldInvestigation";
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL + PAGE_URL+param)
                 .build();
 
         WebHelper.getInstance(getContext()).requestCall(request,this);
@@ -266,8 +285,38 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
                     }
                 });
                 break;
+            case INTERNET_ERROR:
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(refreshLayout.isRefreshing() && isVisible()){
+                            Snackbar.make(parentView, R.string.snackbar_no_connection, Snackbar.LENGTH_LONG)
+                                    //.setAction(R.string.snackbar_action, myOnClickListener)
+                                    .show(); // Don’t forget to show!
+                            refreshLayout.setRefreshing(false);
+
+                        }else{
+                            Toast.makeText(activity,"Internet Unavailable",Toast.LENGTH_SHORT).show();
+                        }
+                        Log.e(LOG_TAG,"Network failure");
+
+                    }
+                });
+                break;
 
 
         }
+    }
+
+    @Override
+    public void onFilter(InvestigationFilterDialog dialog) {
+        String result = dialog.getResult();
+        Log.e(LOG_TAG,result);
+        loadData(result);
+    }
+
+    @Override
+    public void onCancelFilter(InvestigationFilterDialog dialog) {
+
     }
 }
