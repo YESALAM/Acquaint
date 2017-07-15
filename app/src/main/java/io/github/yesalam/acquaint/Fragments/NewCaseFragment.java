@@ -130,9 +130,11 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
 
     private void loadData() {
         refreshLayout.setRefreshing(true);
+        //http://myacquaint.com/Users/Cases/NewCases?pno=1&psize=50
         String NEW_CASES_URL = "/Users/Cases/NewCases";
+        String LOAD_50 = "?pno=1&psize=50" ;
         final Request request = new Request.Builder()
-                .url(ACQUAINT_URL + NEW_CASES_URL)
+                .url(ACQUAINT_URL + NEW_CASES_URL+LOAD_50)
                 .build();
         Log.e(LOG_TAG, ACQUAINT_URL + NEW_CASES_URL);
         WebHelper.getInstance(getContext()).requestCall(request, this);

@@ -113,8 +113,9 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
     private void loadData() {
         refreshLayout.setRefreshing(true);
         String PAGE_URL = "/Users/FieldInvestigation/NewInvestigation";
+        String LOAD_50 = "?pno=1&psize=50" ;
         final Request request = new Request.Builder()
-                .url(ACQUAINT_URL + PAGE_URL)
+                .url(ACQUAINT_URL + PAGE_URL+LOAD_50)
                 .build();
 
         WebHelper.getInstance(getContext()).requestCall(request,this);

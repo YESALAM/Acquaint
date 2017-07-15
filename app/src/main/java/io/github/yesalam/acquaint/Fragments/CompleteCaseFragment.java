@@ -120,8 +120,9 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
     private void loadData(){
         refreshLayout.setRefreshing(true);
         String COMPLETE_CASES_URL = "/Users/Cases";
+        String LOAD_50 = "?pno=1&psize=50" ;
         final Request request = new Request.Builder()
-                .url(ACQUAINT_URL+COMPLETE_CASES_URL)
+                .url(ACQUAINT_URL+COMPLETE_CASES_URL+LOAD_50)
                 .build();
         WebHelper.getInstance(getContext()).requestCall(request,this);
         //activity.okHttpClient.newCall(request).enqueue(this);
