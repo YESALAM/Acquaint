@@ -61,6 +61,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
     InvestigationActivity activity;
     View parentView;
 
+    boolean filter;
 
 
     @Override
@@ -150,6 +151,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
 
     private void loadData() {
         refreshLayout.setRefreshing(true);
+        filter = false ;
         String PAGE_URL = "/Users/FieldInvestigation";
         String LOAD_50 = "?pno=1&psize=50" ;
         final Request request = new Request.Builder()
@@ -161,6 +163,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
 
     private void loadData(String param){
         refreshLayout.setRefreshing(true);
+        filter = true ;
         String PAGE_URL = "/Users/FieldInvestigation";
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL + PAGE_URL+param)
@@ -238,7 +241,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
 
 
         try {
-            Util.writeObject(activity, "completefield", dataset);
+            if(!filter)Util.writeObject(activity, "completefield", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }
