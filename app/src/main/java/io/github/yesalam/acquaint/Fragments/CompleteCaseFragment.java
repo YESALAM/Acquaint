@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import io.github.yesalam.acquaint.Fragments.CaseFilterDialog.FilterEventListener;
+import io.github.yesalam.acquaint.WebHelper.CallBack;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -48,7 +51,8 @@ import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
  * Created by yesalam on 08-06-2017.
  */
 
-public class CompleteCaseFragment extends Fragment implements WaitingForData, Callback, SwipeRefreshLayout.OnRefreshListener, WebHelper.CallBack {
+public class CompleteCaseFragment extends Fragment implements WaitingForData, Callback, OnRefreshListener, CallBack,
+        FilterEventListener {
 
 
     String LOG_TAG = "CompleteCaseFragment" ;
@@ -57,6 +61,8 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
     View parentView ;
 
     CaseActivity activity;
+
+    boolean filter;
 
     @Override
     public void onAttach(Context context) {
@@ -80,6 +86,10 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
         switch (item.getItemId()){
             case R.id.filter:
                 Log.e(LOG_TAG,"filter clicked");
+                CaseFilterDialog filterDialog = new CaseFilterDialog();
+                filterDialog.setNew(false);
+                filterDialog.setFilterEventListener(this);
+                filterDialog.show(getFragmentManager(),"filter");
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -143,10 +153,22 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
 
     private void loadData(){
         refreshLayout.setRefreshing(true);
+        filter = false;
         String COMPLETE_CASES_URL = "/Users/Cases";
         String LOAD_50 = "?pno=1&psize=50" ;
         final Request request = new Request.Builder()
                 .url(ACQUAINT_URL+COMPLETE_CASES_URL+LOAD_50)
+                .build();
+        WebHelper.getInstance(getContext()).requestCall(request,this);
+        //activity.okHttpClient.newCall(request).enqueue(this);
+    }
+
+    private void loadData(String param){
+        refreshLayout.setRefreshing(true);
+        filter = true ;
+        String COMPLETE_CASES_URL = "/Users/Cases";
+        final Request request = new Request.Builder()
+                .url(ACQUAINT_URL+COMPLETE_CASES_URL+param)
                 .build();
         WebHelper.getInstance(getContext()).requestCall(request,this);
         //activity.okHttpClient.newCall(request).enqueue(this);
@@ -223,7 +245,7 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
 
 
         try {
-            Util.writeObject(getContext(), "completecases", dataset);
+            if(!filter) Util.writeObject(getContext(), "completecases", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -272,5 +294,16 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
 
 
         }
+    }
+
+    @Override
+    public void onFilter(CaseFilterDialog dialog) {
+        String result = dialog.getResult();
+        loadData(result);
+    }
+
+    @Override
+    public void onCancelFilter(CaseFilterDialog dialog) {
+
     }
 }
