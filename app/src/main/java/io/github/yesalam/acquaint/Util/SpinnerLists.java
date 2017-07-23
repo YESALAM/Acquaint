@@ -1,9 +1,17 @@
 package io.github.yesalam.acquaint.Util;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.content.Context;
+
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 /**
  * Created by yesalam on 19-06-2017.
@@ -11,9 +19,30 @@ import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 
 public class SpinnerLists {
 
-    public static ArrayList<SpinnerItem> getLoanTypes() {
+    public static ArrayList<SpinnerItem> getLoanTypes(Context context) {
         ArrayList<SpinnerItem> list = new ArrayList<>();
-        list.add(new SpinnerItem("Select Loan Type", "0"));
+        try {
+            String json = (String) Util.readObject(context, "loantype");
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                String name = object.getString("name");
+                String value = object.getString("value");
+                list.add(new SpinnerItem(name, value));
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+       /* list.add(new SpinnerItem("Select Loan Type", "0"));
         list.add(new SpinnerItem("Business", "BL"));
         list.add(new SpinnerItem("Car Loan", "CL"));
         list.add(new SpinnerItem("Education Loan", "EL"));
@@ -21,13 +50,34 @@ public class SpinnerLists {
         list.add(new SpinnerItem("Home Loan", "HL"));
         list.add(new SpinnerItem("Mortgage Loan", "ML"));
         list.add(new SpinnerItem("Pension Loan", "NL"));
-        list.add(new SpinnerItem("Personal Loan", "PL"));
+        list.add(new SpinnerItem("Personal Loan", "PL"));*/
 
         return list;
     }
 
-    public static ArrayList<SpinnerItem> getPickupByType() {
+    public static ArrayList<SpinnerItem> getPickupByType(Context context) {
         ArrayList<SpinnerItem> list = new ArrayList<>();
+
+        try {
+            String json = (String) Util.readObject(context, "pickup");
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                String name = object.getString("name");
+                String value = object.getString("value");
+                list.add(new SpinnerItem(name, value));
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+      /*
         list.add(new SpinnerItem("Select option", "0"));
         list.add(new SpinnerItem("Ankit Mathur", "5072"));
         list.add(new SpinnerItem("Anshul Jain", "3060"));
@@ -46,15 +96,36 @@ public class SpinnerLists {
         list.add(new SpinnerItem("SAHID KHAN", "3067"));
         list.add(new SpinnerItem("SAMEER DIXIT", "1054"));
         list.add(new SpinnerItem("SHUBHAM SHINDE", "1013"));
-        list.add(new SpinnerItem("SURVESH", "1052"));
+        list.add(new SpinnerItem("SURVESH", "1052"));*/
 
 
         return list;
     }
 
-    public static ArrayList<SpinnerItem> getAssignedToType() {
+    public static ArrayList<SpinnerItem> getAssignedToType(Context context) {
         ArrayList<SpinnerItem> list = new ArrayList<>();
-        list.add(new SpinnerItem("Select option", "0"));
+
+        try {
+            String json = (String) Util.readObject(context, "assignedto");
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                String name = object.getString("name");
+                String value = object.getString("value");
+                list.add(new SpinnerItem(name, value));
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+       /* list.add(new SpinnerItem("Select option", "0"));
         list.add(new SpinnerItem("Ankit Mathur", "5072"));
         list.add(new SpinnerItem("ATUL SATNA", "1043"));
         list.add(new SpinnerItem("BABBAN", "6072"));
@@ -70,7 +141,7 @@ public class SpinnerLists {
         list.add(new SpinnerItem("SAHID KHAN", "3067"));
         list.add(new SpinnerItem("SAMEER DIXIT", "1054"));
         list.add(new SpinnerItem("SHUBHAM SHINDE", "1013"));
-        list.add(new SpinnerItem("SURVESH", "1052"));
+        list.add(new SpinnerItem("SURVESH", "1052"));*/
 
 
         return list;
@@ -370,11 +441,31 @@ public class SpinnerLists {
         return list;
     }
 
-    public static ArrayList<SpinnerItem> getClientType() {
+    public static ArrayList<SpinnerItem> getClientType(Context context) {
         ArrayList<SpinnerItem> list = new ArrayList<>();
-        list.add(new SpinnerItem("Select client", "0"));
+        try {
+            String json = (String) Util.readObject(context, "client");
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                String name = object.getString("name");
+                String value = object.getString("value");
+                list.add(new SpinnerItem(name, value));
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+       /* list.add(new SpinnerItem("Select client", "0"));
         list.add(new SpinnerItem("Indiabulls", "101"));
-        list.add(new SpinnerItem("State Bank of India", "100"));
+        list.add(new SpinnerItem("State Bank of India", "100"));*/
 
         return list;
     }

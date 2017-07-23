@@ -33,6 +33,8 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
+import io.github.yesalam.acquaint.Util.RefreshValues;
+import io.github.yesalam.acquaint.Util.RefreshValues.ProgressReceiver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -61,7 +63,7 @@ import static io.github.yesalam.acquaint.Util.WebUtil.byteCodeit;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements Callback{
+public class LoginActivity extends AppCompatActivity implements Callback, ProgressReceiver {
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -257,8 +259,8 @@ public class LoginActivity extends AppCompatActivity implements Callback{
             }
         } else {
             count=0;
-            progressDialog.cancel();
             //logged in
+            progressDialog.setMessage("Login Successfull");
             Element span = welcome.getElementsByTag("span").first();
             String username = span.text();
             Log.e(LOG_TAG, "login successfull. calling main");
@@ -270,9 +272,12 @@ public class LoginActivity extends AppCompatActivity implements Callback{
             editor.putString(USER_ID_KEY,userid);
             editor.putString(PASSWORD_KEY,password);
             editor.commit();
-            Intent intent = new Intent(this,CaseActivity.class) ;
-            startActivity(intent);
-            finish();
+
+
+            RefreshValues refreshValues = new RefreshValues(this);
+            refreshValues.setProgressReceiver(this);
+            refreshValues.refresh();
+
         }
     }
 
@@ -284,6 +289,26 @@ public class LoginActivity extends AppCompatActivity implements Callback{
                 loginResponseReader(htmldoc);
             }
         });
+    }
+
+    @Override
+    public void onProgress(String progress) {
+        progressDialog.setMessage(progress);
+    }
+
+    @Override
+    public void onFinishedProgress() {
+        progressDialog.cancel();
+
+        Intent intent = new Intent(this,CaseActivity.class) ;
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onNegativeProgress(){
+        progressDialog.cancel();
+        Toast.makeText(this, "Refresh data from refresh menu", Toast.LENGTH_SHORT).show();
     }
 }
 

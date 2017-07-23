@@ -246,9 +246,10 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int val = Integer.parseInt(item.getValue());
-                if (val == 0) return;
-                String clientstring = getBranchHash().get(val);
+                String val = item.getValue();
+                Log.e(LOG_TAG,val+" selected");
+                if (val.equalsIgnoreCase("0")) return;
+                String clientstring = getContact(getBaseContext(),val);
                 try {
                     JSONArray array = new JSONArray(clientstring);
                     ArrayList<SpinnerItem> list = new ArrayList<SpinnerItem>();
@@ -274,15 +275,15 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
 
         ArrayAdapter<SpinnerItem> clientadapter = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         clientadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        clientadapter.addAll(getClientType());
+        clientadapter.addAll(getClientType(this));
         client_spinner.setAdapter(clientadapter);
         client_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int val = Integer.parseInt(item.getValue());
-                if (val == 0) return;
-                String branchstring = getClientHash().get(val);
+                String val = item.getValue();
+                if (val.equalsIgnoreCase("0")) return;
+                String branchstring = getBranch(getBaseContext(),val);
                 try {
                     JSONArray array = new JSONArray(branchstring);
                     ArrayList<SpinnerItem> list = new ArrayList<SpinnerItem>();
@@ -310,7 +311,7 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         //loantype_spinner
-        adapter.addAll(getLoanTypes());
+        adapter.addAll(getLoanTypes(this));
         loan_type_spinner.setAdapter(adapter);
         //loan_type_spinner.getSelectedItem();
 
@@ -320,7 +321,7 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
 
         ArrayAdapter<SpinnerItem> pickupbyadapter = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         pickupbyadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        pickupbyadapter.addAll(getPickupByType());
+        pickupbyadapter.addAll(getPickupByType(this));
         pickupby_spinner.setAdapter(pickupbyadapter);
 
         dob_edittext.setOnClickListener(new DateClick(this));
@@ -328,7 +329,7 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
 
         ArrayAdapter<SpinnerItem> assignedtoadapter = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         assignedtoadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedtoadapter.addAll(getAssignedToType());
+        assignedtoadapter.addAll(getAssignedToType(this));
         assignedto_residential_spinner.setAdapter(assignedtoadapter);
 
 
@@ -339,7 +340,7 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
 
         ArrayAdapter<SpinnerItem> assignedto_officeadapter = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         assignedto_officeadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedto_officeadapter.addAll(getAssignedToType());
+        assignedto_officeadapter.addAll(getAssignedToType(this));
         assignedto_office_spinner.setAdapter(assignedto_officeadapter);
 
         guarantor_residential_frame.setVisibility(View.GONE);
@@ -350,7 +351,7 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
 
         ArrayAdapter<SpinnerItem> assignedto_gurantor = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         assignedto_gurantor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedto_gurantor.addAll(getAssignedToType());
+        assignedto_gurantor.addAll(getAssignedToType(this));
         assignedto_guarantor_spinner.setAdapter(assignedto_gurantor);
 
         guarantor_office_frame.setVisibility(View.GONE);
@@ -360,7 +361,7 @@ public class CreateCaseDialog extends AppCompatActivity implements WebHelper.Cal
 
         ArrayAdapter<SpinnerItem> assignedto_gurantoroffice = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         assignedto_gurantoroffice.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedto_gurantoroffice.addAll(getAssignedToType());
+        assignedto_gurantoroffice.addAll(getAssignedToType(this));
         assignedto_guarantoroffice_spinner.setAdapter(assignedto_gurantoroffice);
 
 

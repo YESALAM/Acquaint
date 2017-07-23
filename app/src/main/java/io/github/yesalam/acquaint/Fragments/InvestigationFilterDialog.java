@@ -162,7 +162,7 @@ public class InvestigationFilterDialog extends DialogFragment {
         ArrayAdapter<SpinnerItem> clientadapter =
                 new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         clientadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        clientadapter.addAll(getClientType());
+        clientadapter.addAll(getClientType(getActivity()));
         client_spinner.setAdapter(clientadapter);
 
 

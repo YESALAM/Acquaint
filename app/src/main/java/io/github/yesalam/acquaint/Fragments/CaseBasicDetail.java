@@ -57,8 +57,8 @@ import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-import static io.github.yesalam.acquaint.Util.Maps.getBranchHash;
-import static io.github.yesalam.acquaint.Util.Maps.getClientHash;
+import static io.github.yesalam.acquaint.Util.Maps.getBranch;
+import static io.github.yesalam.acquaint.Util.Maps.getContact;
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.*;
 import static io.github.yesalam.acquaint.WebHelper.NO_CONNECTION;
@@ -251,9 +251,9 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int val = Integer.parseInt(item.getValue());
-                if (val == 0) return;
-                String jsonString = getBranchHash().get(val);
+                String val = item.getValue();
+                if (val.equalsIgnoreCase("0")) return;
+                String jsonString = getContact(getContext(),val);
                 spinnerUpdate(jsonString, contact, contact_person_spinner, contactadapter);
             }
 
@@ -266,15 +266,15 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
 
         ArrayAdapter<SpinnerItem> clientadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         clientadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        clientadapter.addAll(getClientType());
+        clientadapter.addAll(getClientType(getActivity()));
         client_spinner.setAdapter(clientadapter);
         client_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int val = Integer.parseInt(item.getValue());
-                if (val == 0) return;
-                String jsonString = getClientHash().get(val);
+                String val = item.getValue();
+                if (val.equalsIgnoreCase("0")) return;
+                String jsonString = getBranch(getActivity(),val);
                 spinnerUpdate(jsonString, branch, branch_spinner, branchadapter);
             }
 
@@ -289,7 +289,7 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
-        adapter.addAll(getLoanTypes());
+        adapter.addAll(getLoanTypes(getActivity()));
         loan_type_spinner.setAdapter(adapter);
 
 
@@ -298,7 +298,7 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
 
         ArrayAdapter<SpinnerItem> pickupbyadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         pickupbyadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        pickupbyadapter.addAll(getPickupByType());
+        pickupbyadapter.addAll(getPickupByType(getActivity()));
         pickupby_spinner.setAdapter(pickupbyadapter);
 
         dob_edittext.setOnClickListener(new DateClick(getContext()));
@@ -306,7 +306,7 @@ public class CaseBasicDetail extends Fragment implements SwipeRefreshLayout.OnRe
 
         ArrayAdapter<SpinnerItem> assignedtoadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         assignedtoadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedtoadapter.addAll(getAssignedToType());
+        assignedtoadapter.addAll(getAssignedToType(getActivity()));
         assignedto_residential_spinner.setAdapter(assignedtoadapter);
 
 

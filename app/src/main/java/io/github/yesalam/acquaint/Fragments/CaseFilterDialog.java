@@ -22,12 +22,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
 import io.github.yesalam.acquaint.R;
+import io.github.yesalam.acquaint.Util.Maps;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static io.github.yesalam.acquaint.Util.Maps.getBranchHash;
-import static io.github.yesalam.acquaint.Util.Maps.getClientHash;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getClientType;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getLoanTypes;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getStatusType;
@@ -200,9 +199,9 @@ public class CaseFilterDialog extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int val = Integer.parseInt(item.getValue());
-                if (val == 0) return;
-                String clientstring = getBranchHash().get(val);
+                String val = item.getValue();
+                if (val.equalsIgnoreCase("0")) return;
+                String clientstring = Maps.getContact(getContext(),val);
                 try {
                     JSONArray array = new JSONArray(clientstring);
                     ArrayList<SpinnerItem> list = new ArrayList<SpinnerItem>();
@@ -228,15 +227,15 @@ public class CaseFilterDialog extends DialogFragment {
 
         ArrayAdapter<SpinnerItem> clientadapter = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         clientadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        clientadapter.addAll(getClientType());
+        clientadapter.addAll(getClientType(getActivity()));
         client_spinner.setAdapter(clientadapter);
         client_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int val = Integer.parseInt(item.getValue());
-                if (val == 0) return;
-                String branchstring = getClientHash().get(val);
+                String val = item.getValue();
+                if (val.equalsIgnoreCase("0")) return;
+                String branchstring = Maps.getBranch(getActivity(),val);
                 try {
                     JSONArray array = new JSONArray(branchstring);
                     ArrayList<SpinnerItem> list = new ArrayList<SpinnerItem>();
@@ -264,7 +263,7 @@ public class CaseFilterDialog extends DialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         //loantype_spinner
-        adapter.addAll(getLoanTypes());
+        adapter.addAll(getLoanTypes(getActivity()));
         loantype_spinner.setAdapter(adapter);
         //loan_type_spinner.getSelectedItem();
 

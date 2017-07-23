@@ -171,7 +171,7 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
 
         ArrayAdapter<SpinnerItem> assignedto_gurantor = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         assignedto_gurantor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedto_gurantor.addAll(getAssignedToType());
+        assignedto_gurantor.addAll(getAssignedToType(getActivity()));
         assignedto_residential_spinner.setAdapter(assignedto_gurantor);
 
         if (!haveguarantoroffice_radiobutton.isChecked())
@@ -182,7 +182,7 @@ public class CaseGuarantor extends Fragment implements SwipeRefreshLayout.OnRefr
 
         ArrayAdapter<SpinnerItem> assignedto_gurantoroffice = new ArrayAdapter<SpinnerItem>(getContext(), android.R.layout.simple_spinner_item);
         assignedto_gurantoroffice.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedto_gurantoroffice.addAll(getAssignedToType());
+        assignedto_gurantoroffice.addAll(getAssignedToType(getActivity()));
         assignedto_guarantoroffice_spinner.setAdapter(assignedto_gurantoroffice);
 
         save_button.setOnClickListener(new View.OnClickListener() {

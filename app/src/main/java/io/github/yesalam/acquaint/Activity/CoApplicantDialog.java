@@ -175,7 +175,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
 
         ArrayAdapter<SpinnerItem> assignedtoadapter = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         assignedtoadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        assignedtoadapter.addAll(getAssignedToType());
+        assignedtoadapter.addAll(getAssignedToType(this));
         assignedto_residential_spinner.setAdapter(assignedtoadapter);
 
 
@@ -191,7 +191,7 @@ public class CoApplicantDialog extends Activity implements WebHelper.CallBack, S
 
         ArrayAdapter<SpinnerItem> office_adapter = new ArrayAdapter<SpinnerItem>(this, android.R.layout.simple_spinner_item);
         office_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        office_adapter.addAll(getAssignedToType());
+        office_adapter.addAll(getAssignedToType(this));
         assignedto_office_spinner.setAdapter(office_adapter);
 
     }

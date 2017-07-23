@@ -1,7 +1,12 @@
 package io.github.yesalam.acquaint.Util;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
+import android.content.Context;
+
 
 /**
  * Created by yesalam on 19-06-2017.
@@ -78,6 +83,31 @@ public class Maps {
 
 
 
+    public static String getBranch(Context context,String id){
+        String json = "" ;
+        try {
+            json = (String) Util.readObject(context,"b"+id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return json;
+    }
+
+    public static String getContact(Context context,String id){
+        String contact = "";
+        try {
+            contact = (String) Util.readObject(context,"c"+id);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return contact;
+    }
 
 
 
