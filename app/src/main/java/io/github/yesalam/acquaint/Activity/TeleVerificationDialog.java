@@ -14,6 +14,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import io.github.yesalam.acquaint.Util.Listener.DateClick;
+import io.github.yesalam.acquaint.Util.Listener.TimeClick;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -151,6 +153,21 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         relation_residence_spinner.setAdapter(relation_adapter);
         relation_office_spinner.setAdapter(relation_adapter);
 
+        firstcallingdate_office_edittext.setOnClickListener(new DateClick(this));
+        firstcallingdate_residence_edittext.setOnClickListener(new DateClick(this));
+        secondcallingdate_office_edittext.setOnClickListener(new DateClick(this));
+        secondcallingdate_residence_edittext.setOnClickListener(new DateClick(this));
+        thirdcallingdate_office_edittext.setOnClickListener(new DateClick(this));
+        thirdcallingdate_residence_edittext.setOnClickListener(new DateClick(this));
+
+        firstcallingtime_office_edittext.setOnClickListener(new TimeClick(this));
+        firstcallingtime_residence_edittext.setOnClickListener(new TimeClick(this));
+        secondcallingtime_office_edittext.setOnClickListener(new TimeClick(this));
+        secondcallingtime_residence_edittext.setOnClickListener(new TimeClick(this));
+        thiredcallingtime_office_edittext.setOnClickListener(new TimeClick(this));
+        thiredcallingtime_residence_edittext.setOnClickListener(new TimeClick(this));
+
+
 
         ArrayAdapter<SpinnerItem> status_adapter = new ArrayAdapter<SpinnerItem>(this,android.R.layout.simple_spinner_item);
         status_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -268,19 +285,13 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
     }
 
     private boolean validate() {
-        int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
-        if (confirmed < 0) {
-            Toast.makeText(this, "Please select Address Confirmed button", Toast.LENGTH_SHORT).show();
-            return false;
-        }
 
-        String recommendation = ((SpinnerItem) recommendation_spinner.getSelectedItem()).getValue();
+        String status = ((SpinnerItem) status_residence_spinner.getSelectedItem()).getValue();
         try {
-            int recommend = Integer.parseInt(recommendation);
+            int sts = Integer.parseInt(status);
 
-            Toast.makeText(this, "Please select recommendation", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please select status", Toast.LENGTH_SHORT).show();
             return false;
-
         } catch (NumberFormatException nfe) {
             //map.put(OVerificationId.status,recommendation);
         }
