@@ -1,11 +1,15 @@
 package io.github.yesalam.acquaint.Activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,13 +18,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import io.github.yesalam.acquaint.Util.Id.OVerificationId;
+import io.github.yesalam.acquaint.Util.Id.RVerificationId;
+import io.github.yesalam.acquaint.Util.Id.TeleVerificationId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.TimeClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +44,7 @@ import io.github.yesalam.acquaint.WebHelper;
 import okhttp3.Call;
 import okhttp3.Request;
 
+import static io.github.yesalam.acquaint.Util.SpinnerLists.getOfficeRelationType;
 import static io.github.yesalam.acquaint.Util.Util.ACQUAINT_URL;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getRelationType;
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getStatusType;
@@ -124,6 +136,9 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
     String LOG_TAG = "TeleVerificationDialog" ;
     String investigationId ;
     SwipeRefreshLayout refreshLayout;
+    ProgressDialog progressDialog;
+
+    Map<String, String> map;
 
 
     @Override
@@ -132,8 +147,13 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         setContentView(R.layout.dialog_televerification);
         Intent intent = getIntent();
         investigationId = intent.getStringExtra("investigationid");
+        //investigationId = "4966416";
         ButterKnife.bind(this);
         initForm();
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Submitting Data");
 
         refreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeContainer);
         refreshLayout.setOnRefreshListener(this);
@@ -151,7 +171,11 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         relation_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         relation_adapter.addAll(getRelationType());
         relation_residence_spinner.setAdapter(relation_adapter);
-        relation_office_spinner.setAdapter(relation_adapter);
+
+        ArrayAdapter<SpinnerItem> relation_adapter_office = new ArrayAdapter<SpinnerItem>(this,android.R.layout.simple_spinner_item);
+        relation_adapter_office.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        relation_adapter_office.addAll(getOfficeRelationType());
+        relation_office_spinner.setAdapter(relation_adapter_office);
 
         firstcallingdate_office_edittext.setOnClickListener(new DateClick(this));
         firstcallingdate_residence_edittext.setOnClickListener(new DateClick(this));
@@ -256,12 +280,106 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
 
     public void cancel(View view){finish();}
 
-    public void save(View view){
+    public void save(View view) {
+        if (validate()) {
+            areYouSure();
+        }
+    }
+
+    public void areYouSure() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+
+                        WebHelper webHelper = WebHelper.getInstance(getApplicationContext());
+                        if (webHelper.isConnected()) {
+                            progressDialog.show();
+                            oktoSubmit();
+                        } else {
+                            //cacheData();
+                            Toast.makeText(TeleVerificationDialog.this, "Internet Unavailable! Try later",
+                                    Toast.LENGTH_SHORT).show();
+                            //finish();
+                        }
+                        //finish();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+
+    }
+
+    private void oktoSubmit() {
+        Map<String, String> valuesMap = getValues();
+        map.putAll(valuesMap);
+        //logId(map);
+        submitMultiPart(map);
+    }
+
+
+    public void submitMultiPart(Map<String, String> map) {
+        MultipartBody.Builder requestBodyBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        for (String key : map.keySet()) {
+            requestBodyBuilder.addFormDataPart(key, map.get(key));
+        }
+
+
+        MultipartBody requestBody = requestBodyBuilder.build();
+
+        String TELE_VERIFICATION_DETAIL = "/Users/Verifications/TeleVerification/" + investigationId;
+
+        Request request = new Request.Builder()
+                .url(ACQUAINT_URL + TELE_VERIFICATION_DETAIL)
+                .post(requestBody)
+                .build();
+        Log.e(LOG_TAG, ACQUAINT_URL + TELE_VERIFICATION_DETAIL + " submitting data");
+
+        WebHelper.getInstance(this).requestCall(request, new WebHelper.CallBack() {
+            @Override
+            public void onPositiveResponse(String html) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Data Submited", Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                        finish();
+                    }
+                });
+            }
+
+            @Override
+            public void onNegativeResponse(int code) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //cacheData();
+                        Toast.makeText(getApplicationContext(), "Error Occured!", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        //finish();
+                    }
+                });
+            }
+        });
+
     }
 
     @Override
     public void onPositiveResponse(String htmldoc) {
-        final Map map = parseData(htmldoc);
+        map = parseData(htmldoc);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -298,6 +416,82 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
 
 
         return true;
+    }
+
+    private Map<String, String> getValues() {
+        Map<String, String> map = new HashMap<>();
+
+        map.put(TeleVerificationId.personSpeakToResi, String.valueOf(personspoken_residence_edittext.getText()));
+
+
+        String relation = ((SpinnerItem) relation_residence_spinner.getSelectedItem()).getValue();
+        try {
+            int relationType = Integer.parseInt(relation);
+            if (relationType == 0) {
+                map.put(TeleVerificationId.relation, "");
+            }
+        } catch (NumberFormatException nfe) {
+            map.put(TeleVerificationId.relation, relation);
+        }
+
+        map.put(TeleVerificationId.resiDate1, String.valueOf(firstcallingdate_residence_edittext.getText()));
+        map.put(TeleVerificationId.resiTime1, String.valueOf(firstcallingtime_residence_edittext.getText()));
+        map.put(TeleVerificationId.resiDate2, String.valueOf(secondcallingdate_residence_edittext.getText()));
+        map.put(TeleVerificationId.resiTime2, String.valueOf(secondcallingtime_residence_edittext.getText()));
+        map.put(TeleVerificationId.resiDate3, String.valueOf(thirdcallingdate_residence_edittext.getText()));
+        map.put(TeleVerificationId.resiTime3, String.valueOf(thiredcallingtime_residence_edittext.getText()));
+
+        map.put(TeleVerificationId.resiRemark, String.valueOf(remark_residence_edittext.getText()));
+
+
+        String recommendation = ((SpinnerItem) status_residence_spinner.getSelectedItem()).getValue();
+        try {
+            int recommend = Integer.parseInt(recommendation);
+            if (recommend == 0) {
+                map.put(TeleVerificationId.resiStatus, "");
+            }
+        } catch (NumberFormatException nfe) {
+            map.put(TeleVerificationId.resiStatus, recommendation);
+        }
+
+        //OFFICE TELE VERIFICATION
+
+        map.put(TeleVerificationId.officePersonSpeakTo, String.valueOf(personspoken_office_edittext.getText()));
+        map.put(TeleVerificationId.designation, String.valueOf(designation_office_edittext.getText()));
+
+
+        String relation_office = ((SpinnerItem) relation_office_spinner.getSelectedItem()).getValue();
+        try {
+            int relationType_office = Integer.parseInt(relation_office);
+            if (relationType_office == 0) {
+                map.put(TeleVerificationId.officeRelation, "");
+            }
+        } catch (NumberFormatException nfe) {
+            map.put(TeleVerificationId.officeRelation, relation_office);
+        }
+
+        map.put(TeleVerificationId.officeDate1, String.valueOf(firstcallingdate_office_edittext.getText()));
+        map.put(TeleVerificationId.officeTime1, String.valueOf(firstcallingtime_office_edittext.getText()));
+        map.put(TeleVerificationId.officeDate2, String.valueOf(secondcallingdate_office_edittext.getText()));
+        map.put(TeleVerificationId.officeTime2, String.valueOf(secondcallingtime_office_edittext.getText()));
+        map.put(TeleVerificationId.officeDate3, String.valueOf(thirdcallingdate_office_edittext.getText()));
+        map.put(TeleVerificationId.officeTime3, String.valueOf(thiredcallingtime_office_edittext.getText()));
+
+        map.put(TeleVerificationId.officeRemark, String.valueOf(remark_office_edittext.getText()));
+
+
+        String recommendation_office = ((SpinnerItem) status_office_spinner.getSelectedItem()).getValue();
+        try {
+            int recommend_office = Integer.parseInt(recommendation_office);
+            if (recommend_office == 0) {
+                map.put(TeleVerificationId.officeStatus, "");
+            }
+        } catch (NumberFormatException nfe) {
+            map.put(TeleVerificationId.officeStatus, recommendation_office);
+        }
+
+        //logId(map);
+        return map;
     }
 
     private Map<String, String> parseData(String html){

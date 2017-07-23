@@ -269,6 +269,26 @@ public class SpinnerLists {
         return list;
     }
 
+    public static ArrayList<SpinnerItem> getOfficeRelationType() {
+        ArrayList<SpinnerItem> list = new ArrayList<>();
+        list.add(new SpinnerItem("Select Relation","0"));
+        list.add(new SpinnerItem("ASST TEACHER", "A"));
+        list.add(new SpinnerItem("Brother", "R"));
+        list.add(new SpinnerItem("Collegue", "C"));
+        list.add(new SpinnerItem("Employee", "E"));
+        list.add(new SpinnerItem("Guard", "G"));
+        list.add(new SpinnerItem("MANAGER", "M"));
+        list.add(new SpinnerItem("PRINCIPAL", "PP"));
+        list.add(new SpinnerItem("PROPRIETOR", "P"));
+        list.add(new SpinnerItem("SELF", "SS"));
+        list.add(new SpinnerItem("SUPERVISOR", "S"));
+        list.add(new SpinnerItem("TEACHER", "T"));
+
+        return list;
+    }
+
+
+
     public static ArrayList<SpinnerItem> getFamilyMemberType() {
         ArrayList<SpinnerItem> list = new ArrayList<>();
         list.add(new SpinnerItem("Select Option","0"));
