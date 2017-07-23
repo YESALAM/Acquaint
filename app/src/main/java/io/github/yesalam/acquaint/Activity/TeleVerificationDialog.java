@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -266,6 +267,27 @@ public class TeleVerificationDialog extends Activity implements WebHelper.CallBa
         }
     }
 
+    private boolean validate() {
+        int confirmed = addressconfirmed_radiogroup.getCheckedRadioButtonId();
+        if (confirmed < 0) {
+            Toast.makeText(this, "Please select Address Confirmed button", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String recommendation = ((SpinnerItem) recommendation_spinner.getSelectedItem()).getValue();
+        try {
+            int recommend = Integer.parseInt(recommendation);
+
+            Toast.makeText(this, "Please select recommendation", Toast.LENGTH_SHORT).show();
+            return false;
+
+        } catch (NumberFormatException nfe) {
+            //map.put(OVerificationId.status,recommendation);
+        }
+
+
+        return true;
+    }
 
     private Map<String, String> parseData(String html){
         Map<String,String> map = new HashMap<>();
