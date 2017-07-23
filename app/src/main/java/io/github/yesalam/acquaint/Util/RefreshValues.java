@@ -158,7 +158,7 @@ public class RefreshValues implements CallBack {
     }
 
     private void fetchBranches() {
-        Log.e(LOG_TAG,"called fetchBranches");
+        //Log.e(LOG_TAG,"called fetchBranches");
         currentFetch = client_list.poll();
         if (currentFetch == null) {
             if (mProgressReceiver != null) {
@@ -168,7 +168,7 @@ public class RefreshValues implements CallBack {
             return;
         }
 
-        Log.e(LOG_TAG,currentFetch);
+        //Log.e(LOG_TAG,currentFetch);
 
         String BRANCH_URL = "http://myacquaint.com/Users/Cases/GetBranches?client_id=" + currentFetch;
 
@@ -178,7 +178,7 @@ public class RefreshValues implements CallBack {
 
     private String currentBranch;
     private void fetchContacts() {
-        Log.e(LOG_TAG,"called fetchContacts");
+        //Log.e(LOG_TAG,"called fetchContacts");
         currentBranch = branch_list.poll();
 
         if (currentBranch == null) {
@@ -188,7 +188,7 @@ public class RefreshValues implements CallBack {
             return;
         }
 
-        Log.e(LOG_TAG,currentBranch);
+        //Log.e(LOG_TAG,currentBranch);
 
         String CONTACT_URL = "http://myacquaint.com/Users/Cases/GetBranchContacts?branch_id=" + currentBranch;
 
@@ -197,8 +197,8 @@ public class RefreshValues implements CallBack {
     }
 
     private void saveBranch(String json) {
-        Log.e(LOG_TAG,"called saveBranch");
-        Log.e(LOG_TAG,json);
+        //Log.e(LOG_TAG,"called saveBranch");
+        //Log.e(LOG_TAG,json);
         try {
             JSONArray array = new JSONArray(json);
             for (int i = 0; i < array.length(); i++) {
@@ -218,7 +218,7 @@ public class RefreshValues implements CallBack {
     }
 
     private void saveContact(String json) {
-        Log.e(LOG_TAG,json);
+        //Log.e(LOG_TAG,json);
         try {
             writeObject(context, "c" + currentBranch, json);
         } catch (IOException e) {
@@ -227,7 +227,7 @@ public class RefreshValues implements CallBack {
     }
 
     private void saveClient(Element client_element) {
-        Log.e(LOG_TAG,"called saveClient");
+        //Log.e(LOG_TAG,"called saveClient");
         Elements pickup_elements = client_element.getElementsByTag("option");
         JSONArray jsonArray = new JSONArray();
         for (Element pickup : pickup_elements) {
@@ -236,7 +236,7 @@ public class RefreshValues implements CallBack {
 
             if(value.isEmpty()) value = "0" ;
 
-            Log.e(LOG_TAG,name+" --> "+value);
+            //Log.e(LOG_TAG,name+" --> "+value);
             client_list.add(value);
             try {
                 JSONObject object = new JSONObject();
@@ -297,7 +297,7 @@ public class RefreshValues implements CallBack {
                 JSONObject object = new JSONObject();
                 object.put("name", name);
                 object.put("value", value);
-                Log.e(LOG_TAG,name+" --> "+value);
+                //Log.e(LOG_TAG,name+" --> "+value);
                 jsonArray.put(object);
             } catch (JSONException jsonEception) {
 

@@ -1,5 +1,7 @@
 package io.github.yesalam.acquaint;
 
+
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,6 +33,8 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
+import io.github.yesalam.acquaint.Util.RefreshValues;
+import io.github.yesalam.acquaint.Util.RefreshValues.ProgressReceiver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -62,7 +66,7 @@ import static io.github.yesalam.acquaint.Util.Util.deletePreference;
  * Created by yesalam on 07-06-2017.
  */
 
-public abstract class BaseDrawerActivity extends AppCompatActivity  {
+public abstract class BaseDrawerActivity extends AppCompatActivity implements ProgressReceiver {
 
     protected DrawerLayout mDrawerLayout;
 
@@ -70,6 +74,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity  {
 
     String LOG_TAG = "BaseDrawerActivity" ;
     private SharedPreferences app_preferences;
+    ProgressDialog progressDialog;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -156,16 +161,35 @@ public abstract class BaseDrawerActivity extends AppCompatActivity  {
                         finish();
                         break;
                     case R.id.signout_menu_drawer:
-
                         signOut();
                         break;
+
+                    case R.id.refresh_menu_drawer:
+                        refreshValues();
+                        break;
+
                 }
 
                 return true;
             }
+
+
         });
     }
 
+
+    private void refreshValues() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Updating Data");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        RefreshValues refreshValues = new RefreshValues(this);
+        refreshValues.setProgressReceiver(this);
+        refreshValues.refresh();
+
+
+    }
 
     public void signOut(){
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -211,7 +235,29 @@ public abstract class BaseDrawerActivity extends AppCompatActivity  {
         return false;
     }
 
+
+    @Override
+    public void onProgress(String progress) {
+        progressDialog.setMessage(progress);
+    }
+
+    @Override
+    public void onFinishedProgress() {
+        progressDialog.cancel();
+
+        Intent intent = new Intent(this,CaseActivity.class) ;
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onNegativeProgress(){
+        progressDialog.cancel();
+        Toast.makeText(this, "Some Error occured! Try later", Toast.LENGTH_SHORT).show();
+    }
+
     public abstract void setupViewPager(ViewPager viewPager);
+
 
 
 }

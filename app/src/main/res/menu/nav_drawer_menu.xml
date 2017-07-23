@@ -22,6 +22,11 @@
     <item android:title="Other">
         <menu>
             <item
+                android:id="@+id/refresh_menu_drawer"
+                android:title="@string/refresh_menu"
+                android:icon="@drawable/ic_refresh_black_24dp" />
+
+            <item
                 android:id="@+id/signout_menu_drawer"
                 android:title="@string/signout_drawer_title"
                 android:icon="@drawable/ic_exit_to_app_black_24dp"
