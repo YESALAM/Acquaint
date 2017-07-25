@@ -14,7 +14,7 @@ import android.content.Context;
 
 public class Maps {
 
-    public static final String client_101 = "[{\"idSortby\":1,\"id\":0,\"name\":\"Select a Branch\"},{\"idSortby\":2,\"id\":106,\"name\":\"GWALIOR\"}]";
+   /* public static final String client_101 = "[{\"idSortby\":1,\"id\":0,\"name\":\"Select a Branch\"},{\"idSortby\":2,\"id\":106,\"name\":\"GWALIOR\"}]";
     public static final String branch_106 = "[{\"idSortby\":1,\"id\":0,\"name\":\"Select a Name\"},{\"idSortby\":2,\"id\":20,\"name\":\"Team\"}]";
     public static final String client_100 = "[{\"idSortby\":1,\"id\":0,\"name\":\"Select a Branch\"},{\"idSortby\":2,\"id\":112,\"name\":\"AIRPORT ROAD\"},{\"idSortby\":3,\"id\":113,\"name\":\"ALAPUR\"},{\"idSortby\":4,\"id\":111,\"name\":\"CITY CENTER\"},{\"idSortby\":5,\"id\":16195,\"name\":\"D.R.D.E\"},{\"idSortby\":6,\"id\":148,\"name\":\"DABRA BUZURG \"},{\"idSortby\":7,\"id\":108,\"name\":\"G R M C\"},{\"idSortby\":8,\"id\":107,\"name\":\"GWALIOR MAIN BRANCH\"},{\"idSortby\":9,\"id\":9191,\"name\":\"HAZIRA\"},{\"idSortby\":10,\"id\":147,\"name\":\"HOSPITAL ROAD DABRA\"},{\"idSortby\":11,\"id\":114,\"name\":\"JAYENDRA GANJ\"},{\"idSortby\":12,\"id\":110,\"name\":\"KAMPOO\"},{\"idSortby\":13,\"id\":119,\"name\":\"LASHKAR BRANCH\"},{\"idSortby\":14,\"id\":109,\"name\":\"M P S T \"},{\"idSortby\":15,\"id\":120,\"name\":\"MAYUR MARKET\"},{\"idSortby\":16,\"id\":117,\"name\":\"MORAR BARADARI\"},{\"idSortby\":17,\"id\":115,\"name\":\"MORAR BRANCH\"},{\"idSortby\":18,\"id\":116,\"name\":\"MOTI MAHAL\"},{\"idSortby\":19,\"id\":118,\"name\":\"PBB\"},{\"idSortby\":20,\"id\":122,\"name\":\"R A C P C \"},{\"idSortby\":21,\"id\":124,\"name\":\"RAM BAGH COLONY \"},{\"idSortby\":22,\"id\":8188,\"name\":\"RBO\"},{\"idSortby\":23,\"id\":144,\"name\":\"Subhash ganj\"},{\"idSortby\":24,\"id\":6185,\"name\":\"TANSEN ROAD\"},{\"idSortby\":25,\"id\":121,\"name\":\"TRANSPORT NAGAR\"}]";
     public static final String branch_112 = "[{\"idSortby\":1,\"id\":0,\"name\":\"Select a Name\"},{\"idSortby\":2,\"id\":56,\"name\":\"JAGDISH BATHAM\"}]";
@@ -79,7 +79,7 @@ public class Maps {
         map.put(9191,branch_9191);
 
         return map;
-    }
+    }*/
 
 
 

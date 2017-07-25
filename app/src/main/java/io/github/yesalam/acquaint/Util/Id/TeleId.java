@@ -1,4 +1,4 @@
-package io.github.yesalam.acquaint.Util;
+package io.github.yesalam.acquaint.Util.Id;
 
 /**
  * Created by yesalam on 18-06-2017.

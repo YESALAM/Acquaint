@@ -18,30 +18,24 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import io.github.yesalam.acquaint.Util.Id.OVerificationId;
-import io.github.yesalam.acquaint.Util.Id.RVerificationId;
 import io.github.yesalam.acquaint.Util.Id.TeleVerificationId;
 import io.github.yesalam.acquaint.Util.Listener.DateClick;
 import io.github.yesalam.acquaint.Util.Listener.TimeClick;
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.yesalam.acquaint.Pojo.SpinnerItem;
-import io.github.yesalam.acquaint.Util.TeleId;
+import io.github.yesalam.acquaint.Util.Id.TeleId;
 import io.github.yesalam.acquaint.R;
 import io.github.yesalam.acquaint.WebHelper;
-import okhttp3.Call;
 import okhttp3.Request;
 
 import static io.github.yesalam.acquaint.Util.SpinnerLists.getOfficeRelationType;
