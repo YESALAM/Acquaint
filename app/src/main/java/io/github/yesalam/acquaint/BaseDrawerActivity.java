@@ -165,7 +165,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity implements Pr
                         break;
 
                     case R.id.refresh_menu_drawer:
-                        refreshValues();
+                        areYouSureRefresh();
                         break;
 
                 }
@@ -177,6 +177,30 @@ public abstract class BaseDrawerActivity extends AppCompatActivity implements Pr
         });
     }
 
+    private void areYouSureRefresh(){
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        refreshValues();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("You don't need to refresh if data like 'employee' or 'branch' is not updated on the server.").setPositiveButton("Yes", dialogClickListener)
+                .setTitle("Are you sure?")
+                .setNegativeButton("No", dialogClickListener).show();
+    }
+
 
     private void refreshValues() {
         progressDialog = new ProgressDialog(this);
@@ -184,7 +208,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity implements Pr
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        RefreshValues refreshValues = new RefreshValues(this);
+        RefreshValues refreshValues = new RefreshValues(getApplicationContext());
         refreshValues.setProgressReceiver(this);
         refreshValues.refresh();
 
