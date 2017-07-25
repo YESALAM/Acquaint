@@ -258,7 +258,7 @@ public class NewCaseFragment extends Fragment implements WaitingForData, Callbac
 
 
         try {
-            if(!isFilter) Util.writeObject(getContext(), "newcases", dataset);
+            if(!isFilter) Util.writeObject(activity.getApplicationContext(), "newcases", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }

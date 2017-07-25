@@ -241,7 +241,7 @@ public class CompleteInvestigationFragment extends Fragment implements WaitingFo
 
 
         try {
-            if(!filter)Util.writeObject(activity, "completefield", dataset);
+            if(!filter)Util.writeObject(activity.getApplicationContext(), "completefield", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }

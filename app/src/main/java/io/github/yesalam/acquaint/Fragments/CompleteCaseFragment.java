@@ -245,7 +245,7 @@ public class CompleteCaseFragment extends Fragment implements WaitingForData, Ca
 
 
         try {
-            if(!filter) Util.writeObject(getContext(), "completecases", dataset);
+            if(!filter) Util.writeObject(activity.getApplicationContext(), "completecases", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }

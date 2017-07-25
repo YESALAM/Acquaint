@@ -286,7 +286,7 @@ public class OfflineCases extends Fragment implements SwipeRefreshLayout.OnRefre
                 //loadData();
             }
             passData(pendingCases);
-            writeObject(getContext(),PENDING_CASES,pendingCases);
+            writeObject(activity.getApplicationContext(),PENDING_CASES,pendingCases);
         } catch (IOException e) {
             e.printStackTrace();
             //loadData();

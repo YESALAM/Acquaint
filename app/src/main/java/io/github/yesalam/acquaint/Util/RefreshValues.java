@@ -211,7 +211,7 @@ public class RefreshValues implements CallBack {
             e.printStackTrace();
         }
         try {
-            writeObject(context, "b" + currentFetch, json);
+            writeObject(context.getApplicationContext(), "b" + currentFetch, json);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -220,7 +220,7 @@ public class RefreshValues implements CallBack {
     private void saveContact(String json) {
         //Log.e(LOG_TAG,json);
         try {
-            writeObject(context, "c" + currentBranch, json);
+            writeObject(context.getApplicationContext(), "c" + currentBranch, json);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -251,7 +251,7 @@ public class RefreshValues implements CallBack {
 
         String client = jsonArray.toString();
         try {
-            writeObject(context, "client", client);
+            writeObject(context.getApplicationContext(), "client", client);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -260,7 +260,7 @@ public class RefreshValues implements CallBack {
     private void saveLoanType(Element loantype_element) {
         String loantype = getElementToJsonString(loantype_element);
         try {
-            writeObject(context, "loantype", loantype);
+            writeObject(context.getApplicationContext(), "loantype", loantype);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -270,7 +270,7 @@ public class RefreshValues implements CallBack {
     private void saveAssigned(Element assigned_element) {
         String assigned = getElementToJsonString(assigned_element);
         try {
-            writeObject(context, "assignedto", assigned);
+            writeObject(context.getApplicationContext(), "assignedto", assigned);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -279,7 +279,7 @@ public class RefreshValues implements CallBack {
     private void savePickup(Element pickup_element) {
         String pickup = getElementToJsonString(pickup_element);
         try {
-            writeObject(context, "pickup", pickup);
+            writeObject(context.getApplicationContext(), "pickup", pickup);
         } catch (IOException e) {
             e.printStackTrace();
         }

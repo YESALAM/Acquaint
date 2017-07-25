@@ -240,7 +240,7 @@ public class TeleVerificationFragment extends Fragment implements WaitingForData
             dataset.add(pojo);
         }
         try {
-            if(!filter)Util.writeObject(getContext(), "tele", dataset);
+            if(!filter)Util.writeObject(activity.getApplicationContext(), "tele", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }

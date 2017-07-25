@@ -241,7 +241,7 @@ public class NewInvestigationFragment extends Fragment implements WaitingForData
 
 
         try {
-            if(!filter)Util.writeObject(getActivity().getApplicationContext(), "newfield", dataset);
+            if(!filter)Util.writeObject(activity.getApplicationContext(), "newfield", dataset);
         } catch (IOException e) {
             e.printStackTrace();
         }

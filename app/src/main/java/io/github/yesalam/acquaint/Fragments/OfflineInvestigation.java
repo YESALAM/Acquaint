@@ -263,7 +263,7 @@ public class OfflineInvestigation extends Fragment implements SwipeRefreshLayout
                 //loadData();
             }
             passData(pendingCases);
-            writeObject(getContext(),PENDING_INVESTIGATION,pendingCases);
+            writeObject(activity.getApplicationContext(),PENDING_INVESTIGATION,pendingCases);
         } catch (IOException e) {
             e.printStackTrace();
             //loadData();
